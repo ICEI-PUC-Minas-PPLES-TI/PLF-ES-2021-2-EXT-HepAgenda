@@ -1,0 +1,28 @@
+{
+  "name": "puc-agenda",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "api": "nodemon ./api/index"
+  },
+  "dependencies": {
+    "@nuxtjs/axios": "^5.13.6",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "4.17.1",
+    "express-async-errors": "^3.1.1",
+    "mysql2": "^2.3.0",
+    "nuxt": "latest",
+    "sequelize": "^6.6.5",
+    "yup": "^0.32.9"
+  },
+  "devDependencies": {
+    "@nuxtjs/vuetify": "^1.12.1",
+    "jest": "^27.0.6",
+    "nodemon": "^2.0.12"
+  }
+}
