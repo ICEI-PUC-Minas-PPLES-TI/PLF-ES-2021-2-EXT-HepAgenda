@@ -24,6 +24,7 @@ yarn install # or npm install
 - [Nuxt.js](https://nuxtjs.org/guide/)
 - [Vue.js](http://vuejs.org/guide/)
 - [Sequelize.js](https://sequelize.org/master/index.html)
+- [Vuetify](https://vuetifyjs.com/en/)
 
 ## Licenses
 

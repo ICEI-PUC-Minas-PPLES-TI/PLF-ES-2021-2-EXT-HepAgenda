@@ -58,7 +58,7 @@ export default {
 
   axios: {
     // See https://github.com/nuxt-community/axios-module#options
-    baseURL: 'http://localhost:3000/api', // http://localhost:8000/ https://sol.interfoneip.com/
+    baseURL: `http://localhost:${process.env.PORT}/api`,
     timeout: 5000
   },
 
@@ -72,10 +72,10 @@ export default {
   /*
   ** For deployment you might want to edit host and port
   */
-  // server: {
-  //  port: 8000, // default: 3000
-  //  host: '0.0.0.0' // default: localhost
-  // },
+  server: {
+    port: process.env.PORT, // default: 3000
+    host: '0.0.0.0' // default: localhost
+  },
 
   /*
   ** Build configuration
