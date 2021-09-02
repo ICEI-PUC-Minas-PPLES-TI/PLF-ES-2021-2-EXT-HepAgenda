@@ -1,6 +1,6 @@
 <template>
   <div>
-    Aqui vai ser a agenda
+    Aqui vai ser a tela do paciente
   </div>
 </template>
 
