@@ -19,6 +19,10 @@ router.get('/tratamento/:id', tratamentoController.get)
 router.get('/tratamento', tratamentoController.getAll)
 // Usuario
 router.post('/usuario', usuarioController.create)
+router.get('/usuario/:id', usuarioController.get)
+router.get('/usuario', usuarioController.getAll)
+router.delete('/usuario/:id', usuarioController.delete)
+router.put('/usuario/:id', usuarioController.update)
 
 
 module.exports = router

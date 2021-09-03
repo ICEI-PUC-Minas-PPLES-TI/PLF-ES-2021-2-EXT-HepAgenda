@@ -1,60 +1,217 @@
 const yup = require('yup')
-const PasswordEncrypt  = require('../helpers/PasswordEncrypt');
+const PasswordEncrypt = require('../helpers/PasswordEncrypt');
 const Usuario = require('../models/Usuario');
 
 
 class UsuarioController {
 
-    async create(request, response) {
-        const scheme = yup.object().shape({
-            nome: yup.string().required("Nome obrigatório!"),
-            email: yup.string().email().required("E-mail obrigatório!"),
-            senha: yup.string().required("Senha obrigatório!"),
-            tipo: yup.mixed().oneOf(['A', 'M','V'])
-        })
+  async create(request, response) {
+    const telefoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+    const senhaRegEx = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
+    // Em breve buscar dos tipos automaticamente no banco de dados.
+    const tipos = ['A', 'M', 'V'];
 
-        
-        // Validando com o esquema criado:
-        try {
-            await scheme.validate(request.body, { abortEarly: false }); // AbortEarly para fazer todas as validações
-        } catch (err) {
-            return response.status(422).json({
-                'name:': err.name, // => 'ValidationError'
-                'message': err.message,
-                'errors': err.errors
-            })
-        }
+    const scheme = yup.object().shape({
+      nome: yup.string().required("Nome obrigatório!"),
+      telefone: yup.string().matches(telefoneRegExp, "Telefone inválido!"),
 
-        const { nome, email, senha, tipo, telefone } = request.body;
+      login: yup.string().min(3, "Login deve ter no mínimo 3 caracteres!"),
 
-        const pe = new PasswordEncrypt()
-        const password = await pe.hash(senha)
+      email: yup.string().email().required("Email obrigatório!"),
+      senha: yup.string().required("Senha obrigatória!").matches(
+        senhaRegEx,
+        "Senha deve ter no mínimo 8 caracteres, 1 maiúsculo, 1 minúsculo, 1 número e 1 caracter especial!"
+      ),
+      senhaRepetida: yup.string().required("Senhas repetida é obrigatória!").oneOf([yup.ref('senha'), null], 'Senhas devem ser iguais'),
 
-        const usuario = await Usuario.create({
-            nome,
-            email,
-            senha: password,
-            /*login: 'teste',
-            telefone: '319989898',
-            tipo: 'V'*/
-        })
+      tipo: yup.mixed().oneOf(tipos, `Tipo deve ser algum destes: ${tipos}.`).required("Tipo obrigatório!")
+    })
 
+
+    // Validando com o esquema criado:
+    try {
+      await scheme.validate(request.body, { abortEarly: false }); // AbortEarly para fazer todas as validações
+    } catch (err) {
+      return response.status(422).json({
+        'name:': err.name, // => 'ValidationError'
+        'message': err.message,
+        'errors': err.errors
+      })
+    }
+
+    const { nome, email, telefone, login, senha, tipo } = request.body;
+
+    const pe = new PasswordEncrypt()
+    const password = await pe.hash(senha)
+
+    const usuario = Usuario.build({
+      nome,
+      email,
+      telefone: telefone,
+      login: login,
+      senha: password,
+      tipo: tipo
+    })
+
+    usuario.save()
+      .then(function (anotherTask) {
         return response.status(201).json({
-            created: true,
-            usuarioID: usuario.id
+          criado: true,
+          usuarioID: usuario.id,
         });
+      }).catch(function (erro) {
+        return response.status(409).json({
+          criado: false,
+          erros: erro.message
+        });
+      })
+  }
+
+  // URI de exemplo: http://localhost:3000/api/usuario/1
+  async delete(request, response) {
+    await Usuario.destroy({
+      where: {
+        id: request.params.id
+      }
+    })
+      .then((dado) => {
+        response.status(204).json(dado);
+      })
+      .catch(function (error) {
+        response.status(500).send('Erro interno do servidor');
+      });
+  }
+
+  // URI de exemplo: http://localhost:3000/api/usuario/1
+  async get(request, response) {
+    const atributos = ['id', 'login', 'nome', 'email', 'telefone', 'tipo', 'data_expira']
+    const usuario = await Usuario.findAll({
+      where: {
+        id: request.params.id
+      },
+      attributes: atributos,
+    });
+    if (usuario[0] == null) {
+      response.status(404).json(usuario);
+    } else {
+      response.status(200).json(usuario[0]);
+    }
+  }
+
+  // URI de exemplo: http://localhost:3000/api/usuario/1
+  async update(request, response) {
+    const telefoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+    const senhaRegEx = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
+    // Em breve buscar dos tipos automaticamente no banco de dados.
+    const tipos = ['A', 'M', 'V'];
+
+    const scheme = yup.object().shape({
+      nome: yup.string(),
+      telefone: yup.string().matches(telefoneRegExp, "Telefone inválido!"),
+
+      login: yup.string().min(3, "Login deve ter no mínimo 3 caracteres!"),
+
+      email: yup.string().email(),
+      senha: yup.string().matches(
+        senhaRegEx,
+        "Senha deve ter no mínimo 8 caracteres, 1 maiúsculo, 1 minúsculo, 1 número e 1 caracter especial!"
+      ),
+      senhaRepetida: yup.string().oneOf([yup.ref('senha'), null], 'Senhas devem ser iguais'),
+
+      tipo: yup.mixed().oneOf(tipos, `Tipo deve ser algum destes: ${tipos}.`)
+    })
+
+
+    // Validando com o esquema criado:
+    try {
+      await scheme.validate(request.body, { abortEarly: false }); // AbortEarly para fazer todas as validações
+    } catch (err) {
+      return response.status(422).json({
+        'name:': err.name, // => 'ValidationError'
+        'message': err.message,
+        'errors': err.errors
+      })
     }
 
-    
-    async get(request, response) {
-        
+    const { nome, email, telefone, login, senha, tipo } = request.body;
+    const atributos = ['id', 'login', 'nome', 'email', 'telefone', 'tipo', 'data_expira']
+    const usuario = await Usuario.findAll({
+      where: {
+        id: request.params.id
+      },
+      attributes: atributos,
+    });
+    if (usuario[0] == null) {
+      response.status(404);
+    } else {
+      usuario[0].update({
+        nome: nome,
+        email: email,
+        telefone: telefone,
+        login: login,
+        senha: senha,
+        tipo: tipo
+      })
+      response.status(200).json({
+        atualizado: true,
+        usuarioID: usuario[0].id,
+      });
     }
+  }
 
-    async getAll(request, response) {
-        
-    }
+  // URI de exemplo: http://localhost:3000/api/usuario?pagina=1&limite=5&atributo=nome&ordem=DESC
+  // todos as querys são opicionais
+  async getAll(request, response) {
+    const atributos = ['id', 'login', 'nome', 'email', 'telefone', 'tipo', 'data_expira'];
 
-    
+    let limite = 50;
+    if (request.query.limite)
+      limite = parseInt(request.query.limite);
+    if (limite > 50)
+      limite = 50;
+
+    let offset = 0;
+
+    Usuario.findAndCountAll()
+      .then((dados) => {
+
+        let pagina = 1;
+        if (request.query.pagina)
+          pagina = parseInt(request.query.pagina);
+        let paginas = Math.ceil(dados.count / limite);
+
+        let atributo = 'id';
+        if (request.query.atributo)
+          if (atributos.includes(request.query.atributo))
+            atributo = request.query.atributo;
+
+        let ordem = 'ASC';
+        if (request.query.ordem)
+          if (request.query.ordem == 'ASC' || request.query.ordem == "DESC")
+            ordem = request.query.ordem;
+
+        offset = limite * (pagina - 1);
+
+        Usuario.findAll({
+          attributes: atributos,
+          limit: limite,
+          offset: offset,
+          order: [[atributo, ordem]]
+        })
+          .then((usuarios) => {
+            /* Para remover os expirados */
+            // usuarios.forEach(usuario => {
+            //   if (usuario.dataValues.data_expira!=null)
+            //     usuarios.pop(usuario)
+            // });
+            response.status(200).json({ 'dados': usuarios, 'registros': dados.count, 'paginas': paginas });
+          });
+      })
+      .catch(function (error) {
+        response.status(500).send('Erro interno do servidor');
+      });
+  }
+
 };
 
-module.exports = UsuarioController 
+module.exports = UsuarioController
