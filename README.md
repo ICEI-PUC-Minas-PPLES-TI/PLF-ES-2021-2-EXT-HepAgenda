@@ -14,7 +14,7 @@
 * Guilherme Gabriel Silva Pereira 
 * Henrique Penna Forte Monteiro
 * Layla Raissa Silva Pereira
-* Lucas   ngelo Oliveira Martins Rocha
+* Lucas Ângelo Oliveira Martins Rocha
 * Maycon Henrique Souza Tavares
 * Victor Boaventura Góes Campos
 
