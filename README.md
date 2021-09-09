@@ -1,6 +1,32 @@
-<p align="center"><img width="328px" src="https://nuxtjs.org/logos/nuxt.svg"></p>
+ # HEPAGenda :hospital:
+ Software de gestão dos atendimentos prestados no ambulatório da UFMG
 
-# Agenda - HEPAgenda
+ <a href="url"><img src="https://raw.githubusercontent.com/ICEI-PUC-Minas-PPLES-TI/PLF-ES-2021-2-EXT-HepAgenda/main/docs/Logo/logotipo_hepagenda.png?token=AOBP67POVJ4X4JOU75DEWBLBIO62U" align="center" height="50%" width="50%" ></a>
+ 
+<br>
+<p>
+Desenvolver um programa para registrar os atendimentos prestados no ambulatório com o intuito de facilitar e melhorar oatendimento prestado ao paciente.
+ 
+
+## Alunos integrantes da equipe
+
+* Emerson Pereira Siqueira
+* Guilherme Gabriel Silva Pereira 
+* Henrique Penna Forte Monteiro
+* Layla Raissa Silva Pereira
+* Lucas   ngelo Oliveira Martins Rocha
+* Maycon Henrique Souza Tavares
+* Victor Boaventura Góes Campos
+
+
+## Coordenadora da Extensão
+
+* Ivre Marjorie Ribeiro Machado
+
+## Instruções de utilização
+
+Assim que a primeira versão do sistema estiver disponível, deverá complementar com as instruções de utilização. Descreva como instalar eventuais dependências e como executar a aplicação.
+
 
 ## Installation
 
@@ -31,5 +57,9 @@ yarn install # or npm install
 - [ExpressJS license](https://github.com/expressjs/express/blob/master/LICENSE)
 - [NuxtJS license](https://github.com/nuxt/nuxt.js/blob/master/LICENSE.md)
 - [VueJS license](https://github.com/vuejs/vue/blob/master/LICENSE)
+
+
+
+
 
 
