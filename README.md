@@ -1,10 +1,8 @@
  # HEPAGenda :hospital:
- Software de gestão dos atendimentos prestados no ambulatório da UFMG
 
  <a href="url"><img src="https://raw.githubusercontent.com/ICEI-PUC-Minas-PPLES-TI/PLF-ES-2021-2-EXT-HepAgenda/main/docs/Logo/logotipo_hepagenda.png?token=AOBP67POVJ4X4JOU75DEWBLBIO62U" align="center" height="30%" width="30%" ></a>
- 
-<br>
 <p>
+  Software de gestão dos atendimentos prestados no ambulatório da UFMG
 Desenvolver um programa para registrar os atendimentos prestados no ambulatório com o intuito de facilitar e melhorar oatendimento prestado ao paciente.
  
 
