@@ -6,6 +6,7 @@
  
 <p>Instituto de Informática e Ciências Exatas
 <br>Pontifícia Universidade Católica de Minas Gerais (PUC MINAS)
+<br> Engenharia de Software
 <br>Belo Horizonte – MG – Brasil
 
   
