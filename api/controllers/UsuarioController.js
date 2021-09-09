@@ -1,9 +1,42 @@
 const yup = require('yup')
-const PasswordEncrypt = require('../helpers/PasswordEncrypt');
 const Usuario = require('../models/Usuario');
+const PasswordEncrypt = require('../helpers/PasswordEncrypt');
 
+var jwt = require('jsonwebtoken');
+const config = require('../config/config.js');
+var bcrypt = require('bcryptjs');
 
 class UsuarioController {
+
+  async signin(req, res) {
+    console.log("Sign-In");
+
+    const { email, login, senha } = req.body;
+
+    Usuario.findOne({
+      where: {
+        login: login
+      }
+    }).then(usuario => {
+      if (!usuario) {
+        return res.status(404).send('Usuario nao encontrado.');
+      }
+
+      var senhaValida = bcrypt.compareSync(senha, usuario.senha);
+      if (!senhaValida) {
+        return res.status(401).send({ autenticado: false, acessoToken: null, razao: "Senha incorreta!" });
+      }
+
+      var token = jwt.sign({ id: usuario.id }, config.secret, {
+        expiresIn: 86400 // expires in 24 hours
+      });
+
+      res.status(200).send({ autenticado: true, acessoToken: token });
+
+    }).catch(err => {
+      res.status(500).send('Erro -> ' + err);
+    });
+  }
 
   async create(request, response) {
     const telefoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
@@ -27,22 +60,19 @@ class UsuarioController {
       tipo: yup.mixed().oneOf(tipos, `Tipo deve ser algum destes: ${tipos}.`).required("Tipo obrigatório!")
     })
 
-
     // Validando com o esquema criado:
     try {
       await scheme.validate(request.body, { abortEarly: false }); // AbortEarly para fazer todas as validações
-    } catch (err) {
+    } catch (erro) {
       return response.status(422).json({
-        'name:': err.name, // => 'ValidationError'
-        'message': err.message,
-        'errors': err.errors
+        'criado': false,
+        'nome:': erro.name, // => 'ValidationError'
+        'erros': erro.errors
       })
     }
 
     const { nome, email, telefone, login, senha, tipo } = request.body;
-
-    const pe = new PasswordEncrypt()
-    const password = await pe.hash(senha)
+    const password = bcrypt.hashSync(senha, 8);
 
     const usuario = Usuario.build({
       nome,
@@ -53,14 +83,18 @@ class UsuarioController {
       tipo: tipo
     })
 
+    // Verificar se usuário já existe.
+    // get(request, response);
+
     usuario.save()
       .then(function (anotherTask) {
         return response.status(201).json({
           criado: true,
           usuarioID: usuario.id,
         });
-      }).catch(function (erro) {
-        return response.status(409).json({
+      })
+      .catch(function (erro) {
+        return response.status(500).json({
           criado: false,
           erros: erro.message
         });
@@ -80,22 +114,6 @@ class UsuarioController {
       .catch(function (error) {
         response.status(500).send('Erro interno do servidor');
       });
-  }
-
-  // URI de exemplo: http://localhost:3000/api/usuario/1
-  async get(request, response) {
-    const atributos = ['id', 'login', 'nome', 'email', 'telefone', 'tipo', 'data_expira']
-    const usuario = await Usuario.findAll({
-      where: {
-        id: request.params.id
-      },
-      attributes: atributos,
-    });
-    if (usuario[0] == null) {
-      response.status(404).json(usuario);
-    } else {
-      response.status(200).json(usuario[0]);
-    }
   }
 
   // URI de exemplo: http://localhost:3000/api/usuario/1
@@ -127,13 +145,16 @@ class UsuarioController {
       await scheme.validate(request.body, { abortEarly: false }); // AbortEarly para fazer todas as validações
     } catch (err) {
       return response.status(422).json({
-        'name:': err.name, // => 'ValidationError'
-        'message': err.message,
-        'errors': err.errors
+        'atualizado': false,
+        'nome:': err.name, // => 'ValidationError'
+        'erros': err.errors
       })
     }
 
     const { nome, email, telefone, login, senha, tipo } = request.body;
+
+    let dados = new Map();
+
     const atributos = ['id', 'login', 'nome', 'email', 'telefone', 'tipo', 'data_expira']
     const usuario = await Usuario.findAll({
       where: {
@@ -142,7 +163,7 @@ class UsuarioController {
       attributes: atributos,
     });
     if (usuario[0] == null) {
-      response.status(404);
+      response.status(404).json(usuario);
     } else {
       usuario[0].update({
         nome: nome,
@@ -156,6 +177,22 @@ class UsuarioController {
         atualizado: true,
         usuarioID: usuario[0].id,
       });
+    }
+  }
+
+  // URI de exemplo: http://localhost:3000/api/usuario/1
+  async get(request, response) {
+    const atributos = ['id', 'login', 'nome', 'email', 'telefone', 'tipo', 'data_expira']
+    const usuario = await Usuario.findAll({
+      where: {
+        id: request.params.id
+      },
+      attributes: atributos,
+    });
+    if (usuario[0] == null) {
+      response.status(404).json(usuario);
+    } else {
+      response.status(200).json(usuario[0]);
     }
   }
 
