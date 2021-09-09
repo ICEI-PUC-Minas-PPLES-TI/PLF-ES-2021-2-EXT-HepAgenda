@@ -1,4 +1,4 @@
- # HEPAGenda :hospital:
+ # Projeto de Extensão - PUC Minas Softwares para Saúde
 
  <a href="url"><img src="https://raw.githubusercontent.com/ICEI-PUC-Minas-PPLES-TI/PLF-ES-2021-2-EXT-HepAgenda/main/docs/Logo/logotipo_hepagenda.png?token=AOBP67POVJ4X4JOU75DEWBLBIO62U" align="center" height="30%" width="30%" ></a>
 <p>
