@@ -26,6 +26,7 @@ export default {
   ** Global CSS
   */
   css: [
+    '~/assets/css/index.css'
   ],
 
   /*
@@ -47,6 +48,18 @@ export default {
   buildModules: [
     '@nuxtjs/vuetify'
   ],
+
+  vuetify: {
+    customVariables: ['~/assets/scss/vuetifyvar.scss'],
+    treeShake: true,
+    theme: {
+      themes: {
+        light: {
+          primary: '008BD9'
+        },
+      },
+    },
+  },
 
   /*
   ** Nuxt.js modules
