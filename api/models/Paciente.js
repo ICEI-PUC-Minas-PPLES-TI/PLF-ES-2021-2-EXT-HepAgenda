@@ -53,7 +53,7 @@ class Paciente extends Model{
             },
             comorbidade: {
                 type: DataTypes.ENUM,
-                values: ['A', 'B', 'C'],
+                values: ['HEPB', 'HEPC', 'OUTRO'],
                 allowNull: true,
             },
             desfecho: {

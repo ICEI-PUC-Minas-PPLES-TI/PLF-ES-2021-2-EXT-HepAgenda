@@ -14,7 +14,7 @@ class PacienteController{
             email: yup.string().max(50),
             peso: yup.number().min(0),
             altura: yup.number().min(0),
-            comorbidade: yup.mixed().oneOf(['A', 'B', 'C']),
+            comorbidade: yup.mixed().oneOf(['HEPB', 'HEPC', 'OUTRO']),
             desfecho: yup.number(),
         })
 
@@ -83,7 +83,7 @@ class PacienteController{
             email: yup.string().max(50),
             peso: yup.number().min(0),
             altura: yup.number().min(0),
-            comorbidade: yup.mixed().oneOf(['A', 'B', 'C']),
+            comorbidade: yup.mixed().oneOf(['HEPB', 'HEPC', 'OUTRO']),
             desfecho: yup.number(),
         })
 
@@ -100,7 +100,7 @@ class PacienteController{
 
         //procura um registro_hc testar se é único
         if (
-            await Paciente.findOne({
+            request.body.registro_hc && await Paciente.findOne({
                 where: { 
                     registro_hc: request.body.registro_hc,
                     id: {
