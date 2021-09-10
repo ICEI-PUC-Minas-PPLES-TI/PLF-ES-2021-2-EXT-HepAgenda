@@ -9,8 +9,6 @@ var bcrypt = require('bcryptjs');
 class UsuarioController {
 
   async signin(req, res) {
-    console.log("Sign-In");
-
     const { email, login, senha } = req.body;
 
     Usuario.findOne({
@@ -40,7 +38,16 @@ class UsuarioController {
 
   async create(request, response) {
     const telefoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
-    const senhaRegEx = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
+    const senhaRegEx = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
+    /*
+      /^
+        (?=.*\d)          // deve ter no mínimo 1 número
+        (?=.*[a-z])       // deve ter no mínimo 1 letra minúscula
+        (?=.*[A-Z])       // deve ter no mínimo 1 letra maiúscula
+        [a-zA-Z0-9]{8,}   // deve ter no mínimo 8 caracteres alfanuméricos
+      $/
+    */
+
     // Em breve buscar dos tipos automaticamente no banco de dados.
     const tipos = ['A', 'M', 'V'];
 
@@ -53,7 +60,7 @@ class UsuarioController {
       email: yup.string().email().required("Email obrigatório!"),
       senha: yup.string().required("Senha obrigatória!").matches(
         senhaRegEx,
-        "Senha deve ter no mínimo 8 caracteres, 1 maiúsculo, 1 minúsculo, 1 número e 1 caracter especial!"
+        "Senha deve ter no mínimo 8 caracteres, 1 maiúsculo, 1 minúsculo e 1 número!"
       ),
       senhaRepetida: yup.string().required("Senhas repetida é obrigatória!").oneOf([yup.ref('senha'), null], 'Senhas devem ser iguais'),
 
