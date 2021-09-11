@@ -19,7 +19,18 @@ class Paciente extends Model{
             registro_hc: {
                 type: DataTypes.STRING(20),
                 allowNull: false,
-                unique: true
+                isUnique: (value, next) => {
+                    Paciente.findAll({
+                      where: { registro_hc: value },
+                      attributes: ['id'],
+                    })
+                    .then((usuario) => {
+                        if (usuario.length != 0)
+                            next(new AppError('Email já cadastrado!'));
+                        next();
+                    })
+                    .catch((onError) => console.log(onError));
+                  },
             },
             sexo: {
                 type: DataTypes.ENUM,

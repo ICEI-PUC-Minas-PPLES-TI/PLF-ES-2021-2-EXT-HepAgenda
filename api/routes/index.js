@@ -5,7 +5,7 @@ const router = Router()
 // Importar controllers
 const TratamentoController  = require('../controllers/TratamentoController.js');
 const UsuarioController  = require('../controllers/UsuarioController.js');
-const PacienteController  = require('../controllers/PacienteController');
+const PacienteController  = require('../controllers/PacienteController.js');
 
 
 // Iniciar controllers
