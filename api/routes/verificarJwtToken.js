@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const config = require('../config/config.js');
 const Usuario = require('../models/Usuario.js');
 
 verificarToken = (req, res, next) => {
@@ -12,7 +11,7 @@ verificarToken = (req, res, next) => {
     });
   }
 
-  jwt.verify(token, config.secret, (err, decoded) => {
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
     if (err) {
       return res.status(500).send({
         autenticado: false,
