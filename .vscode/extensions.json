@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "mubaidr.vuejs-extension-pack",
+    "waderyan.nodejs-extension-pack",
+    "mikestead.dotenv",
+    "editorconfig.editorconfig",
+    "coenraads.bracket-pair-colorizer",
+    "eamodio.gitlens",
+    "github.vscode-pull-request-github",
+    "yzhang.markdown-all-in-one"
+  ]
+}
