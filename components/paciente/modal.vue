@@ -18,14 +18,14 @@
       </v-card-title>
       <v-card-text>
         <v-container>
-          <v-form>
+          <v-form v-if="formData">
             <v-row>
               <span class="paciente-modal-subtitle">Informações Básicas</span>
             </v-row>
             <!-- Secao 1 - Nome, Nascimento, Sexo, Email, Telefone, Registro HC, Nome da Mãe -->
             <v-row class="mt-0">
               <v-col :md="7" :sm="12" :xl="4" cols="12">
-                <v-text-field v-model="formData.nome" outlined :hide-details="true" label="Nome" />
+                <v-text-field v-model="formData.nome" outlined :hide-details="true" label="Nome" @blur="salvarEmCache" />
               </v-col>
               <v-col :md="2" :sm="12" :xl="2" cols="12">
                 <v-menu
@@ -60,6 +60,7 @@
                   row
                   style="margin: 0"
                   :hide-details="true"
+                  @change="salvarEmCache"
                 >
                   <v-radio
                     label="Masculino"
@@ -72,16 +73,16 @@
                 </v-radio-group>
               </v-col>
               <v-col :md="7" :sm="12" :xl="4" cols="12">
-                <v-text-field v-model="formData.email" type="email" outlined :hide-details="true" label="E-Mail (Opcional)" />
+                <v-text-field v-model="formData.email" type="email" outlined :hide-details="true" label="E-Mail (Opcional)" @blur="salvarEmCache" />
               </v-col>
               <v-col :md="2" :sm="12" :xl="2" cols="12">
-                <v-text-field v-model="formData.telefone" outlined :hide-details="true" label="Telefone" />
+                <v-text-field v-model="formData.telefone" outlined :hide-details="true" label="Telefone" @blur="salvarEmCache" />
               </v-col>
               <v-col :md="3" :sm="12" :xl="2" cols="12">
-                <v-text-field v-model="formData.registro_hc" outlined :hide-details="true" label="Registro HC" />
+                <v-text-field v-model="formData.registro_hc" outlined :hide-details="true" label="Registro HC" @blur="salvarEmCache" />
               </v-col>
               <v-col :md="7" :sm="12" :xl="4" cols="12">
-                <v-text-field v-model="formData.nome_mae" outlined label="Nome da Mãe" />
+                <v-text-field v-model="formData.nome_mae" outlined label="Nome da Mãe" @blur="salvarEmCache" />
               </v-col>
             </v-row>
             <br>
@@ -91,13 +92,13 @@
             <!-- Seção Informações clínicas - Peso, Altura, IMC,  Comorbidade e Desfecho -->
             <v-row>
               <v-col :md="2" :sm="12" cols="12">
-                <v-text-field v-model="formData.peso" type="number" outlined :hide-details="true" label="Peso (Opcional)" />
+                <v-text-field v-model="formData.peso" type="number" outlined :hide-details="true" label="Peso (Opcional)" @blur="salvarEmCache" />
               </v-col>
               <v-col :md="2" :sm="12" cols="12">
-                <v-text-field v-model="formData.altura" type="number" outlined :hide-details="true" label="Altura (Opcional)" />
+                <v-text-field v-model="formData.altura" type="number" outlined :hide-details="true" label="Altura (Opcional)" @blur="salvarEmCache" />
               </v-col>
               <v-col :md="2" :sm="12" cols="12">
-                <v-text-field class="mt-0" outlined :readonly="true" :hide-details="true" label="IMC" v-model="calculoIMC" />
+                <v-text-field class="mt-0" outlined :readonly="true" :hide-details="true" label="IMC" v-model="calculoIMC" @blur="salvarEmCache" />
               </v-col>
               <v-col :md="2" :sm="12" cols="12">
                 <v-select
@@ -107,6 +108,7 @@
                   item-text="label"
                   item-value="value"
                   outlined
+                  @change="salvarEmCache"
                 />
               </v-col>
               <v-col :md="4" :sm="12" cols="12">
@@ -118,6 +120,7 @@
                   item-text="label"
                   item-value="value"
                   outlined
+                  @change="salvarEmCache"
                 />
               </v-col>
             </v-row>
@@ -620,34 +623,7 @@ export default {
           value: 7
         }
       ],
-      formData: {
-        nome: null,
-        data_nascimento: null,
-        sexo: null,
-        email: null,
-        telefone: null,
-        registro_hc: null,
-        nome_mae: null,
-        altura: null,
-        peso: null,
-        comorbidade: null,
-        desfecho: null,
-        hepatiteb: {
-          tratamento: null,
-          inicio_tratamento: null,
-          fibrose: null,
-          cirrotico: false,
-          data_alfa: null,
-          resultado_alfa: null,
-          data_antiretroviral: null,
-          portador_inativo: false,
-          data_ultrasom: null,
-          resultado_ultrasom: null,
-          data_cargaviral: null,
-          resultado_cargaviral: null
-        },
-        hepatitec: []
-      },
+      formData: null,
       tratamentoBItems: [
         {
           value: 1,
@@ -695,9 +671,40 @@ export default {
     },
   },
   mounted(){
-    this.adicionarHepatiteC()
+    this.limparDados()
   },
   methods: {
+    limparDados(){
+      this.formData = {
+        nome: null,
+        data_nascimento: null,
+        sexo: null,
+        email: null,
+        telefone: null,
+        registro_hc: null,
+        nome_mae: null,
+        altura: null,
+        peso: null,
+        comorbidade: null,
+        desfecho: null,
+        hepatiteb: {
+          tratamento: null,
+          inicio_tratamento: null,
+          fibrose: null,
+          cirrotico: false,
+          data_alfa: null,
+          resultado_alfa: null,
+          data_antiretroviral: null,
+          portador_inativo: false,
+          data_ultrasom: null,
+          resultado_ultrasom: null,
+          data_cargaviral: null,
+          resultado_cargaviral: null
+        },
+        hepatitec: []
+      }
+      this.adicionarHepatiteC()
+    },
     formatDate (date) {
       if (!date) return null
       const [year, month, day] = date.split('-')
@@ -724,6 +731,12 @@ export default {
         menuUltra: false,
         menuCarga: false
       })
+    },
+    salvarEmCache(){
+      //const VERSION = '0.0.1'
+      //localStorage.setItem('hepagenda-paciente-version', JSON.stringify(this.formData))
+      localStorage.setItem('hepagenda-paciente', JSON.stringify(this.formData))
+      console.log('here')
     }
   }
 }
