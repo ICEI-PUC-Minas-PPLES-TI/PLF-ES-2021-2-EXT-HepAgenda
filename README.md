@@ -1,6 +1,31 @@
-<p align="center"><img width="328px" src="https://nuxtjs.org/logos/nuxt.svg"></p>
+ ## Projeto de Extensão PUC Minas - Softwares para Saúde  :hospital:
+<p><a href="https://github.com/ICEI-PUC-Minas-PPLES-TI/PLF-ES-2021-2-EXT-HepAgenda/blob/main/README.md"><img src="https://raw.githubusercontent.com/ICEI-PUC-Minas-PPLES-TI/PLF-ES-2021-2-EXT-HepAgenda/main/docs/Logo/logotipo_hepagenda.png?token=AOBP67POVJ4X4JOU75DEWBLBIO62U" align="center" height="30%" width="30%" ></a>
+<p>Hep Agenda -  Software de gestão dos atendimentos prestados no ambulatório de Hepatites da UFMG<p>
+<p>Instituto de Informática e Ciências Exatas
+<br>Pontifícia Universidade Católica de Minas Gerais (PUC MINAS)
+<br> Engenharia de Software
+<br>Belo Horizonte – MG – Brasil
 
-# Agenda - HEPFacil
+  
+## Alunos integrantes da equipe
+
+* Emerson Pereira Siqueira
+* Guilherme Gabriel Silva Pereira 
+* Henrique Penna Forte Monteiro
+* Layla Raissa Silva Pereira
+* Lucas Ângelo Oliveira Martins Rocha
+* Maycon Henrique Souza Tavares
+* Victor Boaventura Góes Campos
+
+
+## Coordenadora da Extensão
+
+* Ivre Marjorie Ribeiro Machado
+
+## Instruções de utilização
+
+Assim que a primeira versão do sistema estiver disponível, deverá complementar com as instruções de utilização. Descreva como instalar eventuais dependências e como executar a aplicação.
+
 
 ## Installation
 
@@ -31,5 +56,9 @@ yarn install # or npm install
 - [ExpressJS license](https://github.com/expressjs/express/blob/master/LICENSE)
 - [NuxtJS license](https://github.com/nuxt/nuxt.js/blob/master/LICENSE.md)
 - [VueJS license](https://github.com/vuejs/vue/blob/master/LICENSE)
+
+
+
+
 
 
