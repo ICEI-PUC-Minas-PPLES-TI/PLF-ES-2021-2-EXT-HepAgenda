@@ -2,8 +2,8 @@ const Usuario = require("../models/Usuario");
 const { SortPaginate } = require("../helpers/SortPaginate");
 
 const yup = require("yup");
-var jwt = require("jsonwebtoken");
-var bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 
 class UsuarioController {
   async signin(req, res) {
@@ -19,7 +19,7 @@ class UsuarioController {
           return res.status(404).send("Usuario nao encontrado.");
         }
 
-        var senhaValida = bcrypt.compareSync(senha, usuario.senha);
+        const senhaValida = bcrypt.compareSync(senha, usuario.senha);
         if (!senhaValida) {
           return res.status(401).send({
             autenticado: false,
@@ -28,7 +28,7 @@ class UsuarioController {
           });
         }
 
-        var token = jwt.sign({ id: usuario.id }, process.env.SECRET_KEY, {
+        const token = jwt.sign({ id: usuario.id }, process.env.SECRET_KEY, {
           expiresIn: 604800 // 1 semana expira
         });
 
