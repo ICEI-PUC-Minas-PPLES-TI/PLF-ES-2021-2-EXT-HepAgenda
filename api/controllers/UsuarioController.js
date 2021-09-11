@@ -254,6 +254,7 @@ class UsuarioController {
           dados.count
         );
         Usuario.findAll({
+          attributes: atributos,
           ...SortPaginateOptions
         })
           .then(usuarios => {

@@ -1,13 +1,13 @@
-const jwt = require('jsonwebtoken');
-const Usuario = require('../models/Usuario.js');
+const jwt = require("jsonwebtoken");
+const Usuario = require("../models/Usuario.js");
 
 verificarToken = (req, res, next) => {
-  let token = req.headers['x-access-token'];
+  let token = req.headers["x-access-token"];
 
   if (!token) {
     return res.status(403).send({
       autenticado: false,
-      message: 'Token de autenticação não fornecido.'
+      message: "Token de autenticação não fornecido."
     });
   }
 
@@ -15,27 +15,25 @@ verificarToken = (req, res, next) => {
     if (err) {
       return res.status(500).send({
         autenticado: false,
-        message: 'Falha ao autenticar o token. Erro -> ' + err
+        message: "Falha ao autenticar o token. Erro -> " + err
       });
     }
     req.userId = decoded.id;
     next();
   });
-}
+};
 
 isAdmin = (req, res, next) => {
-
-  Usuario.findByPk(req.userId)
-    .then(usuario => {
-      if (usuario.tipo === "A") {
-        next();
-        return;
-      }
-
-      res.status(403).send("Necessita de ser um usuário administrador!");
+  Usuario.findByPk(req.userId).then(usuario => {
+    if (usuario.tipo === "A") {
+      next();
       return;
-    })
-}
+    }
+
+    res.status(403).send("Necessita de ser um usuário administrador!");
+    return;
+  });
+};
 
 const autenticacaoJwt = {};
 autenticacaoJwt.verificarToken = verificarToken;

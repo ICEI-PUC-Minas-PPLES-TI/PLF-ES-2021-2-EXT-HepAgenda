@@ -1,5 +1,4 @@
 function SortPaginate(query, atributos, dadosCount) {
-
   const limite =
     query.limite && Number.parseInt(query.limite) < 50
       ? Number.parseInt(query.limite)
