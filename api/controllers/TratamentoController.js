@@ -48,7 +48,7 @@ class TratamentoController {
         response.json(result);
     }
 
-    
+
 };
 
 module.exports = TratamentoController

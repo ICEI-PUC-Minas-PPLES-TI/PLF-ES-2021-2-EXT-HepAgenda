@@ -1,6 +1,7 @@
-const yup = require("yup");
 const Usuario = require("../models/Usuario");
+const { SortPaginate } = require("../helpers/SortPaginate");
 
+const yup = require("yup");
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
@@ -20,13 +21,11 @@ class UsuarioController {
 
         var senhaValida = bcrypt.compareSync(senha, usuario.senha);
         if (!senhaValida) {
-          return res
-            .status(401)
-            .send({
-              autenticado: false,
-              acessoToken: null,
-              razao: "Senha incorreta!"
-            });
+          return res.status(401).send({
+            autenticado: false,
+            acessoToken: null,
+            razao: "Senha incorreta!"
+          });
         }
 
         var token = jwt.sign({ id: usuario.id }, process.env.SECRET_KEY, {
@@ -247,54 +246,37 @@ class UsuarioController {
       "data_expira"
     ];
 
-    let limite = 50;
-    if (request.query.limite) limite = parseInt(request.query.limite);
-    if (limite > 50) limite = 50;
-
-    let offset = 0;
-
     Usuario.findAndCountAll()
       .then(dados => {
-        let pagina = 1;
-        if (request.query.pagina) pagina = parseInt(request.query.pagina);
-        let paginas = Math.ceil(dados.count / limite);
-
-        let atributo = "id";
-        if (request.query.atributo)
-          if (atributos.includes(request.query.atributo))
-            atributo = request.query.atributo;
-
-        let ordem = "ASC";
-        if (request.query.ordem)
-          if (request.query.ordem == "ASC" || request.query.ordem == "DESC")
-            ordem = request.query.ordem;
-
-        offset = limite * (pagina - 1);
-
+        const { paginas, ...SortPaginateOptions } = SortPaginate(
+          request.query,
+          atributos,
+          dados.count
+        );
         Usuario.findAll({
-          attributes: atributos,
-          limit: limite,
-          offset: offset,
-          order: [[atributo, ordem]]
-        }).then(usuarios => {
-          /* Para remover os expirados */
-          // usuarios.forEach(usuario => {
-          //   if (usuario.dataValues.data_expira!=null)
-          //     usuarios.pop(usuario)
-          // });
-          response
-            .status(200)
-            .json({
+          ...SortPaginateOptions
+        })
+          .then(usuarios => {
+            response.status(200).json({
               dados: usuarios,
               quantidade: usuarios.length,
               total: dados.count,
               paginas: paginas,
-              offset: offset
+              offset: SortPaginateOptions.offset
             });
-        });
+          })
+          .catch(error => {
+            response.status(500).json({
+              titulo: "Erro interno do servidor!",
+              error
+            });
+          });
       })
       .catch(function(error) {
-        response.status(500).send("Erro interno do servidor");
+        response.status(500).json({
+          titulo: "Erro interno do servidor!",
+          error
+        });
       });
   }
 }
