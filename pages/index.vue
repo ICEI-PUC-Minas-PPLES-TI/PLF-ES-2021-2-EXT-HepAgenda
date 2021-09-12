@@ -2,10 +2,18 @@
     <v-container>
     <v-row>
       <v-col :md="10" :offset-md="1" class="consulta-container">
-        <v-btn color="primary" large @click="modalAtivo = !modalAtivo">
+        <v-btn color="primary" large @click="modalCreateAtivo = !modalCreateAtivo">
           Marcar Consulta
         </v-btn>
-        <modalCreateConsulta v-model="modalAtivo" />
+        <modalCreateConsulta v-model="modalCreateAtivo" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col :md="10" :offset-md="1" class="consulta-container">
+        <v-btn color="primary" large @click="modalEditAtivo = !modalEditAtivo">
+          Editar Consulta
+        </v-btn>
+        <modalEditConsulta v-model="modalEditAtivo" />
       </v-col>
     </v-row>
   </v-container>
@@ -13,14 +21,18 @@
 
 <script>
 import modalCreateConsulta from '@/components/consulta/modalCreate.vue'
+import modalEditConsulta from '@/components/consulta/modalEdit.vue'
+
 export default {
   layout: 'main',
   components: {
-    modalCreateConsulta
+    modalCreateConsulta,
+    modalEditConsulta
   },
   data(){
     return {
-      modalAtivo: false
+      modalCreateAtivo: false,
+      modalEditAtivo: false,
     }
   }
 }
