@@ -108,8 +108,8 @@
                             </v-row>
                             <!-- historico -->
                             <v-row class="mt-0">
-                                <v-col :md="12" :sm="12" :xl="2" cols="12">
-                                    <v-card elevation="0" max-width="450" class="mx-auto">
+                                <v-col :md="12" :sm="12" :xl="12" cols="12">
+                                    <v-card elevation="0" max-width="100%" class="mx-auto">
                                         <v-virtual-scroll :items="items" height="240" item-height="150">
                                             <template v-slot:default="{ item }">
                                                 {{item.mensagem}}
