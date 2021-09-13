@@ -21,14 +21,14 @@
         </v-card-title>
         <v-card-text>
           <v-container>
-            <v-form v-if="formData">
+            <v-form ref="formPaciente" v-if="formData" lazy-validation>
               <v-row>
                 <span class="paciente-modal-subtitle">Informações Básicas</span>
               </v-row>
               <!-- Secao 1 - Nome, Nascimento, Sexo, Email, Telefone, Registro HC, Nome da Mãe -->
               <v-row class="mt-0">
                 <v-col :md="7" :sm="12" :xl="4" cols="12">
-                  <v-text-field v-model="formData.nome" outlined :hide-details="true" label="Nome" @blur="salvarEmCache" />
+                  <v-text-field v-model="formData.nome" outlined hide-details="auto" :rules="[v => !!v || 'Nome é obrigatório']" label="Nome" @blur="salvarEmCache" />
                 </v-col>
                 <v-col :md="2" :sm="12" :xl="2" cols="12">
                   <v-menu
@@ -43,7 +43,8 @@
                       <v-text-field
                         :value="formatDate(formData.data_nascimento)"
                         outlined
-                        :hide-details="true"
+                        hide-details="auto"
+                        :rules="[v => !!v || 'Data de Nascimento obrigatória']"
                         label="Data de Nascimento"
                         readonly
                         v-bind="attrs"
@@ -63,7 +64,8 @@
                     v-model="formData.sexo"
                     row
                     style="margin: 0"
-                    :hide-details="true"
+                    hide-details="auto"
+                    :rules="[v => !!v || 'Sexo obrigatório']"
                     @change="salvarEmCache"
                   >
                     <v-radio
@@ -83,17 +85,18 @@
                   <v-text-field
                     v-model="formData.telefone"
                     outlined
-                    :hide-details="true"
+                    hide-details="auto"
+                    :rules="[v => !!v || 'Telefone obrigatório', v => (v && v.length >= 14) || 'Telefone inválido']"
                     label="Telefone"
                     v-mask="['(##) ####-####', '(##) #####-####']"
                     @blur="salvarEmCache"
                   />
                 </v-col>
                 <v-col :md="3" :sm="12" :xl="2" cols="12">
-                  <v-text-field v-model="formData.registro_hc" outlined :hide-details="true" label="Registro HC" @blur="salvarEmCache" />
+                  <v-text-field v-model="formData.registro_hc" outlined hide-details="auto" :rules="[v => !!v || 'Registro HC é obrigatório']" label="Registro HC" @blur="salvarEmCache" />
                 </v-col>
                 <v-col :md="7" :sm="12" :xl="4" cols="12">
-                  <v-text-field v-model="formData.nome_mae" outlined label="Nome da Mãe" @blur="salvarEmCache" />
+                  <v-text-field v-model="formData.nome_mae" outlined label="Nome da Mãe" hide-details="auto" :rules="[v => !!v || 'Nome da mãe é obrigatório']" @blur="salvarEmCache" />
                 </v-col>
               </v-row>
               <br>
@@ -612,7 +615,7 @@
                   </v-col>
                 </v-row>
               </div>
-
+              <!-- Botões Enviar, Cancelar e Limpar dados -->
               <v-row>
                 <v-col :md="2">
                   <v-btn
@@ -633,7 +636,7 @@
                   </v-btn>
                 </v-col>
                 <v-col :md="2">
-                  <v-btn block large color="primary">
+                  <v-btn block large color="primary" @click="enviarDados">
                     Salvar
                   </v-btn>
                 </v-col>
@@ -724,6 +727,7 @@ export default {
         }
       ],
       formData: null,
+      formValid: true,
       tratamentoBItems: [
         {
           value: 1,
@@ -857,7 +861,20 @@ export default {
     salvarEmCache(){
       localStorage.setItem('hepagenda-paciente-version', MODALV)
       localStorage.setItem('hepagenda-paciente', JSON.stringify(this.formData))
-      console.log('here')
+    },
+    enviarDados(){
+      if(this.$refs.formPaciente.validate()) {
+        let info = JSON.parse(JSON.stringify(this.formData))
+        info.telefone = info.telefone.replace(/\D/g,'')
+        this.$axios.post('/paciente', info).then(res=>{
+          this.limparDados()
+          this.$emit('input', false) // Fecha modal
+          alert('Paciente Cadastrado')
+        }).catch(err => {
+          alert(JSON.stringify(err.response.data))
+          console.log(err.response.data)
+        })
+      }
     }
   }
 }
@@ -892,5 +909,8 @@ export default {
     position: absolute !important;
     right: 0;
     top: 0;
+  }
+  .paciente-modal > .v-text-field__details{
+    margin-bottom: 0;
   }
 </style>

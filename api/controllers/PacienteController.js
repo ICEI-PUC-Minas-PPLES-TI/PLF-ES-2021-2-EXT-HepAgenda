@@ -15,11 +15,11 @@ class PacienteController{
             sexo: yup.mixed().oneOf(['M', 'F']).required("Sexo do paciente obrigatório!"),
             telefone: yup.string().max(15).matches(telefoneRegExp).required("Telefone obrigatório!"),
             nome_mae: yup.string().max(120).required("Nome da mãe obrigatório!"),
-            email: yup.string().email().max(50),
-            peso: yup.number().min(0),
-            altura: yup.number().min(0),
-            comorbidade: yup.mixed().oneOf(['HEPB', 'HEPC', 'OUTRO']),
-            desfecho: yup.number(),
+            email: yup.string().email().max(50).nullable(),
+            peso: yup.number().min(0).nullable(),
+            altura: yup.number().min(0).nullable(),
+            comorbidade: yup.mixed().oneOf(['HEPB', 'HEPC', 'OUTRO', null]),
+            desfecho: yup.number().nullable(),
         });
 
         // Validando com o esquema criado:
