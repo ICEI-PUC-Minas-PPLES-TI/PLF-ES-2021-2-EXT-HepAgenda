@@ -18,8 +18,10 @@ export default {
                 data: ['01/01/11 11:11', '01/01/11 11:12', '01/01/11 11:13']
             },
             descricao: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut at dignissim orci. Mauris aliquet est diam, ac tincidunt ipsum tristique a.Cras ut pretium metus',
-            status: '',
-            medico: '',
+            statusAtual: 'Aguardando Consulta',
+            status:['Em confirmação', 'Aguardando Consulta'],
+            medicos: ['Não definido'],
+            medicoAtual: 'Não definido',
             menuDataConsulta: false
 
         }

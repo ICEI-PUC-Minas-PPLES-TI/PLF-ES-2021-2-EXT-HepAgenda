@@ -1,5 +1,5 @@
 <template>
-<v-dialog v-model="value" transition="dialog-bottom-transition" class="consulta-modal" @click:outside="$emit('input', false)">
+<v-dialog v-model="value" transition="dialog-bottom-transition" class="consulta-modal" @click:outside="$emit('input', false)" @keydown.esc="$emit('input', false)">
     <v-card>
         <v-card-title class="text-h5 consulta-modal-title">
             <h4>
@@ -8,13 +8,13 @@
                 </span>
             </h4>
 
-            <v-btn icon @click="value = false">
+            <v-btn icon @click="$emit('input', false)">
                 <v-icon>mdi-close</v-icon>
             </v-btn>
 
         </v-card-title>
         <v-card-text>
-            <v-container id="input-usage">
+            <v-container fluid id="input-usage">
                 <v-form>
                     <!-- paciente -->
                     <v-row>
@@ -34,24 +34,24 @@
                             <!-- Descrição -->
                             <v-row>
                                 <v-col :md="12" :sm="12" :xl="12" cols="12">
-                                    <v-textarea readonly row-height="10" auto-grow v-model="descricao" label="Descrição do agendamento">
+                                    <v-textarea row-height="10" auto-grow v-model="descricao" label="Descrição do agendamento">
                                     </v-textarea>
                                 </v-col>
                             </v-row>
                             <!-- Status -->
-                            <v-row>
+                            <v-row class="mt-n3 mx-auto">
                                 <v-col :md="12" :sm="12" :xl="12" cols="12">
-                                    <v-select v-model="status" :clearable="true" label="Paciente" item-text="label" item-value="value" outlined />
+                                    <v-select v-model="statusAtual" :items="status" menu-props="auto" label="Status"  outlined />
                                 </v-col>
                             </v-row>
                             <!-- Medico -->
-                            <v-row>
+                            <v-row class="mt-n3 mx-auto">
                                 <v-col :md="12" :sm="12" :xl="12" cols="12">
-                                    <v-select v-model="medico" :clearable="true" label="Médico" item-text="label" item-value="value" outlined />
+                                    <v-select v-model="medicoAtual" :items="medicos" menu-props="auto" label="Médico" outlined />
                                 </v-col>
                             </v-row>
                             <!-- Relatório do atendimento -->
-                            <v-row>
+                            <v-row class="mt-n3 mx-auto">
                                 <v-col :md="12" :sm="12" :xl="12" cols="12">
                                     <v-textarea outlined label="Relatório do atendimento" auto-grow></v-textarea>
                                 </v-col>
@@ -62,7 +62,7 @@
                         <v-col :md="1" :sm="0" :xl="1">
                             <div class="vertical-line"></div>
                         </v-col>
-                        <v-col :md="3" :sm="12" :xl="3" cols="12">
+                        <v-col :md="3" :sm="12" :xl="3" cols="12" class="mt-n6 mx-auto">
                             <!-- Icone -->
                             <v-row>
                                 <v-col :md="12" :sm="12" :xl="12" cols="12">
@@ -99,7 +99,7 @@
                                 </v-col>
                             </v-row>
                             <!-- Barra horizontal -->
-                            <v-row>
+                            <v-row class="mt-n6 mx-auto">
                                 <v-col :md="12" :sm="12" :xl="12" cols="12">
                                     <div class="historico-divider">
                                     </div>
@@ -110,11 +110,11 @@
                             <v-row class="mt-0">
                                 <v-col :md="12" :sm="12" :xl="12" cols="12">
                                     <v-card elevation="0" max-width="100%" class="mx-auto">
-                                        <v-virtual-scroll :items="items" height="240" item-height="150">
+                                        <v-virtual-scroll :items="items" height="200" item-height="120">
                                             <template v-slot:default="{ item }">
                                                 {{item.mensagem}}
                                                 <div class="text-right">
-                                                <br>
+                                                    <br>
                                                     {{item.data}}
                                                 </div>
                                                 <v-divider></v-divider>
@@ -193,5 +193,4 @@
     color: black;
     font-size: 1.1em;
 }
-
 </style>

@@ -7,12 +7,12 @@
                     Nova Consulta
                 </span>
             </h4>
-            <v-btn icon @click="value = false">
+            <v-btn icon @click="$emit('input', false)">
                 <v-icon>mdi-close</v-icon>
             </v-btn>
         </v-card-title>
         <v-card-text>
-            <v-container>
+            <v-container fluid>
                 <v-form>
                     <!-- select pacientes -->
                     <v-row class="mt-0">
