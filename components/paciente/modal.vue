@@ -28,7 +28,7 @@
               <!-- Secao 1 - Nome, Nascimento, Sexo, Email, Telefone, Registro HC, Nome da Mãe -->
               <v-row class="mt-0">
                 <v-col :md="7" :sm="12" :xl="4" cols="12">
-                  <v-text-field v-model="formData.nome" outlined hide-details="auto" :rules="[v => !!v || 'Nome é obrigatório']" label="Nome" @blur="salvarEmCache" />
+                  <v-text-field v-model="formData.nome" outlined hide-details="auto" :rules="[v => !!v || 'Nome é obrigatório']" label="Nome" maxlength="120" @blur="salvarEmCache" />
                 </v-col>
                 <v-col :md="2" :sm="12" :xl="2" cols="12">
                   <v-menu
@@ -79,7 +79,7 @@
                   </v-radio-group>
                 </v-col>
                 <v-col :md="7" :sm="12" :xl="4" cols="12">
-                  <v-text-field v-model="formData.email" type="email" outlined :hide-details="true" label="E-Mail (Opcional)" @blur="salvarEmCache" />
+                  <v-text-field v-model="formData.email" type="email" outlined hide-details="auto" label="E-Mail (Opcional)" :rules="[v => v ? /.+@.+\..+/.test(v) || 'E-mail inválido': true]" maxlength="50" @blur="salvarEmCache" />
                 </v-col>
                 <v-col :md="2" :sm="12" :xl="2" cols="12">
                   <v-text-field
@@ -93,10 +93,10 @@
                   />
                 </v-col>
                 <v-col :md="3" :sm="12" :xl="2" cols="12">
-                  <v-text-field v-model="formData.registro_hc" outlined hide-details="auto" :rules="[v => !!v || 'Registro HC é obrigatório']" label="Registro HC" @blur="salvarEmCache" />
+                  <v-text-field v-model="formData.registro_hc" outlined hide-details="auto" :rules="[v => !!v || 'Registro HC é obrigatório']" label="Registro HC" maxlength="20" @blur="salvarEmCache" />
                 </v-col>
                 <v-col :md="7" :sm="12" :xl="4" cols="12">
-                  <v-text-field v-model="formData.nome_mae" outlined label="Nome da Mãe" hide-details="auto" :rules="[v => !!v || 'Nome da mãe é obrigatório']" @blur="salvarEmCache" />
+                  <v-text-field v-model="formData.nome_mae" outlined label="Nome da Mãe" hide-details="auto" :rules="[v => !!v || 'Nome da mãe é obrigatório']" maxlength="120" @blur="salvarEmCache" />
                 </v-col>
               </v-row>
               <br>
@@ -106,10 +106,18 @@
               <!-- Seção Informações clínicas - Peso, Altura, IMC,  Comorbidade e Desfecho -->
               <v-row>
                 <v-col :md="2" :sm="12" cols="12">
-                  <v-text-field v-model="formData.peso" type="number" outlined :hide-details="true" label="Peso (Opcional)" @blur="salvarEmCache" />
+                  <v-text-field v-model="formData.peso" type="number" min="0" max="400" step='0.01' outlined :hide-details="true" label="Peso (Opcional)" @blur="salvarEmCache">
+                    <span slot="append">
+                      Kg
+                    </span>
+                  </v-text-field>
                 </v-col>
                 <v-col :md="2" :sm="12" cols="12">
-                  <v-text-field v-model="formData.altura" type="number" outlined :hide-details="true" label="Altura (Opcional)" @blur="salvarEmCache" />
+                  <v-text-field v-model="formData.altura" type="number" min="0" max="3" step='0.01' outlined :hide-details="true" label="Altura (Opcional)" @blur="salvarEmCache">
+                    <span slot="append">
+                      m
+                    </span>
+                  </v-text-field>
                 </v-col>
                 <v-col :md="2" :sm="12" cols="12">
                   <v-text-field class="mt-0" outlined :readonly="true" :hide-details="true" label="IMC" v-model="calculoIMC" />
