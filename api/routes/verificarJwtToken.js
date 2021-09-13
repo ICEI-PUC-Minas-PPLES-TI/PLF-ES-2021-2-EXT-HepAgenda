@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const Usuario = require("../models/Usuario.js");
 
-verificarToken = (req, res, next) => {
+const verificarToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
 
   if (!token) {
@@ -23,7 +23,7 @@ verificarToken = (req, res, next) => {
   });
 };
 
-isAdmin = (req, res, next) => {
+const isAdmin = (req, res, next) => {
   Usuario.findByPk(req.userId).then(usuario => {
     if (usuario.tipo === "A") {
       next();
@@ -35,8 +35,22 @@ isAdmin = (req, res, next) => {
   });
 };
 
-const autenticacaoJwt = {};
-autenticacaoJwt.verificarToken = verificarToken;
-autenticacaoJwt.isAdmin = isAdmin;
+const isAdminOrMedic = (req, res, next) => {
+  Usuario.findByPk(req.userId).then(usuario => {
+    if (usuario.tipo === "A" || usuario.tipo === "M") {
+      next();
+      return;
+    }
+
+    res.status(403).send("Necessita de ser um usuário administrador!");
+    return;
+  });
+};
+
+const autenticacaoJwt = {
+  verificarToken,
+  isAdmin,
+  isAdminOrMedic
+};
 
 module.exports = autenticacaoJwt;

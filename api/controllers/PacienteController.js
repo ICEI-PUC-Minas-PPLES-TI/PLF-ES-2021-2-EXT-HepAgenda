@@ -55,8 +55,7 @@ class PacienteController{
         })
 
         return response.status(201).json({
-            criado: true,
-            pacienteID: paciente.id
+            id: paciente.id
         });
     }
 
@@ -156,14 +155,12 @@ class PacienteController{
                 ...requestBody
             })
             return response.status(201).json({
-                atualizado: true,
-                message: "Paciente atualizado com sucesso!"
+                mensagem: "Paciente atualizado com sucesso!"
             });
         }
         else{
             response.status(404).json({
-                atualizado: false,
-                message: "Paciente não encontrado"
+                mensagem: "Paciente não encontrado"
             })
         }
         
