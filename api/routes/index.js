@@ -7,12 +7,14 @@ const autenticacaoJwt = require('./verificarJwtToken.js');
 const TratamentoController  = require('../controllers/TratamentoController.js');
 const UsuarioController  = require('../controllers/UsuarioController.js');
 const ConsultaController = require('../controllers/ConsultaController.js');
+const PacienteController  = require('../controllers/PacienteController.js');
 
 
 // Iniciar controllers
 const tratamentoController = new TratamentoController();
 const usuarioController = new UsuarioController();
 const consultaController = new ConsultaController();
+const pacienteController = new PacienteController();
 
 
 // Adicionar rotas
@@ -32,5 +34,10 @@ router.post('/consulta', consultaController.create)
 router.get('/consulta/:id', consultaController.get)
 router.get('/consulta', consultaController.getAll)
 router.put('/consulta', consultaController.update)
+// Paciente
+router.post('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic] , pacienteController.create)
+router.put('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.update)
+router.get('/paciente/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.get)
+router.get('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.getAll)
 
 module.exports = router
