@@ -7,6 +7,7 @@
     "coenraads.bracket-pair-colorizer",
     "eamodio.gitlens",
     "github.vscode-pull-request-github",
-    "yzhang.markdown-all-in-one"
+    "yzhang.markdown-all-in-one",
+    "wayou.vscode-todo-highlight"
   ]
 }

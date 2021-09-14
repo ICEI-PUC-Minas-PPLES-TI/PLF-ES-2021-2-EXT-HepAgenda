@@ -44,7 +44,7 @@ class Consulta extends Model {
           type: DataTypes.INTEGER(11).UNSIGNED,
           allowNull: false
         },
-        paciente_id: {
+        usuario_id_medico: {
           type: DataTypes.INTEGER(11).UNSIGNED,
           allowNull: true
         }

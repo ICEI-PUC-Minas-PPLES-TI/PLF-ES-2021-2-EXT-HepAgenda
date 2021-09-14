@@ -18,10 +18,10 @@ app.use(routes);
 
 db.connect();
 
-app.use(function(err, request, response, next) {
-  if (err instanceof AppError) {
-    return response.status(err.statusCode).json({
-      message: err.message
+app.use(function(erro, request, response, next) {
+  if (erro instanceof AppError) {
+    return response.status(erro.statusCode).json({
+      message: erro.message
     });
   }
 
