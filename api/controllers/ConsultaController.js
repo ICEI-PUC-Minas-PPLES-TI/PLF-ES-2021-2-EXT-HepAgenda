@@ -1,6 +1,9 @@
 const Consulta = require("../models/Consulta");
 const Usuario = require("../models/Usuario");
 
+const UsuarioController = require("./UsuarioController");
+const PacienteController = require("./PacienteController");
+
 const { SortPaginate } = require("../helpers/SortPaginate");
 const AppError = require("../errors/AppError");
 
@@ -59,8 +62,10 @@ class ConsultaController {
     } = request.body;
 
     // TODO: verificar se o id do paciente é válido findByPK
-    const usuario_criador = await Usuario.findByPk(usuario_id_criador);
-    const usuario_medico = await Usuario.findByPk(usuario_id_medico);
+
+    const usuarioController = new UsuarioController();
+    const usuario_criador = await usuarioController.getByID(usuario_id_criador);
+    const usuario_medico = await usuarioController.getByID(usuario_id_medico);
     if (!usuario_criador)
       throw new AppError("'usuario_id_criador' não encontrado!", 404);
     // Se enviar o id do médico, verificar se existe
@@ -104,11 +109,8 @@ class ConsultaController {
     ];
 
     const scheme = yup.object().shape({
-      id: yup
-        .number("'id' deve ser numérico!")
-        .required("'id' é obrigatório!"),
-      paciente_id: yup
-        .number("'paciente_id' deve ser numérico!"),
+      id: yup.number("'id' deve ser numérico!").required("'id' é obrigatório!"),
+      paciente_id: yup.number("'paciente_id' deve ser numérico!"),
       descricao: yup
         .string("'descricao' deve ser string!")
         .max(60, "'descricao' deve ter no máximo 60 caracteres!"),
@@ -118,11 +120,9 @@ class ConsultaController {
       detalhes: yup
         .string("'detalhes' deve ser string!")
         .max(65000, "'detalhes' deve ter no máximo 65000 caracteres!"),
-      dt_inicio: yup
-        .date("'dt_inicio' deve ser data!"),
+      dt_inicio: yup.date("'dt_inicio' deve ser data!"),
       dt_desmarcada: yup.date("'dt_desmarcada' deve ser data!"),
-      usuario_id_criador: yup
-        .number("'usuario_id_criador' deve ser numérico!"),
+      usuario_id_criador: yup.number("'usuario_id_criador' deve ser numérico!"),
       usuario_id_medico: yup.number("'usuario_id_medico' deve ser numérico!")
     });
 
@@ -185,13 +185,17 @@ class ConsultaController {
         status: status ? status : consultaData.status,
         detalhes: detalhes ? detalhes : consultaData.detalhes,
         dt_inicio: dt_inicio ? dt_inicio : consultaData.dt_inicio,
-        dt_desmarcada: dt_desmarcada ? dt_desmarcada : consultaData.dt_desmarcada,
-        usuario_id_criador: usuario_id_criador ? usuario_id_criador : consultaData.usuario_id_criador,
-        usuario_id_medico: usuario_id_medico ? usuario_id_medico : consultaData.paciente_id
+        dt_desmarcada: dt_desmarcada
+          ? dt_desmarcada
+          : consultaData.dt_desmarcada,
+        usuario_id_criador: usuario_id_criador
+          ? usuario_id_criador
+          : consultaData.usuario_id_criador,
+        usuario_id_medico: usuario_id_medico
+          ? usuario_id_medico
+          : consultaData.paciente_id
       });
-      response.status(200).json(
-        consulta
-      );
+      response.status(200).json(consulta);
     }
   }
 
@@ -216,6 +220,11 @@ class ConsultaController {
     if (consulta == null) {
       throw new AppError("Consulta não encontrada!", 404);
     } else {
+      const usuarioController = new UsuarioController();
+      const pacienteController = new PacienteController();
+      consulta.dataValues.paciente = await pacienteController.getByID(consulta.dataValues.paciente_id);
+      consulta.dataValues.usuario_criador = await usuarioController.getByID(consulta.dataValues.usuario_id_criador);
+      consulta.dataValues.usuario_medico = await usuarioController.getByID(consulta.dataValues.usuario_id_medico);
       response.status(200).json(consulta);
     }
   }
@@ -244,7 +253,15 @@ class ConsultaController {
           attributes: atributos,
           ...SortPaginateOptions
         })
-          .then(consultas => {
+          .then(async consultas => {
+            await Promise.all(consultas.map(async (consulta) => {
+              const usuarioController = new UsuarioController();
+              const pacienteController = new PacienteController();
+              consulta.dataValues.paciente = await pacienteController.getByID(consulta.dataValues.paciente_id);
+              consulta.dataValues.usuario_criador = await usuarioController.getByID(consulta.dataValues.usuario_id_criador);
+              consulta.dataValues.usuario_medico = await usuarioController.getByID(consulta.dataValues.usuario_id_medico);
+            }));
+
             response.status(200).json({
               dados: consultas,
               quantidade: consultas.length,

@@ -7,7 +7,7 @@ const { telefoneRegExp } = require('../helpers/Regex')
 
 class PacienteController{
     async create(request, response){
-        
+
         const scheme = yup.object().shape({
             nome: yup.string().max(120).required("Nome obrigatório!"),
             data_nascimento: yup.date().required("Data de nacimento obrigatória!"),
@@ -49,7 +49,7 @@ class PacienteController{
         if (request.body.peso){
             request.body.peso_atualizacao = new Date().toISOString().replace('T', ' ').substr(0,19)
         }
-        
+
         const paciente = await Paciente.create({
             ...request.body
         })
@@ -60,7 +60,7 @@ class PacienteController{
     }
 
     async get(request, response) {
-        
+
         const result = await Paciente.findOne({
             where: {
               id: request.params.id
@@ -72,8 +72,17 @@ class PacienteController{
             response.status(404).send('Paciente com esse id não encontrado')
     }
 
+    async getByID(id) {
+      const paciente = await Paciente.findOne({
+        where: {
+          id: id
+        },
+      });
+      return paciente;
+    }
+
     async getAll(request, response) {
-        
+
         const atributos = ['id', 'data_nascimento', 'nome', 'email', 'telefone', 'registro_hc', 'nome_mae', 'peso', 'peso_atualizacao', 'altura'];
 
         Paciente.findAndCountAll()
@@ -96,7 +105,7 @@ class PacienteController{
     }
 
     async update(request, response) {
-        
+
         const scheme = yup.object().shape({
             id: yup.number().required("É necessário passar o id do paciente que se deseja atualizar!"),
             nome: yup.string().max(120),
@@ -126,7 +135,7 @@ class PacienteController{
         //procura um registro_hc testar se é único
         if (
             request.body.registro_hc && await Paciente.findOne({
-                where: { 
+                where: {
                     registro_hc: request.body.registro_hc,
                     id: {
                         [Op.ne]: request.body.id
@@ -163,7 +172,7 @@ class PacienteController{
                 mensagem: "Paciente não encontrado"
             })
         }
-        
+
     }
 
 }
