@@ -22,7 +22,8 @@ export default {
             status:['Em confirmação', 'Aguardando Consulta'],
             medicos: ['Não definido'],
             medicoAtual: 'Não definido',
-            menuDataConsulta: false
+            menuDataConsulta: false,
+            modalConfirm: false,
 
         }
     },
