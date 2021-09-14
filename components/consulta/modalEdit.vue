@@ -1,6 +1,6 @@
 <template>
 <div class="text-center">
-    <v-dialog v-model="value" scrollable max-width="800px" transition="dialog-bottom-transition" class="consulta-modal" @click:outside="$emit('input', false)" @keydown.esc="$emit('input', false)">
+    <v-dialog v-model="value" scrollable max-width="1400px" transition="dialog-bottom-transition" class="consulta-modal" @click:outside="$emit('input', false)" @keydown.esc="$emit('input', false)">
         <v-card>
             <v-card-title class="text-h5 consulta-modal-title">
                 <h4>
@@ -125,7 +125,7 @@
                             </v-col>
                         </v-row>
                         <!-- Botão de marcarConsulta -->
-                        <v-row class="mt-n6">
+                        <v-row class="mt-n2">
                             <v-col class="consulta-modal-marcar text-center">
                                 <v-dialog v-model="modalConfirm" persistent max-width="290">
                                     <template v-slot:activator="{ on, attrs }">
