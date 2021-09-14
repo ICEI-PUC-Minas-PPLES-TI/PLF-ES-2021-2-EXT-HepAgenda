@@ -42,7 +42,7 @@ const isAdminOrMedic = (req, res, next) => {
       return;
     }
 
-    res.status(403).send("Necessita de ser um usuário administrador!");
+    res.status(403).send("Necessita de ser um usuário administrador ou médico!");
     return;
   });
 };
