@@ -6,7 +6,7 @@ const Consulta = require("../models/Consulta");
 const Tratamento = require('../models/Tratamento');
 const Usuario = require('../models/Usuario');
 const Paciente = require('../models/Paciente');
-const Log_consulta = require("../models/Log_consulta");
+const LogConsulta = require("../models/LogConsulta");
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -28,7 +28,7 @@ module.exports = {
       Usuario.init(sequelize);
       Consulta.init(sequelize);
       Paciente.init(sequelize);
-      Log_consulta.init(sequelize);
+      LogConsulta.init(sequelize);
       if (process.env.NODE_ENV === "dev") {
         console.log(
           `Conexão com '${process.env.DB_HOST}/${process.env.DB_DATABASE}' estabelecida`

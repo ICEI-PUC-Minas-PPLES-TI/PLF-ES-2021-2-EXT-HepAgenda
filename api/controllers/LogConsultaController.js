@@ -1,8 +1,8 @@
-const Log_consulta = require("../models/Log_consulta");
+const LogConsulta = require("../models/LogConsulta");
 const yup = require("yup");
 const AppError = require("../errors/AppError");
 
-class Log_consultaController {
+class LogConsultaController {
   async create(descricao, usuario_id, consulta_id) {
     const tempoAgora = Date.now();
     const hoje = new Date(tempoAgora);
@@ -29,7 +29,7 @@ class Log_consultaController {
       throw new AppError(err.message, 422);
     }
 
-    await Log_consulta.create({
+    await LogConsulta.create({
       data: log.data,
       descricao: log.descricao,
       usuario_id: log.usuario_id,
@@ -44,7 +44,7 @@ class Log_consultaController {
   }
 
   async getAll(id_consulta) {
-    const logs = await Log_consulta.findAll({
+    const logs = await LogConsulta.findAll({
       where: {
         consulta_id: id_consulta
       },
@@ -53,4 +53,4 @@ class Log_consultaController {
   }
 }
 
-module.exports = Log_consultaController;
+module.exports = LogConsultaController;

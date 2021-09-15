@@ -7,7 +7,7 @@ const { SortPaginate } = require("../helpers/SortPaginate");
 const AppError = require("../errors/AppError");
 
 const yup = require("yup");
-const Log_consultaController = require("./Log_consultaController");
+const LogConsultaController = require("./LogConsultaController");
 
 class ConsultaController {
   async create(request, response) {
@@ -94,11 +94,11 @@ class ConsultaController {
         // TODO: fazer o arquivo
 
         // Salvando log de criação
-        const log_consultaController = new Log_consultaController();
+        const logConsultaController = new LogConsultaController();
         const log_descricao = `Consulta criada.`;
         const userId = request.userId;
         const consulta_id = consultaObj.dataValues.id;
-        log_consultaController.create(log_descricao, userId, consulta_id);
+        logConsultaController.create(log_descricao, userId, consulta_id);
 
         return response.status(201).json({
           id: consulta.id
@@ -192,7 +192,7 @@ class ConsultaController {
       // TODO: fazer o arquivo
 
       // Salvando log de criação
-      const log_consultaController = new Log_consultaController();
+      const logConsultaController = new LogConsultaController();
       let nomeMedico;
 
       if (usuario_medico) {
@@ -211,7 +211,7 @@ class ConsultaController {
 
       const userId = request.userId;
       const consulta_id = consultaData.id;
-      log_consultaController.create(log_descricao, userId, consulta_id);
+      logConsultaController.create(log_descricao, userId, consulta_id);
 
       consulta.update({
         paciente_id: paciente_id ? paciente_id : consultaData.paciente_id,
@@ -265,8 +265,8 @@ class ConsultaController {
       );
 
       // Adicionando logs
-      const log_consultaController = new Log_consultaController();
-      consulta.dataValues.logs = await log_consultaController.getAll(
+      const logConsultaController = new LogConsultaController();
+      consulta.dataValues.logs = await logConsultaController.getAll(
         consulta.dataValues.id
       );
 
@@ -314,8 +314,8 @@ class ConsultaController {
                   consulta.dataValues.usuario_id_medico
                 );
                 // Adicionando logs
-                const log_consultaController = new Log_consultaController();
-                consulta.dataValues.logs = await log_consultaController.getAll(
+                const logConsultaController = new LogConsultaController();
+                consulta.dataValues.logs = await logConsultaController.getAll(
                   consulta.dataValues.id
                 );
               })
