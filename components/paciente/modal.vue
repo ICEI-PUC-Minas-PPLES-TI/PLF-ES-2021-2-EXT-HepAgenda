@@ -13,11 +13,14 @@
           <svg width="27" height="27" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M2.25788 26C2.25309 25.9998 2.24166 25.9994 2.22457 25.9981C2.18963 25.9957 2.13319 25.9902 2.06284 25.9785C1.91739 25.9542 1.73875 25.9076 1.57221 25.8243C1.40959 25.743 1.27739 25.6368 1.18361 25.4961C1.09401 25.3617 1 25.1375 1 24.75C1 23.8818 1.46304 21.8887 3.23836 20.1134C4.98436 18.3673 8.08589 16.75 13.5 16.75C18.9141 16.75 22.0156 18.3673 23.7616 20.1134C25.537 21.8887 26 23.8818 26 24.75C26 25.1375 25.906 25.3617 25.8164 25.4961C25.7226 25.6368 25.5904 25.743 25.4278 25.8243C25.2613 25.9076 25.0826 25.9542 24.9372 25.9785C24.8668 25.9902 24.8104 25.9957 24.7754 25.9981C24.7583 25.9994 24.7469 25.9998 24.7421 26H2.25788ZM17.5659 10.8159C16.4875 11.8942 15.025 12.5 13.5 12.5C11.975 12.5 10.5125 11.8942 9.43414 10.8159C8.3558 9.73753 7.75 8.27499 7.75 6.75C7.75 5.22501 8.3558 3.76247 9.43414 2.68414C10.5125 1.6058 11.975 1 13.5 1C15.025 1 16.4875 1.6058 17.5659 2.68414C18.6442 3.76247 19.25 5.22501 19.25 6.75C19.25 8.27499 18.6442 9.73753 17.5659 10.8159Z" stroke="black" stroke-width="2"/>
           </svg>
-          <h4>
+          <h4 class="paciente-modal-mobile-minitext">
             <span>
               Cadastrar paciente
             </span>
           </h4>
+          <button class="paciente-modal-close" @click="$emit('input', false)">
+            <v-icon>mdi-close</v-icon>
+          </button>
         </v-card-title>
         <v-card-text>
           <v-container>
@@ -388,9 +391,14 @@
                   <span class="paciente-modal-subtitle">Hepatite C</span>
                 </v-row>
                 <v-row v-for="(linha, lidx) in formData.hepatitec" :key="lidx" class="paciente-model-hepatitec-row">
+                  <v-col :xs="12" cols="12" class="d-block d-md-none">
+                    <v-btn icon v-if="lidx > 0" v-bind="attrs" v-on="on" @click="formData.hepatitec.splice(lidx)">
+                      <v-icon color="red">mdi-close-circle-outline</v-icon>
+                    </v-btn>
+                  </v-col>
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on, attrs }">
-                      <v-btn icon v-if="lidx > 0" class="paciente-model-hepatitec-button-delete" v-bind="attrs" v-on="on" @click="formData.hepatitec.splice(lidx)">
+                      <v-btn icon v-if="lidx > 0" class="paciente-model-hepatitec-button-delete d-none d-md-block" v-bind="attrs" v-on="on" @click="formData.hepatitec.splice(lidx)">
                         <v-icon color="red">mdi-close-circle-outline</v-icon>
                       </v-btn>
                     </template>
@@ -617,8 +625,11 @@
                 </v-row>
                 <v-row>
                   <v-col>
-                    <v-btn color="#E3E3E3" @click="adicionarHepatiteC">
+                    <v-btn color="#E3E3E3" class="d-none d-md-flex" @click="adicionarHepatiteC">
                       Adicionar outro tratamento de hepatite C
+                    </v-btn>
+                    <v-btn color="#E3E3E3" class="d-flex d-md-none" @click="adicionarHepatiteC">
+                      Adicionar outro <br> tratamento de hepatite C
                     </v-btn>
                   </v-col>
                 </v-row>
@@ -896,6 +907,12 @@ export default {
   .paciente-modal-title{
     margin-left: 40px;
   }
+  .paciente-modal-close{
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    background: white;
+  }
   .paciente-modal-title h4{
     width: calc(100% - 27px); 
     text-align: left; 
@@ -916,9 +933,17 @@ export default {
   .paciente-model-hepatitec-button-delete{
     position: absolute !important;
     right: 0;
-    top: 0;
   }
   .paciente-modal > .v-text-field__details{
     margin-bottom: 0;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .paciente-model-hepatitec .paciente-model-hepatitec-row{
+      margin-top: 40px !important;
+    }
+    .paciente-modal-mobile-minitext{
+      font-size: 1rem;
+    }
   }
 </style>
