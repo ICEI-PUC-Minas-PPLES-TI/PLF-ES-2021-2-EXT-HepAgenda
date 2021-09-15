@@ -30,10 +30,10 @@ router.get('/usuario', [autenticacaoJwt.verificarToken], usuarioController.getAl
 router.delete('/usuario/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], usuarioController.delete)
 router.put('/usuario/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], usuarioController.update)
 // Consulta
-router.post('/consulta', consultaController.create)
-router.get('/consulta/:id', consultaController.get)
-router.get('/consulta', consultaController.getAll)
-router.put('/consulta', consultaController.update)
+router.post('/consulta', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], consultaController.create)
+router.get('/consulta/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], consultaController.get)
+router.get('/consulta', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], consultaController.getAll)
+router.put('/consulta', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], consultaController.update)
 // Paciente
 router.post('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic] , pacienteController.create)
 router.put('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.update)

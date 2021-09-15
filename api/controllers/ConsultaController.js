@@ -7,6 +7,7 @@ const { SortPaginate } = require("../helpers/SortPaginate");
 const AppError = require("../errors/AppError");
 
 const yup = require("yup");
+const Log_consultaController = require("./Log_consultaController");
 
 class ConsultaController {
   async create(request, response) {
@@ -61,11 +62,8 @@ class ConsultaController {
     } = request.body;
 
     const pacienteController = new PacienteController();
-    const paciente = await pacienteController.getByID(
-      paciente_id
-    );
-    if (!paciente)
-      throw new AppError("'paciente_id' não encontrado!", 404);
+    const paciente = await pacienteController.getByID(paciente_id);
+    if (!paciente) throw new AppError("'paciente_id' não encontrado!", 404);
 
     const usuarioController = new UsuarioController();
     const usuario_criador = await usuarioController.getByID(usuario_id_criador);
@@ -92,9 +90,16 @@ class ConsultaController {
 
     consulta
       .save()
-      .then(function(funcao) {
+      .then(function(consultaObj) {
         // TODO: fazer o arquivo
-        // TODO: fazer o log_consulta
+
+        // Salvando log de criação
+        const log_consultaController = new Log_consultaController();
+        const log_descricao = `Consulta criada.`;
+        const userId = request.userId;
+        const consulta_id = consultaObj.dataValues.id;
+        log_consultaController.create(log_descricao, userId, consulta_id);
+
         return response.status(201).json({
           id: consulta.id
         });
@@ -147,16 +152,14 @@ class ConsultaController {
     } = request.body;
 
     const pacienteController = new PacienteController();
-    const paciente = await pacienteController.getByID(
-      paciente_id
-    );
-    if (!paciente)
-      throw new AppError("'paciente_id' não encontrado!", 404);
+    const paciente = await pacienteController.getByID(paciente_id);
+    if (!paciente) throw new AppError("'paciente_id' não encontrado!", 404);
 
+    let usuarioMedicoTemp;
     if (usuario_id_medico) {
       const usuarioController = new UsuarioController();
       const usuario_medico = await usuarioController.getByID(usuario_id_medico);
-
+      usuarioMedicoTemp = usuario_medico;
       // Se enviar o id do médico, verificar se existe
       if (usuario_id_medico && !usuario_medico)
         throw new AppError("'usuario_id_medico' não encontrado!", 404);
@@ -164,6 +167,7 @@ class ConsultaController {
       if (usuario_id_medico && usuario_medico.dataValues.tipo != "M")
         throw new AppError("'usuario_id_medico' não é médico!", 422);
     }
+    const usuario_medico = usuarioMedicoTemp;
 
     const atributos = [
       "id",
@@ -186,7 +190,29 @@ class ConsultaController {
     } else {
       const consultaData = consulta.dataValues;
       // TODO: fazer o arquivo
-      // TODO: fazer o log_consulta
+
+      // Salvando log de criação
+      const log_consultaController = new Log_consultaController();
+      let nomeMedico;
+
+      if (usuario_medico) {
+        let nomes = usuario_medico.dataValues.nome.split(" ");
+        nomeMedico = nomes[0] + " " + nomes[1].substr(0, 1);
+      }
+      const medicoNovo = nomeMedico;
+
+      const log_descricao = `Consulta atualizada. ${
+        descricao ? "Descrição atualizada." : ""
+      } ${
+        status
+          ? "Status de: " + consultaData.status + " para " + status + "."
+          : ""
+      }${medicoNovo ? " Médico novo: " + medicoNovo + "." : "" + ""}`;
+
+      const userId = request.userId;
+      const consulta_id = consultaData.id;
+      log_consultaController.create(log_descricao, userId, consulta_id);
+
       consulta.update({
         paciente_id: paciente_id ? paciente_id : consultaData.paciente_id,
         descricao: descricao ? descricao : consultaData.descricao,
@@ -225,6 +251,7 @@ class ConsultaController {
     if (consulta == null) {
       throw new AppError("Consulta não encontrada!", 404);
     } else {
+      // Adicionando usuários e paciente no retorno
       const usuarioController = new UsuarioController();
       const pacienteController = new PacienteController();
       consulta.dataValues.paciente = await pacienteController.getByID(
@@ -236,6 +263,13 @@ class ConsultaController {
       consulta.dataValues.usuario_medico = await usuarioController.getByID(
         consulta.dataValues.usuario_id_medico
       );
+
+      // Adicionando logs
+      const log_consultaController = new Log_consultaController();
+      consulta.dataValues.logs = await log_consultaController.getAll(
+        consulta.dataValues.id
+      );
+
       response.status(200).json(consulta);
     }
   }
@@ -265,6 +299,7 @@ class ConsultaController {
           ...SortPaginateOptions
         })
           .then(async consultas => {
+            // Adicionando usuários e paciente no retorno
             await Promise.all(
               consultas.map(async consulta => {
                 const usuarioController = new UsuarioController();
@@ -277,6 +312,11 @@ class ConsultaController {
                 );
                 consulta.dataValues.usuario_medico = await usuarioController.getByID(
                   consulta.dataValues.usuario_id_medico
+                );
+                // Adicionando logs
+                const log_consultaController = new Log_consultaController();
+                consulta.dataValues.logs = await log_consultaController.getAll(
+                  consulta.dataValues.id
                 );
               })
             );
