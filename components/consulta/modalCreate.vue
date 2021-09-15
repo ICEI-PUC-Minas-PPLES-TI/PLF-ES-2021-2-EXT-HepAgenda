@@ -1,6 +1,6 @@
 <template>
 <div class="text-center">
-    <v-dialog v-model="value" scrollable max-width="500px" max-height="400px" transition="dialog-bottom-transition" class="consulta-modal" @click:outside="$emit('input', false)">
+    <v-dialog v-model="value" scrollable max-width="500px" transition="dialog-bottom-transition" class="consulta-modal" @click:outside="$emit('input', false)" @keydown.esc="$emit('input', false)">
         <v-card>
             <v-card-title class="text-h5 consulta-modal-title">
                 <h4>
