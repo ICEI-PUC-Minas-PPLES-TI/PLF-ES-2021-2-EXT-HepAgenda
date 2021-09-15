@@ -747,36 +747,8 @@ export default {
       ],
       formData: null,
       formValid: true,
-      tratamentoBItems: [
-        {
-          value: 1,
-          label: 'ENTECAVIR 0,5 MG 01COMP/DIA'
-        },{
-          value: 2,
-          label: 'ENTECAVIR 0,5 MG 02 COMP/DIA'
-        },{
-          value: 3,
-          label: 'TENOFOVIR 300 MG'
-        },{
-          value: 4,
-          label: 'INTERFERON'
-        }
-      ],
-      tratamentoCItems: [
-        {
-          value: 1,
-          label: 'sofo/vel'
-        },{
-          value: 2,
-          label: 'sofo/led'
-        },{
-          value: 3,
-          label: 'GP'
-        },{
-          value: 4,
-          label: 'outros esquemas'
-        }
-      ],
+      tratamentoBItems: [],
+      tratamentoCItems: [],
       fibroseItems: ['F1','F2','F3','F4','F5'],
       menuNascimento: false,
       menuInicioTratamento: false,
@@ -795,7 +767,29 @@ export default {
     },
   },
   mounted(){
+    // Buscar tratamentos
+    const t = this
+    this.$axios
+      .get('/tratamento')
+      .then(res => {
+        if(res.data) {
+          res.data.forEach(function(tratamento){
+            if(tratamento.direcionado == 'HEPB')
+              t.tratamentoBItems.push({
+                value: tratamento.id,
+                label: tratamento.identificacao
+              })
+            else if(tratamento.direcionado == 'HEPC')
+              t.tratamentoCItems.push({
+                value: tratamento.id,
+                label: tratamento.identificacao
+              })
+          });
+        }
+      })
+
     const ULTIMAV = localStorage.getItem('hepagenda-paciente-version')
+    // Retomar dados inseridos sem salvar
     if(ULTIMAV === MODALV) {
       const DADOS = localStorage.getItem('hepagenda-paciente')
       try{
