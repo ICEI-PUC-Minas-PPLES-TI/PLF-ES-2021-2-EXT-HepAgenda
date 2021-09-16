@@ -1,0 +1,39 @@
+export default {
+  layout: 'main',
+
+  data() {
+    return {
+      headers: [
+        { text: 'NOME DO USUÁRIO', value: 'nome' },
+        { text: 'LOGIN', value: 'email' },
+        { text: 'TIPO', value: 'tipo' },
+        { text: 'AÇÕES', value: 'actions', sortable: false },
+      ],
+      usuarios: [
+        {
+          nome: '',
+          email: '',
+          tipo: '',
+        }
+      ],
+      teste: '',
+    }
+  },
+  mounted(){
+    this.listaUsuarios();
+  },
+  methods: {
+
+    listaUsuarios() {
+      this.$axios.$get('/usuario').then(response => {
+        this.usuarios = response.dados;
+        console.log(this.usuarios);
+      }).catch(error => {
+        console.log(error)
+        this.errored = true
+      })
+    }
+
+  }
+
+}
