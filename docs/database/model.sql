@@ -93,7 +93,6 @@ CREATE TABLE IF NOT EXISTS `agenda`.`paciente_hepc` (
   `tratado` TINYINT(1) NULL,
   `tratamento_id` INT NULL,
   `num_tratamentos` TINYINT UNSIGNED NULL,
-  `inicio_tratamento` DATE NULL COMMENT 'DATA DE INÍCIO DO TRATAMENTO COM ANTIRETROVIRAL',
   `ultimo_resultado_alfa` DOUBLE NULL COMMENT 'ULTIMO RESULTADO DE ALFAFETOPROTEINA',
   `data_alfa` DATE NULL,
   `ultimo_resultado_ultra` VARCHAR(200) NULL COMMENT 'ULTIMO RESULTADO DE ULTRASSOM',

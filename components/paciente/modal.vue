@@ -169,7 +169,7 @@
                       @change="salvarEmCache"
                     />
                   </v-col>
-                  <!-- Inicio do Tratamento -->
+                  <!-- Inicio do Tratamento Antiretroviral -->
                   <v-col :md="3" :sm="12" cols="12">
                     <v-menu
                       v-model="menuInicioTratamento"
@@ -184,7 +184,7 @@
                           :value="formatDate(formData.hepatiteb.inicio_tratamento)"
                           outlined
                           :hide-details="true"
-                          label="Inicio do Tratamento (Opcional)"
+                          label="Data Inicio do Antiretroviral (Opcional)"
                           readonly
                           clearable
                           @click:clear="formData.hepatiteb.inicio_tratamento = null;salvarEmCache()"
@@ -199,17 +199,25 @@
                       ></v-date-picker>
                     </v-menu>
                   </v-col>
-                  <!-- Fibrose -->
+                  <!-- Portador Inativo -->
                   <v-col :md="3" :sm="12" cols="12">
-                    <v-select
-                      v-model="formData.hepatiteb.fibrose"
-                      :items="fibroseItems"
-                      label="Fibrose (Opcional)"
-                      outlined
-                      clearable
+                    <span>Portador Inativo</span>
+                    <v-radio-group
+                      row
+                      v-model="formData.hepatiteb.portador_inativo"
+                      style="margin: 0"
                       :hide-details="true"
                       @change="salvarEmCache"
-                    />
+                    >
+                      <v-radio
+                        label="Não"
+                        :value="false"
+                      ></v-radio>
+                      <v-radio
+                        label="Sim"
+                        :value="true"
+                      ></v-radio>
+                    </v-radio-group>
                   </v-col>
                   <!-- Cirrotico -->
                   <v-col :md="3" :sm="12" cols="12">
@@ -265,55 +273,17 @@
                   <v-col :md="3" :sm="12" cols="12">
                     <v-text-field v-model="formData.hepatiteb.resultado_alfa" type="text" outlined :hide-details="true" label="Resultado - Alfafetoproteina (Opcional)" @blur="salvarEmCache" />
                   </v-col>
-                  <!-- Data - Antiretroviral -->
+                  <!-- Fibrose -->
                   <v-col :md="3" :sm="12" cols="12">
-                    <v-menu
-                      v-model="menuAntir"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          :value="formatDate(formData.hepatiteb.data_antiretroviral)"
-                          outlined
-                          :hide-details="true"
-                          label="Data - Antiretroviral (Opcional)"
-                          readonly
-                          clearable
-                          @click:clear="formData.hepatiteb.data_antiretroviral = null;salvarEmCache()"
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="formData.hepatiteb.data_antiretroviral"
-                        @input="menuAntir = false"
-                        @change="salvarEmCache"
-                      ></v-date-picker>
-                    </v-menu>
-                  </v-col>
-                  <!-- Portador Inativo -->
-                  <v-col :md="3" :sm="12" cols="12">
-                    <span>Portador Inativo</span>
-                    <v-radio-group
-                      row
-                      v-model="formData.hepatiteb.portador_inativo"
-                      style="margin: 0"
+                    <v-select
+                      v-model="formData.hepatiteb.fibrose"
+                      :items="fibroseItems"
+                      label="Fibrose (Opcional)"
+                      outlined
+                      clearable
                       :hide-details="true"
                       @change="salvarEmCache"
-                    >
-                      <v-radio
-                        label="Não"
-                        :value="false"
-                      ></v-radio>
-                      <v-radio
-                        label="Sim"
-                        :value="true"
-                      ></v-radio>
-                    </v-radio-group>
+                    />
                   </v-col>
                   <!-- Data - Ultrassom -->
                   <v-col :md="3" :sm="12" cols="12">
@@ -418,36 +388,6 @@
                       @change="salvarEmCache"
                     />
                   </v-col>
-                  <!-- Inicio Tratamento -->
-                  <v-col :md="3" :sm="12" cols="12">
-                    <v-menu
-                      v-model="menuHepatiteC[lidx].menuInicioTratamento"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          :value="formatDate(formData.hepatitec[lidx].inicio_tratamento)"
-                          outlined
-                          :hide-details="true"
-                          label="Inicio do Tratamento (Opcional)"
-                          readonly
-                          clearable
-                          @click:clear="formData.hepatitec[lidx].inicio_tratamento = null;salvarEmCache()"
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="formData.hepatitec[lidx].inicio_tratamento"
-                        @input="menuHepatiteC[lidx].menuInicioTratamento = false"
-                        @change="salvarEmCache"
-                      ></v-date-picker>
-                    </v-menu>
-                  </v-col>
                   <!-- Fibrose -->
                   <v-col :md="3" :sm="12" cols="12">
                     <v-select
@@ -462,10 +402,30 @@
                   </v-col>
                   <!-- Tratado -->
                   <v-col :md="3" :sm="12" cols="12">
-                    <span>Tratado (Opcional)</span>
+                    <span>Tratado</span>
                     <v-radio-group
                       row
                       v-model="formData.hepatitec[lidx].tratado"
+                      style="margin: 0"
+                      :hide-details="true"
+                      @change="salvarEmCache"
+                    >
+                      <v-radio
+                        label="Não"
+                        :value="false"
+                      ></v-radio>
+                      <v-radio
+                        label="Sim"
+                        :value="true"
+                      ></v-radio>
+                    </v-radio-group>
+                  </v-col>
+                  <!-- Cirrotico -->
+                  <v-col :md="3" :sm="12" cols="12">
+                    <span>Cirrotico</span>
+                    <v-radio-group
+                      row
+                      v-model="formData.hepatitec[lidx].cirrotico"
                       style="margin: 0"
                       :hide-details="true"
                       @change="salvarEmCache"
@@ -513,46 +473,6 @@
                   <!-- Resultado - Alfafetoproteina -->
                   <v-col :md="3" :sm="12" cols="12">
                     <v-text-field v-model="formData.hepatitec[lidx].resultado_alfa" type="text" outlined :hide-details="true" label="Resultado - Alfafetoproteina (Opcional)" @blur="salvarEmCache" />
-                  </v-col>
-                  <!-- Cirrotico -->
-                  <v-col :md="3" :sm="12" cols="12">
-                    <span>Cirrotico</span>
-                    <v-radio-group
-                      row
-                      v-model="formData.hepatitec[lidx].cirrotico"
-                      style="margin: 0"
-                      :hide-details="true"
-                      @change="salvarEmCache"
-                    >
-                      <v-radio
-                        label="Não"
-                        :value="false"
-                      ></v-radio>
-                      <v-radio
-                        label="Sim"
-                        :value="true"
-                      ></v-radio>
-                    </v-radio-group>
-                  </v-col>
-                  <!-- Portador Inativo -->
-                  <v-col :md="3" :sm="12" cols="12">
-                    <span>Portador Inativo</span>
-                    <v-radio-group
-                      row
-                      v-model="formData.hepatitec[lidx].portador_inativo"
-                      style="margin: 0"
-                      :hide-details="true"
-                      @change="salvarEmCache"
-                    >
-                      <v-radio
-                        label="Não"
-                        :value="false"
-                      ></v-radio>
-                      <v-radio
-                        label="Sim"
-                        :value="true"
-                      ></v-radio>
-                    </v-radio-group>
                   </v-col>
                   <!-- Data - Ultrassom -->
                   <v-col :md="3" :sm="12" cols="12">
@@ -621,6 +541,26 @@
                   <!-- Resultado - Carga Viral -->
                   <v-col :md="3" :sm="12" cols="12">
                     <v-text-field v-model="formData.hepatitec[lidx].resultado_cargaviral" type="number" outlined :hide-details="true" label="Resultado - Carga Viral (Opcional)" @blur="salvarEmCache" />
+                  </v-col>
+                  <!-- Portador Inativo -->
+                  <v-col :md="3" :sm="12" cols="12">
+                    <span>Portador Inativo</span>
+                    <v-radio-group
+                      row
+                      v-model="formData.hepatitec[lidx].portador_inativo"
+                      style="margin: 0"
+                      :hide-details="true"
+                      @change="salvarEmCache"
+                    >
+                      <v-radio
+                        label="Não"
+                        :value="false"
+                      ></v-radio>
+                      <v-radio
+                        label="Sim"
+                        :value="true"
+                      ></v-radio>
+                    </v-radio-group>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -753,7 +693,6 @@ export default {
       menuNascimento: false,
       menuInicioTratamento: false,
       menuAlfa: false,
-      menuAntir: false,
       menuUltra: false,
       menuCarga: false,
       menuHepatiteC: [],
@@ -798,7 +737,6 @@ export default {
           for(let i=0;i<JSONDADOS.hepatitec.length;i++)
             this.menuHepatiteC.push({
               menuAlfa: false,
-              menuAntir: false,
               menuUltra: false,
               menuCarga: false
             })
@@ -832,7 +770,6 @@ export default {
           cirrotico: false,
           data_alfa: null,
           resultado_alfa: null,
-          data_antiretroviral: null,
           portador_inativo: false,
           data_ultrasom: null,
           resultado_ultrasom: null,
@@ -853,7 +790,6 @@ export default {
       this.formData.hepatitec.push({
         tratamento: null,
         tratado: false,
-        inicio_tratamento: null,
         fibrose: null,
         cirrotico: false,
         data_alfa: null,
@@ -866,7 +802,6 @@ export default {
       })
       this.menuHepatiteC.push({
         menuAlfa: false,
-        menuAntir: false,
         menuUltra: false,
         menuCarga: false
       })
