@@ -33,6 +33,7 @@ export default {
   ** https://nuxtjs.org/guide/plugins
   */
   plugins: [
+    { src: '~/plugins/axios.js', ssr: true },
   ],
 
   /*
