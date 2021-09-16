@@ -392,7 +392,7 @@
                 </v-row>
                 <v-row v-for="(linha, lidx) in formData.hepatitec" :key="lidx" class="paciente-model-hepatitec-row">
                   <v-col :xs="12" cols="12" class="d-block d-md-none">
-                    <v-btn icon v-if="lidx > 0" v-bind="attrs" v-on="on" @click="formData.hepatitec.splice(lidx)">
+                    <v-btn icon v-if="lidx > 0" @click="formData.hepatitec.splice(lidx)">
                       <v-icon color="red">mdi-close-circle-outline</v-icon>
                     </v-btn>
                   </v-col>
@@ -908,15 +908,15 @@ export default {
     background: white;
   }
   .paciente-modal-title h4{
-    width: calc(100% - 27px); 
-    text-align: left; 
-    border-bottom: 1px solid #B7B7B7; 
+    width: calc(100% - 27px);
+    text-align: left;
+    border-bottom: 1px solid #B7B7B7;
     line-height: 0.1em;
-    margin: 20px 0 20px; 
+    margin: 20px 0 20px;
   }
   .paciente-modal-title h4 span{
-    background:#fff; 
-    padding:0 10px; 
+    background:#fff;
+    padding:0 10px;
   }
   .paciente-model-hepatitec .paciente-model-hepatitec-row{
     position: relative;
