@@ -34,6 +34,7 @@ export default {
   ** https://nuxtjs.org/guide/plugins
   */
   plugins: [
+    { src: '~/plugins/vuetify.js', ssr: false },
   ],
 
   /*

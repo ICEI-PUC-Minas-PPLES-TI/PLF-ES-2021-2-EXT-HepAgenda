@@ -44,15 +44,20 @@
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field
-                        :value="formatDate(formData.data_nascimento)"
+                        v-model="formData.data_nascimento"
                         outlined
                         hide-details="auto"
                         :rules="[v => !!v || 'Data de Nascimento obrigatória']"
                         label="Data de Nascimento"
-                        readonly
-                        v-bind="attrs"
-                        v-on="on"
-                      ></v-text-field>
+                        type="date"
+                        class="paciente-modal-input-date"
+                      >
+                        <span slot="append">
+                          <v-icon v-bind="attrs" v-on="on">
+                            mdi-calendar
+                          </v-icon>
+                        </span>
+                      </v-text-field>
                     </template>
                     <v-date-picker
                       v-model="formData.data_nascimento"
@@ -107,7 +112,7 @@
                 <span class="paciente-modal-subtitle">Informações Clinicas</span>
               </v-row>
               <!-- Seção Informações clínicas - Peso, Altura, IMC,  Comorbidade e Desfecho -->
-              <v-row>
+              <v-row class="mt-0">
                 <v-col :md="2" :sm="12" cols="12">
                   <v-text-field v-model="formData.peso" type="number" min="0" max="400" step='0.01' outlined :hide-details="true" label="Peso (Opcional)" @blur="salvarEmCache">
                     <span slot="append">
@@ -123,7 +128,7 @@
                   </v-text-field>
                 </v-col>
                 <v-col :md="2" :sm="12" cols="12">
-                  <v-text-field class="mt-0" outlined :readonly="true" :hide-details="true" label="IMC" v-model="calculoIMC" />
+                  <v-text-field class="mt-0" outlined :readonly="true" :disabled="true" :hide-details="true" label="IMC" v-model="calculoIMC" />
                 </v-col>
                 <v-col :md="2" :sm="12" cols="12">
                   <v-select
@@ -154,7 +159,7 @@
                 <v-row>
                   <span class="paciente-modal-subtitle">Hepatite B</span>
                 </v-row>
-                <v-row>
+                <v-row class="mt-0">
                   <!-- Tratamento -->
                   <v-col :md="3" :sm="12" cols="12">
                     <v-select
@@ -181,16 +186,21 @@
                     >
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                          :value="formatDate(formData.hepatiteb.inicio_tratamento)"
+                          v-model="formData.hepatiteb.inicio_tratamento"
                           outlined
                           :hide-details="true"
                           label="Data Inicio do Antiretroviral (Opcional)"
-                          readonly
+                          type="date"
+                          class="paciente-modal-input-date"
                           clearable
                           @click:clear="formData.hepatiteb.inicio_tratamento = null;salvarEmCache()"
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
+                        >
+                          <span slot="append">
+                            <v-icon v-bind="attrs" v-on="on">
+                              mdi-calendar
+                            </v-icon>
+                          </span>
+                        </v-text-field>
                       </template>
                       <v-date-picker
                         v-model="formData.hepatiteb.inicio_tratamento"
@@ -251,16 +261,21 @@
                     >
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                          :value="formatDate(formData.hepatiteb.data_alfa)"
+                          v-model="formData.hepatiteb.data_alfa"
                           outlined
                           :hide-details="true"
                           label="Data - Alfafetoproteina (Opcional)"
-                          readonly
                           clearable
+                          type="date"
+                          class="paciente-modal-input-date"
                           @click:clear="formData.hepatiteb.data_alfa = null;salvarEmCache()"
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
+                        >
+                          <span slot="append">
+                            <v-icon v-bind="attrs" v-on="on">
+                              mdi-calendar
+                            </v-icon>
+                          </span>
+                        </v-text-field>
                       </template>
                       <v-date-picker
                         v-model="formData.hepatiteb.data_alfa"
@@ -293,20 +308,27 @@
                       :nudge-right="40"
                       transition="scale-transition"
                       offset-y
+                      type="date"
+                      class="paciente-modal-input-date"
                       min-width="auto"
                     >
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                          :value="formatDate(formData.hepatiteb.data_ultrasom)"
+                          v-model="formData.hepatiteb.data_ultrasom"
                           outlined
                           :hide-details="true"
                           label="Data - Ultrassom (Opcional)"
-                          readonly
                           clearable
+                          type="date"
+                          class="paciente-modal-input-date"
                           @click:clear="formData.hepatiteb.data_ultrasom = null;salvarEmCache()"
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
+                        >
+                          <span slot="append">
+                            <v-icon v-bind="attrs" v-on="on">
+                              mdi-calendar
+                            </v-icon>
+                          </span>
+                        </v-text-field>
                       </template>
                       <v-date-picker
                         v-model="formData.hepatiteb.data_ultrasom"
@@ -331,16 +353,21 @@
                     >
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                          :value="formatDate(formData.hepatiteb.data_cargaviral)"
+                          v-model="formData.hepatiteb.data_cargaviral"
                           outlined
                           :hide-details="true"
                           label="Data - Carga Viral (Opcional)"
-                          readonly
                           clearable
+                          type="date"
+                          class="paciente-modal-input-date"
                           @click:clear="formData.hepatiteb.data_cargaviral = null;salvarEmCache()"
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
+                        >
+                          <span slot="append">
+                            <v-icon v-bind="attrs" v-on="on">
+                              mdi-calendar
+                            </v-icon>
+                          </span>
+                        </v-text-field>
                       </template>
                       <v-date-picker
                         v-model="formData.hepatiteb.data_cargaviral"
@@ -360,7 +387,7 @@
                 <v-row>
                   <span class="paciente-modal-subtitle">Hepatite C</span>
                 </v-row>
-                <v-row v-for="(linha, lidx) in formData.hepatitec" :key="lidx" class="paciente-model-hepatitec-row">
+                <v-row v-for="(linha, lidx) in formData.hepatitec" :key="lidx" class="paciente-model-hepatitec-row mt-0">
                   <v-col :xs="12" cols="12" class="d-block d-md-none">
                     <v-btn icon v-if="lidx > 0" @click="formData.hepatitec.splice(lidx)">
                       <v-icon color="red">mdi-close-circle-outline</v-icon>
@@ -452,16 +479,21 @@
                     >
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                          :value="formatDate(formData.hepatitec[lidx].data_alfa)"
+                          v-model="formData.hepatitec[lidx].data_alfa"
                           outlined
                           :hide-details="true"
                           label="Data - Alfafetoproteina (Opcional)"
-                          readonly
                           clearable
+                          type="date"
+                          class="paciente-modal-input-date"
                           @click:clear="formData.hepatitec[lidx].data_alfa = null;salvarEmCache()"
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
+                        >
+                          <span slot="append">
+                            <v-icon v-bind="attrs" v-on="on">
+                              mdi-calendar
+                            </v-icon>
+                          </span>
+                        </v-text-field>
                       </template>
                       <v-date-picker
                         v-model="formData.hepatitec[lidx].data_alfa"
@@ -486,16 +518,21 @@
                     >
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                          :value="formatDate(formData.hepatitec[lidx].data_ultrasom)"
+                          v-model="formData.hepatitec[lidx].data_ultrasom"
                           outlined
                           :hide-details="true"
                           label="Data - Ultrassom (Opcional)"
-                          readonly
+                          type="date"
+                          class="paciente-modal-input-date"
                           clearable
                           @click:clear="formData.hepatitec[lidx].data_ultrasom = null;salvarEmCache()"
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
+                        >
+                          <span slot="append">
+                            <v-icon v-bind="attrs" v-on="on">
+                              mdi-calendar
+                            </v-icon>
+                          </span>
+                        </v-text-field>
                       </template>
                       <v-date-picker
                         v-model="formData.hepatitec[lidx].data_ultrasom"
@@ -520,16 +557,21 @@
                     >
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                          :value="formatDate(formData.hepatitec[lidx].data_cargaviral)"
+                          v-model="formData.hepatitec[lidx].data_cargaviral"
                           outlined
                           :hide-details="true"
                           label="Data - Carga Viral (Opcional)"
-                          readonly
                           clearable
+                          type="date"
+                          class="paciente-modal-input-date"
                           @click:clear="formData.hepatitec[lidx].data_cargaviral = null;salvarEmCache()"
-                          v-bind="attrs"
-                          v-on="on"
-                        ></v-text-field>
+                        >
+                          <span slot="append">
+                            <v-icon v-bind="attrs" v-on="on">
+                              mdi-calendar
+                            </v-icon>
+                          </span>
+                        </v-text-field>
                       </template>
                       <v-date-picker
                         v-model="formData.hepatitec[lidx].data_cargaviral"
@@ -590,7 +632,7 @@
                   </v-btn>
                 </v-col>
                 <v-col :offset-md="6" :md="2">
-                  <v-btn block large @click="limparDados();$emit('input', false)">
+                  <v-btn block large @click="modalCancelar = true">
                     Cancelar
                   </v-btn>
                 </v-col>
@@ -616,7 +658,7 @@
         <v-card-title class="text-h5">
           Limpar os dados
         </v-card-title>
-        <v-card-text>Limpar os dados preenchidos do paciente ?</v-card-text>
+        <v-card-text>Limpar os dados preenchidos do paciente?</v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
@@ -624,13 +666,44 @@
             outlined
             @click="modalLimparDados = false"
           >
-            Cancelar
+            Não
           </v-btn>
           <v-btn
             color="error"
             text
             outlined
             @click="limparDados();modalLimparDados = false"
+          >
+            Sim
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- Modal confirmar cancelar -->
+    <v-dialog
+      v-model="modalCancelar"
+      persistent
+      max-width="290"
+    >
+      <v-card>
+        <v-card-title class="text-h5">
+          Cancelar
+        </v-card-title>
+        <v-card-text>Tem certeza que deseja cancelar?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            outlined
+            @click="modalCancelar = false"
+          >
+            Não
+          </v-btn>
+          <v-btn
+            color="error"
+            text
+            outlined
+            @click="limparDados();$emit('input', false);modalCancelar=false"
           >
             Sim
           </v-btn>
@@ -696,7 +769,8 @@ export default {
       menuUltra: false,
       menuCarga: false,
       menuHepatiteC: [],
-      modalLimparDados: false
+      modalLimparDados: false,
+      modalCancelar: false,
     }
   },
   computed: {
@@ -781,11 +855,6 @@ export default {
       this.adicionarHepatiteC()
       this.salvarEmCache()
     },
-    formatDate (date) {
-      if (!date) return null
-      const [year, month, day] = date.split('-')
-      return `${day}/${month}/${year}`
-    },
     adicionarHepatiteC(){
       this.formData.hepatitec.push({
         tratamento: null,
@@ -831,6 +900,7 @@ export default {
 <style>
   .paciente-modal-subtitle{
     margin-left: 10px;
+    margin-bottom: 10px;
     color: #000;
   }
   .paciente-modal-title{
@@ -865,6 +935,10 @@ export default {
   }
   .paciente-modal > .v-text-field__details{
     margin-bottom: 0;
+  }
+  .paciente-modal-input-date input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
   }
 
   @media only screen and (max-width: 600px) {
