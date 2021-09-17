@@ -3,24 +3,14 @@ const yup = require('yup');
 
 const Paciente = require('../models/Paciente');
 const { SortPaginate } = require('../helpers/SortPaginate')
-const { telefoneRegExp } = require('../helpers/Regex')
+const PacienteHepB = require('../models/PacienteHepB');
+const PacienteHepC = require('../models/PacienteHepC');
+const { pacienteCreateScheme, pacienteUpdateScheme, hepatiteRequiredScheme } = require('../validation/PacienteValidation');
 
 class PacienteController{
     async create(request, response){
         
-        const scheme = yup.object().shape({
-            nome: yup.string().max(120).required("Nome obrigatório!"),
-            data_nascimento: yup.date().required("Data de nacimento obrigatória!"),
-            registro_hc: yup.string().max(20).required("Registro HC obrigatório!"),
-            sexo: yup.mixed().oneOf(['M', 'F']).required("Sexo do paciente obrigatório!"),
-            telefone: yup.string().max(15).matches(telefoneRegExp).required("Telefone obrigatório!"),
-            nome_mae: yup.string().max(120).required("Nome da mãe obrigatório!"),
-            email: yup.string().email().max(50),
-            peso: yup.number().min(0),
-            altura: yup.number().min(0),
-            comorbidade: yup.mixed().oneOf(['HEPB', 'HEPC', 'OUTRO']),
-            desfecho: yup.number(),
-        });
+        const scheme = pacienteCreateScheme;
 
         // Validando com o esquema criado:
         try {
@@ -32,6 +22,7 @@ class PacienteController{
                 'errors': err.errors
             })
         }
+
 
         //procura um registro_hc testar se é único
         if (
@@ -46,16 +37,39 @@ class PacienteController{
             })
         }
 
+        // atualiza o peso_atualizao se o peso for atualizado
         if (request.body.peso){
             request.body.peso_atualizacao = new Date().toISOString().replace('T', ' ').substr(0,19)
         }
-        
+
+        let hepcIds = [];
         const paciente = await Paciente.create({
-            ...request.body
-        })
+            ...request.body,
+            comorbidade: 
+                request.body.hepatiteb ? 'HEPB' : request.body.hepatitec ? 'HEPC' : 'OUTRO'
+        });
+        if (request.body.hepatiteb){
+            await PacienteHepB.create({
+                paciente_id: paciente.id,
+                ...request.body.hepatiteb
+            });
+        }
+        else if (request.body.hepatitec){
+            await Promise.all(
+                request.body.hepatitec.map((hepc)=>{
+                    return PacienteHepC.create({
+                        paciente_id: paciente.id,
+                        ...hepc
+                    }).then((pacienteHepC)=>{
+                        hepcIds.push(pacienteHepC.id)
+                    })
+                })
+            )
+        }
 
         return response.status(201).json({
-            id: paciente.id
+            id: paciente.id,
+            hepcIds
         });
     }
 
@@ -68,7 +82,7 @@ class PacienteController{
         });
         if (result)
             response.status(200).json(result);
-        else (result)
+        else
             response.status(404).send('Paciente com esse id não encontrado')
     }
 
@@ -96,21 +110,7 @@ class PacienteController{
     }
 
     async update(request, response) {
-        
-        const scheme = yup.object().shape({
-            id: yup.number().required("É necessário passar o id do paciente que se deseja atualizar!"),
-            nome: yup.string().max(120),
-            data_nascimento: yup.date(),
-            registro_hc: yup.string().max(20),
-            sexo: yup.mixed().oneOf(['M', 'F']),
-            telefone: yup.string().matches(telefoneRegExp).max(15),
-            nome_mae: yup.string().max(120),
-            email: yup.string().email().max(50),
-            peso: yup.number().min(0),
-            altura: yup.number().min(0),
-            comorbidade: yup.mixed().oneOf(['HEPB', 'HEPC', 'OUTRO']),
-            desfecho: yup.number(),
-        })
+        const scheme = pacienteUpdateScheme;
 
         // Validando com o esquema criado:
         try {
@@ -145,7 +145,7 @@ class PacienteController{
             request.body.peso_atualizacao = new Date().toISOString().replace('T', ' ').substr(0,19)
         }
 
-        const { id, ...requestBody } = request.body;
+        const { id, hepatiteb, hepatitec, ...requestBody } = request.body;
 
         const paciente = await Paciente.findOne({
             where:{ id }
@@ -154,6 +154,68 @@ class PacienteController{
             await paciente.update({
                 ...requestBody
             })
+            if ( hepatiteb ){
+                // se o hepatiteb já exsitir para esse paciente, apenas atualiza, se não cria um
+                const pacienteHepatiteB = await PacienteHepB.findOne({
+                    where: { paciente_id: id }
+                })
+                if (pacienteHepatiteB){
+                    await pacienteHepatiteB.update({
+                        ...hepatiteb
+                    })
+                }
+                else{
+                    // Revalida dados, pois para criação há atributos obrigatórios
+                    try {
+                        await hepatiteRequiredScheme.validate(hepatiteb, { abortEarly: false }); // AbortEarly para fazer todas as validações
+                    } catch (err) {
+                        return response.status(422).json({
+                            'name:': err.name, // => 'ValidationError'
+                            'message': err.message,
+                            'errors': err.errors
+                        })
+                    }
+                    await PacienteHepB.create({
+                        ...hepatiteb,
+                        paciente_id: paciente.id
+                    })
+                }
+            }
+            else if (hepatitec){
+                // percorre todo vetor de hepatitec, criando ou atualizando os dados
+                await Promise.all(
+                    hepatitec.map(async (hepc)=>{
+                        console.log(hepc);
+                        // se o hepatitec já exsitir para esse paciente, apenas atualiza, se não cria um
+                        const pacienteHepatiteC = await PacienteHepC.findOne({
+                            where: { id: hepc.id??0 }
+                        })
+                        if (pacienteHepatiteC){
+                            await pacienteHepatiteC.update({
+                                ...hepc
+                            })
+                        }
+                        else{
+
+                            // Revalida dados, pois para criação há atributos obrigatórios
+                            try {
+                                await hepatiteRequiredScheme.validate(hepc, { abortEarly: false }); // AbortEarly para fazer todas as validações
+                            } catch (err) {
+                                return response.status(422).json({
+                                    'name:': err.name, // => 'ValidationError'
+                                    'message': err.message,
+                                    'errors': err.errors
+                                })
+                            } 
+                            await PacienteHepC.create({
+                                ...hepc,
+                                paciente_id: paciente.id
+                            })
+                        }
+                    })
+                )
+                
+            }
             return response.status(201).json({
                 mensagem: "Paciente atualizado com sucesso!"
             });

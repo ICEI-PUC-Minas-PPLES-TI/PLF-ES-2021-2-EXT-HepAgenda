@@ -9,6 +9,7 @@ class PacienteHepC extends Model{
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 primaryKey: true,
+                autoIncrement: true
             },
             paciente_id:{
                 type: DataTypes.INTEGER,
@@ -43,9 +44,6 @@ class PacienteHepC extends Model{
             num_tratamentos: {
                 type: DataTypes.TINYINT.UNSIGNED,
             },
-            inicio_tratamento: {
-                type: DataTypes.DATE,
-            },
             ultimo_resultado_alfa: {
                 type: DataTypes.DOUBLE,
             },
@@ -75,6 +73,7 @@ class PacienteHepC extends Model{
             timestamps: false,
             sequelize
         })
+
     }
 }
 module.exports = PacienteHepC

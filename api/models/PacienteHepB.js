@@ -42,12 +42,6 @@ class PacienteHepB extends Model{
             data_alfa: {
                 type: DataTypes.DATE,
             },
-            ultimo_resultado_alfa: {
-                type: DataTypes.DOUBLE,
-            },
-            data_alfa: {
-                type: DataTypes.DATE,
-            },
             ultimo_resultado_ultra: {
                 type: DataTypes.DOUBLE,
             },

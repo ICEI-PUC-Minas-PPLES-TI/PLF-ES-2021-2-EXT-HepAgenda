@@ -4,7 +4,9 @@ const { Sequelize } = require("sequelize");
 // Importar modelos aqui
 const Tratamento = require('../models/Tratamento');
 const Usuario = require('../models/Usuario');
-const Paciente = require('../models/Paciente')
+const Paciente = require('../models/Paciente');
+const PacienteHepB = require("../models/PacienteHepB");
+const PacienteHepC = require("../models/PacienteHepC");
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -25,6 +27,8 @@ module.exports = {
       Tratamento.init(sequelize);
       Usuario.init(sequelize);
       Paciente.init(sequelize);
+      PacienteHepB.init(sequelize);
+      PacienteHepC.init(sequelize);
       if (process.env.NODE_ENV === "dev") {
         console.log(
           `Conexão com '${process.env.DB_HOST}/${process.env.DB_DATABASE}' estabelecida`
