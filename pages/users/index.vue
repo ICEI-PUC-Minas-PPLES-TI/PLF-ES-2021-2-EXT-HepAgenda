@@ -7,7 +7,7 @@
         </v-card-title>
         <v-card-actions right>
             <v-spacer></v-spacer>
-            <v-btn class="mb-6" color="primary" background="primary">
+            <v-btn class="mb-6 mr-2" color="primary" background="primary">
                 Criar usuário
             </v-btn>
         </v-card-actions>
@@ -16,11 +16,11 @@
                 <v-data-table :headers="headers" :items="usuarios" :items-per-page="5" class="elevation-1">
 
                     <template v-slot:item.actions="{ item }">
-                        <v-icon medium class="mr-2" @click="editItem(item)">
-                            mdi-pencil
+                        <v-icon medium color="primary" class="mr-2" @click="editItem(item)">
+                            mdi-square-edit-outline
                         </v-icon>
-                        <v-icon medium @click="deleteItem(item)">
-                            mdi-delete
+                        <v-icon medium color="primary" @click="deleteItem(item)">
+                            mdi-trash-can-outline
                         </v-icon>
                     </template>
                     <template v-slot:no-data>
