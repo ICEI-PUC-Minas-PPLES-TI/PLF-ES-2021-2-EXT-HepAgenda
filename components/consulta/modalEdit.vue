@@ -35,7 +35,8 @@
                                 <!-- Descrição -->
                                 <v-row class="mx-auto">
                                     <v-col :md="12" :sm="12" :xl="12" cols="12">
-                                        <v-textarea readonly row-height="10" hide-details="auto" auto-grow v-model="descricao" label="Descrição do agendamento">
+                                        <label for=""> Descrição do agendamento </label>
+                                        <v-textarea readonly flat solo row-height="10" hide-details="auto" auto-grow v-model="descricao" label="Descrição do agendamento">
                                         </v-textarea>
                                     </v-col>
                                 </v-row>
@@ -57,12 +58,10 @@
                                         <v-textarea outlined hide-details="auto" label="Relatório do atendimento" auto-grow></v-textarea>
                                     </v-col>
                                 </v-row>
-
                             </v-col>
 
                             <!-- Linha vertical -->
                             <v-col :md="4" :sm="12" :xl="4" cols="12" class="mt-1">
-
                                 <div class="vertical-line">
                                     <!-- Icone -->
                                     <v-row>
@@ -111,7 +110,7 @@
                                         <v-col :md="12" :sm="12" :xl="12" cols="12">
                                             <div class="card-historico" v-for="(item, index) in historico" v-bind:item="item" v-bind:index="index" v-bind:key="item.id">
                                                 {{item.mensagem}}
-                                                <div class="text-right">
+                                                <div class="card-historico-data text-right">
                                                     {{item.data}}
                                                 </div>
                                                 <v-divider></v-divider>
@@ -177,9 +176,8 @@
 .vertical-line {
     border-left: 1px solid #B7B7B7;
     padding-left: 10px;
-    height: 47vw;
+    height: 50vw;
     max-height: 500px;
-    widows: 100%;
     overflow-y: scroll;
     overflow-x: hidden;
 }
@@ -215,4 +213,9 @@
     color: black;
     font-size: 0.85em;
 }
+
+.card-historico-data{
+  color: #B7B7B7;
+}
+
 </style>

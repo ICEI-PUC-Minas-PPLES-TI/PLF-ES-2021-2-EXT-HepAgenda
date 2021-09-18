@@ -23,7 +23,7 @@
                         </v-row>
                         <!-- Data da consulta e select de médico -->
                         <v-row class="mt-n3">
-                            <v-col :md="6" :sm="12" :xl="6" cols="12">
+                            <v-col :md="12" :sm="12" :xl="12" cols="12">
                                 <v-menu v-model="menuDataConsulta" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="auto">
                                     <template v-slot:activator="{ on, attrs }">
                                         <v-text-field :value="formatDate(dataConsulta)" outlined hide-details="auto" append-icon="mdi-calendar" label="Data da consulta" readonly v-bind="attrs" v-on="on"></v-text-field>
@@ -31,7 +31,9 @@
                                     <v-date-picker v-model="dataConsulta" @input="menuDataConsulta = false"></v-date-picker>
                                 </v-menu>
                             </v-col>
-                            <v-col :md="6" :sm="12" :xl="6" cols="12">
+                        </v-row>
+                        <v-row class="mt-n3">
+                            <v-col :md="12" :sm="12" :xl="12" cols="12">
                                 <v-select v-model="medico" :clearable="true" hide-details="auto" label="Médico (Opcional)" item-text="label" item-value="value" outlined />
                             </v-col>
                         </v-row>
