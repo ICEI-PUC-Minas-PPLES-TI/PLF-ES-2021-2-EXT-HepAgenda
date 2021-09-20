@@ -50,6 +50,7 @@
                         :rules="[v => !!v || 'Data de Nascimento obrigatória']"
                         label="Data de Nascimento"
                         type="date"
+                        max="3000-01-01"
                         class="paciente-modal-input-date"
                       >
                         <span slot="append">
@@ -191,6 +192,7 @@
                           :hide-details="true"
                           label="Data Inicio do Antiretroviral (Opcional)"
                           type="date"
+                          max="3000-01-01"
                           class="paciente-modal-input-date"
                           clearable
                           @click:clear="formData.hepatiteb.inicio_tratamento = null;salvarEmCache()"
@@ -267,6 +269,7 @@
                           label="Data - Alfafetoproteina (Opcional)"
                           clearable
                           type="date"
+                          max="3000-01-01"
                           class="paciente-modal-input-date"
                           @click:clear="formData.hepatiteb.data_alfa = null;salvarEmCache()"
                         >
@@ -308,7 +311,6 @@
                       :nudge-right="40"
                       transition="scale-transition"
                       offset-y
-                      type="date"
                       class="paciente-modal-input-date"
                       min-width="auto"
                     >
@@ -320,6 +322,7 @@
                           label="Data - Ultrassom (Opcional)"
                           clearable
                           type="date"
+                          max="3000-01-01"
                           class="paciente-modal-input-date"
                           @click:clear="formData.hepatiteb.data_ultrasom = null;salvarEmCache()"
                         >
@@ -359,6 +362,7 @@
                           label="Data - Carga Viral (Opcional)"
                           clearable
                           type="date"
+                          max="3000-01-01"
                           class="paciente-modal-input-date"
                           @click:clear="formData.hepatiteb.data_cargaviral = null;salvarEmCache()"
                         >
@@ -485,6 +489,7 @@
                           label="Data - Alfafetoproteina (Opcional)"
                           clearable
                           type="date"
+                          max="3000-01-01"
                           class="paciente-modal-input-date"
                           @click:clear="formData.hepatitec[lidx].data_alfa = null;salvarEmCache()"
                         >
@@ -523,6 +528,7 @@
                           :hide-details="true"
                           label="Data - Ultrassom (Opcional)"
                           type="date"
+                          max="3000-01-01"
                           class="paciente-modal-input-date"
                           clearable
                           @click:clear="formData.hepatitec[lidx].data_ultrasom = null;salvarEmCache()"
@@ -563,6 +569,7 @@
                           label="Data - Carga Viral (Opcional)"
                           clearable
                           type="date"
+                          max="3000-01-01"
                           class="paciente-modal-input-date"
                           @click:clear="formData.hepatitec[lidx].data_cargaviral = null;salvarEmCache()"
                         >
