@@ -32,6 +32,16 @@ export default {
         console.log(error)
         this.errored = true
       })
+    },
+
+    formataTipo(tipo){
+      if(tipo == "A"){
+        return "Administrador"
+      }else if(tipo == "M"){
+        return "Médico"
+      }else if(tipo == "V"){
+        return "Visualizador"
+      }
     }
 
   }
