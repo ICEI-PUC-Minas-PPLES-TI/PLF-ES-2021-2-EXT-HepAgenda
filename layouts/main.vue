@@ -59,7 +59,7 @@
 
 <style>
   .main{
-    background:  #E5E5E5 !important;
+    background: #F2F2F0 !important;
     height: 100%;
     width: 100%;
     padding:0;
