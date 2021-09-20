@@ -35,6 +35,7 @@ export default {
   */
   plugins: [
     { src: '~/plugins/vuetify.js', ssr: false },
+    { src: '~/plugins/axios.js', ssr: true },
   ],
 
   /*

@@ -28,9 +28,9 @@ router.get('/usuario', [autenticacaoJwt.verificarToken], usuarioController.getAl
 router.delete('/usuario/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], usuarioController.delete)
 router.put('/usuario/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], usuarioController.update)
 // Paciente
-router.post('/paciente', pacienteController.create)
-router.put('/paciente', pacienteController.update)
-router.get('/paciente/:id', pacienteController.get)
-router.get('/paciente', pacienteController.getAll)
+router.post('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic] , pacienteController.create)
+router.put('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.update)
+router.get('/paciente/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.get)
+router.get('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.getAll)
 
 module.exports = router
