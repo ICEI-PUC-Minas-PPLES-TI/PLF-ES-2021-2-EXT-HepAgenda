@@ -1,12 +1,12 @@
 <template>
   <!--Container-->
-  <v-container fluid class="grey-lighten-5">
+  <v-container fluid>
     <!--Linha-->
-    <v-row class="linP" no-gutters>
-      <!--Coluna-2-->
-      <v-col offset-md="4" md="4" class="colDois">
+    <v-row no-gutters>
+      <!--Coluna-->
+      <v-col offset-md="4" md="4" xs="12" cols="12" class="colDois">
         <div class="coluna">
-          <v-row class="imagem" no-gutters>
+          <v-row>
             <svg
               class="pos"
               width="308"
@@ -48,60 +48,52 @@
               />
             </svg>
           </v-row>
-          <v-row class="lim" no-gutters>
+          <v-row>
             <h3>Cadastro de Usuário</h3>
           </v-row>
-
-          <v-row class="mb-6" no-gutters>
+          <!--LOGIN-->
+          <v-row class="mb-6">
             <v-col cols="12" sm="12">
-              <v-text-field label="LOGIN" outlined clearable></v-text-field>
+              <v-text-field hide-details="auto" v-model="formData.login" label="LOGIN" outlined :rules="[rules.required]"></v-text-field>
             </v-col>
           </v-row>
-
           <!--SENHA-->
-
-          <v-row class="mb-6" no-gutters>
+          <v-row class="mb-6">
             <v-col cols="12" sm="12">
               <v-text-field
-                v-model="password"
+                v-model="formData.senha"
                 :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                 :rules="[rules.required, rules.min]"
                 :type="show1 ? 'text' : 'password'"
-                name="input-10-1"
                 label="SENHA"
-                hint="Pelo menos 8 caracteres"
+                hint="Pelo menos 8 caracteres, 1 número, 1 letra minúscula e 1 letra maiúscula"
                 @click:append="show1 = !show1"
                 outlined
-                clearable
               ></v-text-field>
             </v-col>
           </v-row>
-
-          <v-row class="mb-6" no-gutters>
+          <!--CONFIRMAR SENHA-->
+          <v-row class="mb-6">
             <v-col cols="12" sm="12">
               <v-text-field
-                v-model="pass"
+                v-model="formData.confirmar_senha"
                 :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
-                :rules="[rules.required, rules.min]"
-                :type="show2 ? 'text' : 'pass'"
-                name="input-10-1"
+                :rules="[rules.required, rules.equal]"
+                :type="show2 ? 'text' : 'password'"
                 label="CONFIRMAR SENHA"
                 hint="Pelo menos 8 caracteres"
                 @click:append="show2 = !show2"
                 outlined
-                clearable
               ></v-text-field>
             </v-col>
           </v-row>
-
-          <!--FIM SENHA -->
-
           <!--BOTAO-->
           <v-row class="mb-6" no-gutters>
-            <v-btn class="button" color="#008BD9" large>
+            <v-btn color="#008BD9" large block @click="criarUsuario">
               <h3 class="w">Criar usuário</h3>
             </v-btn>
           </v-row>
+          
         </div>
       </v-col>
     </v-row>
@@ -117,61 +109,37 @@ export default {
     return {
       show1: false,
       show2: false,
-      password: "Password",
-      pass: "Password",
+      formData: {
+        login: null,
+        senha: null,
+        confirmar_senha: null
+      },
       rules: {
         required: value => !!value || "Obrigatório.",
-        min: v => v.length >= 8 || "Min 8 caracteres",
-        emailMatch: () => `O e-mail e a senha que você digitou não coincidem`
+        min: v =>{
+          if(v && v.length >= 8 && /\d/.test(v) && /[a-z]/g.test(v) && /[A-Z]/g.test(v) )
+            return true
+          else return "Min 8 caracteres, 1 número, 1 letra minúscula e 1 letra maiúscula"
+        },
+        equal: v => v === this.formData.senha || "Senhas não conferem"
       }
     };
+  },
+  methods: {
+    criarUsuario(){
+      console.log('Botao Criar apertado')
+    }
   }
 }; /*FIM SENHA*/
 </script>
 
 <style>
-.grey-lighten-5 {
-  background-color:#e5e5e5;
-  width: 100vw;
-  height: 100vh;
-  padding: 0%;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-
-.linP {
-  margin-top: 10px 0;
-  background-color: #e5e5e5;
-  margin-left: 0;
-  margin-right: 0;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-h3 {
-  color: black;
-}
 h3.w {
   color: white;
 }
-.button {
-  /*centraliza botão*/
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-
-  background: #008bd9;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-}
 .pos {
   display: block;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto;
 }
 
 .colDois {
@@ -180,15 +148,11 @@ h3.w {
 
 /*Espaçamento de borda*/
 .coluna {
-  margin-left: 10%;
-  margin-right: 10%;
-  margin-bottom: 10%;
-  margin-top: 10%;
-  overflow: hidden;
+  margin: 10%;
 }
 .mb-6 {
-    height: 60px;
-  }
+  height: 65px;
+}
 
 /*Compatibilidade de tamanho para aparelhos menores*/
 
@@ -203,19 +167,9 @@ h3.w {
   .mb-6{
     height: 40px;
   }
-  .lim {
-    height: 22px;
-  }
-  .imagem {
-    overflow: hidden;
-  }
   .pos {
-    display: none;
-    overflow: hidden;
-  }
-  .linP {
-    /*height: 100%;*/
-    background-color: #e5e5e5;
+    width: 40%;
+    margin-bottom: 30px;
   }
   .coluna {
     margin-left: 5%;
