@@ -188,7 +188,6 @@ class PacienteController{
                 // percorre todo vetor de hepatitec, criando ou atualizando os dados
                 await Promise.all(
                     hepatitec.map(async (hepc)=>{
-                        console.log(hepc);
                         // se o hepatitec já exsitir para esse paciente, apenas atualiza, se não cria um
                         const pacienteHepatiteC = await PacienteHepC.findOne({
                             where: { id: hepc.id??0 }
