@@ -29,6 +29,13 @@ module.exports = {
       Paciente.init(sequelize);
       PacienteHepB.init(sequelize);
       PacienteHepC.init(sequelize);
+
+      //Associações
+      Paciente.hasOne(PacienteHepB, {foreignKey: "paciente_id"});
+      Paciente.hasMany(PacienteHepC, {foreignKey: "paciente_id"});
+      PacienteHepB.hasOne(Tratamento, {foreignKey: "tratamento_id"})
+      PacienteHepC.hasOne(Tratamento, {foreignKey: "tratamento_id"})
+
       if (process.env.NODE_ENV === "dev") {
         console.log(
           `Conexão com '${process.env.DB_HOST}/${process.env.DB_DATABASE}' estabelecida`

@@ -43,7 +43,7 @@ class PacienteHepB extends Model{
                 type: DataTypes.DATE,
             },
             ultimo_resultado_ultra: {
-                type: DataTypes.DOUBLE,
+                type: DataTypes.STRING(200),
             },
             data_ultra: {
                 type: DataTypes.DATE,

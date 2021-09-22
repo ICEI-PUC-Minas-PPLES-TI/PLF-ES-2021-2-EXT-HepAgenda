@@ -78,6 +78,9 @@ class PacienteController{
         const result = await Paciente.findOne({
             where: {
               id: request.params.id
+            },
+            include: {
+                all: true
             }
         });
         if (result)
