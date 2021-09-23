@@ -186,15 +186,25 @@ class PacienteController{
             }
             else if (hepatitec){
                 // percorre todo vetor de hepatitec, criando ou atualizando os dados
+                const registrosHepC = await PacienteHepC.findAll({
+                    where: {
+                        paciente_id: id
+                    }
+                })
+                // aqui serão armazenadas os hepc atualizados, para excluir os outros que não foram listados
+                const registrosIdsAtualizadosHepC = [];
+
                 await Promise.all(
                     hepatitec.map(async (hepc)=>{
+                        const alreadyExists = registrosHepC.some( registroHC =>  hepc.id == registroHC.id )
                         // se o hepatitec já exsitir para esse paciente, apenas atualiza, se não cria um
-                        const pacienteHepatiteC = await PacienteHepC.findOne({
-                            where: { id: hepc.id??0 }
-                        })
-                        if (pacienteHepatiteC){
-                            await pacienteHepatiteC.update({
+                        
+                        if (alreadyExists){
+                            registrosIdsAtualizadosHepC.push(hepc.id)
+                            await PacienteHepC.update({
                                 ...hepc
+                            },{
+                                where: { id: hepc.id??0 }
                             })
                         }
                         else{
@@ -214,6 +224,17 @@ class PacienteController{
                                 paciente_id: paciente.id
                             })
                         }
+
+                    })
+                )
+
+                // para todo registro que havia inicialmente e que não foi atualizado, este será apagado
+                await Promise.all(
+                    registrosHepC.map(async (hepc)=>{
+                        if ( !registrosIdsAtualizadosHepC.some(registrohc => hepc.id == registrohc) )
+                            await PacienteHepC.destroy({
+                                where: { id: hepc.id }
+                            })
                     })
                 )
                 
