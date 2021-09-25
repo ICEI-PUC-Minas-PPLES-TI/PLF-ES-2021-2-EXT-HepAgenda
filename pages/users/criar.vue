@@ -54,7 +54,13 @@
           <!--LOGIN-->
           <v-row class="mb-6">
             <v-col cols="12" sm="12">
-              <v-text-field hide-details="auto" v-model="formData.login" label="LOGIN" outlined :rules="[rules.required]"></v-text-field>
+              <v-text-field
+                hide-details="auto"
+                v-model="formData.login"
+                label="LOGIN"
+                outlined
+                :rules="[rules.required]"
+              ></v-text-field>
             </v-col>
           </v-row>
           <!--SENHA-->
@@ -93,7 +99,6 @@
               <h3 class="w">Criar usuário</h3>
             </v-btn>
           </v-row>
-
         </div>
       </v-col>
     </v-row>
@@ -125,16 +130,38 @@ export default {
       }
     };
   },
+  /*FIM SENHA*/
   methods: {
     criarUsuario(){
       console.log('Botao Criar apertado')
-    }
-  }
-}; /*FIM SENHA*/
-
+    },
 /*teste*/
-
+enviarDados(){
+      if(this.$refs.formUsuario.validate()) {
+        let info = JSON.parse(JSON.stringify(this.formData))
+        this.$axios.post('/usuario', info).then(res=>{
+          this.limparDados()
+          this.$emit('input', false) // Fecha modal
+          alert('Usuario Cadastrado')
+        }).catch(err => {
+          alert(JSON.stringify(err.response.data))
+          console.log(err.response.data)
+        })
+      }
+}
+    //new
+    /*
+    this.$axios.post('/paciente', info).then(res=>{
+          this.limparDados()
+          this.$emit('input', false) // Fecha modal
+          alert('Paciente Cadastrado')
+        }).catch(err => {
+          alert(JSON.stringify(err.response.data))
+          console.log(err.response.data)
+        })
+        */
 /*fim teste*/
+  }
 </script>
 
 <style>
@@ -168,7 +195,7 @@ h3.w {
 }
 /*Responsividade dispositivo virado*/
 @media (max-height: 500px) {
-  .mb-6{
+  .mb-6 {
     height: 40px;
   }
   .pos {
