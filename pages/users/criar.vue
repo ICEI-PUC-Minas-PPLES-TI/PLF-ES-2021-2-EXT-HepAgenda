@@ -56,7 +56,7 @@
             <v-col cols="12" sm="12">
               <v-text-field
                 hide-details="auto"
-                v-model="formData.login"
+                v-model="formData.email"
                 label="LOGIN"
                 outlined
                 :rules="[rules.required]"
@@ -115,7 +115,7 @@ export default {
       show1: false,
       show2: false,
       formData: {
-        login: null,
+        email: null,
         senha: null,
         confirmar_senha: null
       },
@@ -137,9 +137,7 @@ export default {
     },
 /*teste*/
 enviarDados(){
-      if(this.$refs.formUsuario.validate()) {
-        let info = JSON.parse(JSON.stringify(this.formData))
-        this.$axios.post('/usuario', info).then(res=>{
+        this.$axios.post('/criar', info).then(res=>{
           this.limparDados()
           this.$emit('input', false) // Fecha modal
           alert('Usuario Cadastrado')
@@ -148,7 +146,7 @@ enviarDados(){
           console.log(err.response.data)
         })
       }
-}
+
     //new
     /*
     this.$axios.post('/paciente', info).then(res=>{
@@ -162,6 +160,7 @@ enviarDados(){
         */
 /*fim teste*/
   }
+}
 </script>
 
 <style>
