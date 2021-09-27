@@ -12,6 +12,7 @@
 * Emerson Pereira Siqueira
 * Guilherme Gabriel Silva Pereira 
 * Henrique Penna Forte Monteiro
+* Igor Siqueira Massaro
 * Layla Raissa Silva Pereira
 * Lucas Ângelo Oliveira Martins Rocha
 * Maycon Henrique Souza Tavares
