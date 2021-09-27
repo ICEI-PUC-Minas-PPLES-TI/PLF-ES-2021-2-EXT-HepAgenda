@@ -1,10 +1,12 @@
 require("dotenv").config();
 const { Sequelize } = require("sequelize");
+const Consulta = require("../models/Consulta");
 
 // Importar modelos aqui
 const Tratamento = require('../models/Tratamento');
 const Usuario = require('../models/Usuario');
-const Paciente = require('../models/Paciente')
+const Paciente = require('../models/Paciente');
+const LogConsulta = require("../models/LogConsulta");
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -24,7 +26,9 @@ module.exports = {
       // Iniciar modelos aqui
       Tratamento.init(sequelize);
       Usuario.init(sequelize);
+      Consulta.init(sequelize);
       Paciente.init(sequelize);
+      LogConsulta.init(sequelize);
       if (process.env.NODE_ENV === "dev") {
         console.log(
           `Conexão com '${process.env.DB_HOST}/${process.env.DB_DATABASE}' estabelecida`

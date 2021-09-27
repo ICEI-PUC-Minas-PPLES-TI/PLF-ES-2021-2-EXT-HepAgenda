@@ -233,6 +233,25 @@ class UsuarioController {
     }
   }
 
+  async getByID(id) {
+    const atributos = [
+      "id",
+      "login",
+      "nome",
+      "email",
+      "telefone",
+      "tipo",
+      "data_expira"
+    ];
+    const usuario = await Usuario.findOne({
+      where: {
+        id: id
+      },
+      attributes: atributos
+    });
+    return usuario;
+  }
+
   // URI de exemplo: http://localhost:3000/api/usuario?pagina=1&limite=5&atributo=nome&ordem=DESC
   // todos as querys são opicionais
   async getAll(request, response) {
