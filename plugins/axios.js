@@ -1,11 +1,12 @@
 export default function({ $axios, req }) {
     if (req) {
-      let cookies = JSON.parse(getCookie('vuex', req.headers.cookie))
+      $axios.defaults.headers.common[
+        'x-access-token'
+      ] = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjMxODI4MzQ1LCJleHAiOjE2MzkwODU5NDV9.R7I89YW9fxFZnSKpFNWtSScZpszs9mIJPCBnWTMxMjI`
+      /*let cookies = JSON.parse(getCookie('vuex', req.headers.cookie))
       if (cookies) {
-        $axios.defaults.headers.common[
-          'x-access-token'
-        ] = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjMxODI4MzQ1LCJleHAiOjE2MzkwODU5NDV9.R7I89YW9fxFZnSKpFNWtSScZpszs9mIJPCBnWTMxMjI`
-      }
+        
+      }*/
     }
   
     $axios.onRequest(config => {

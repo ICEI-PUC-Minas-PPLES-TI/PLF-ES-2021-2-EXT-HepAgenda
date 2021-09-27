@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <!-- Agenda -->
     <v-row>
       <v-col :md="10" :offset-md="1" class="consulta-container">
@@ -72,8 +72,66 @@
           </v-col>
           <!-- Coluna Agendamentos -->
           <v-col :sm="12" :md="8" :lg="9">
+            <div v-if="consultaLista" class="consulta-container-list">
+              <v-row v-for="(li, lidx) in consultaLista" :key="lidx">
+                <v-col :sm="12">
+                  <!-- Dia em extenso/Dia da semana e contador de consultas -->
+                  <v-row>
+                    <v-col>
+                      <b>{{ formataData(lidx) }}</b>
+                      <b class="d-block">{{ buscaDiaSemana(lidx) }}</b>
+                      <span class="consulta-container-list-count d-block">
+                        {{ li.length }} consultas
+                      </span>
+                    </v-col>
+                  </v-row>
+                  <!-- Lista de Consultas -->
+                  <v-row>
+                    <v-col v-for="(l, ldx) in li" :key="ldx" :md="4" cols="12">
+                      <v-card class="consulta-container-list-card">
+                        <v-row>
+                          <!-- Icone -->
+                          <v-col :sm="4" :lg="3" :cols="12">
+                            <svg v-if="l.status == 'REALIZADO'" width="24" height="18" viewBox="0 0 24 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M9.29506 17.1629C9.07997 17.3793 8.7865 17.5 8.48166 17.5C8.17682 17.5 7.88336 17.3793 7.66827 17.1629L1.17224 10.6646C0.498089 9.99034 0.498089 8.89697 1.17224 8.22397L1.98563 7.41021C2.65999 6.73594 3.7519 6.73594 4.42604 7.41021L8.48166 11.4668L19.4405 0.505701C20.1149 -0.168567 21.2079 -0.168567 21.8809 0.505701L22.6943 1.31946C23.3685 1.99373 23.3685 3.08688 22.6943 3.7601L9.29506 17.1629Z" fill="#00BA34"/>
+                            </svg>
+                            <svg v-else-if="l.status == 'AGUARDANDOC'" width="22" height="25" viewBox="0 0 22 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M10.9482 3.07472V0.188436C10.9482 0.0280872 11.1528 -0.0570984 11.2908 0.0431199L17.3458 4.40262C17.4481 4.47778 17.4481 4.6231 17.3458 4.69826L11.2908 9.05776C11.1528 9.15798 10.9482 9.06778 10.9482 8.91244V6.03117C6.45811 6.10132 2.86296 9.83946 3.1698 14.3192C3.43062 18.1676 6.63199 21.2894 10.5595 21.5349C14.7223 21.7955 18.2612 18.8792 18.8954 15.0258C19.013 14.3092 19.6471 13.7881 20.3887 13.7881C21.3041 13.7881 22.0149 14.5848 21.8717 15.4667C20.9819 20.9637 15.8116 25.0877 9.81801 24.4312C4.80628 23.88 0.78156 19.9515 0.213906 15.0408C-0.537854 8.6168 4.5557 3.14488 10.9482 3.07472Z" fill="#008BD9"/>
+                            </svg>
+                            <svg v-else-if="l.status == 'AGUARDANDOA'" width="16" height="25" viewBox="0 0 16 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M14.3007 21.5314V17.6757C14.3007 16.3517 13.734 15.091 12.7453 14.2182L10.515 12.25L12.7453 10.2818C13.734 9.40901 14.3007 8.14826 14.3007 6.82425V2.96857C14.8886 2.75725 15.3126 2.19581 15.3126 1.53125C15.3126 0.687005 14.6316 0 13.7947 0H1.65123C0.814331 0 0.133301 0.687005 0.133301 1.53125C0.133301 2.19581 0.557326 2.75725 1.14524 2.96857V6.82425C1.14524 8.14826 1.71195 9.40901 2.7006 10.2818L4.93097 12.25L2.7006 14.2182C1.7119 15.091 1.14524 16.3517 1.14524 17.6757V21.5314C0.557326 21.7427 0.133301 22.3042 0.133301 22.9688C0.133301 23.813 0.814331 24.5 1.65123 24.5H13.7947C14.6316 24.5 15.3126 23.813 15.3126 22.9688C15.3126 22.3042 14.8886 21.7427 14.3007 21.5314ZM13.2887 21.4375H2.15723V17.6757C2.15723 16.6457 2.59843 15.6657 3.3665 14.9869L6.03199 12.6339C6.14228 12.5369 6.20504 12.397 6.20504 12.25C6.20504 12.103 6.14228 11.9632 6.03199 11.8662L3.3665 9.51323C2.59843 8.83436 2.15723 7.85436 2.15723 6.82435V3.0625H13.2888V6.82425C13.2888 7.85426 12.8476 8.83426 12.0795 9.51313L9.41399 11.8661C9.30366 11.9631 9.2409 12.103 9.2409 12.25C9.2409 12.397 9.30366 12.5369 9.41395 12.6338L12.0794 14.9868C12.8485 15.6657 13.2887 16.6457 13.2887 17.6757V21.4375Z" fill="#0049D6"/>
+                              <path d="M12.1665 19.5876L8.11866 14.4835C7.9264 14.2415 7.52059 14.2415 7.32834 14.4835L3.28053 19.5876C3.1591 19.7408 3.13581 19.9511 3.21981 20.1276C3.30382 20.3043 3.4809 20.4165 3.67519 20.4165H11.7709C11.9651 20.4165 12.1422 20.3042 12.2272 20.1276C12.3111 19.9511 12.2879 19.7408 12.1665 19.5876Z" fill="#0049D6"/>
+                              <path d="M10.2146 8.48219C10.1367 8.29131 9.95151 8.16675 9.74711 8.16675H5.6993C5.4949 8.16675 5.30972 8.29131 5.23178 8.48219C5.15285 8.67307 5.19635 8.89156 5.34107 9.03856L7.365 11.0802C7.46419 11.1792 7.59369 11.2293 7.72323 11.2293C7.85278 11.2293 7.98228 11.1793 8.08146 11.0802L10.1054 9.03856C10.25 8.89256 10.2936 8.67307 10.2146 8.48219Z" fill="#0049D6"/>
+                            </svg>
+                            <svg v-else-if="l.status == 'CANCELADO'" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M0.266602 14.2419L5.70622 8.74996L0.266602 3.25812L3.49369 0L8.93331 5.49192L14.3728 0L17.5999 3.25812L12.1603 8.75004L17.5999 14.2419L14.3728 17.5L8.93323 12.0081L3.49361 17.5L0.266602 14.2419Z" fill="#CE4B39"/>
+                            </svg>
+                          </v-col>
+                          <v-col :sm="8" :lg="9" :cols="12">
+                            <span class="d-block">
+                              <b>{{ l.paciente.nome }}</b>
+                            </span>
+                            <span class="d-block consulta-container-list-card-subtext">
+                              Cadastro em:
+                              {{ formataDataSimples(lidx) }}
+                            </span>
+                            <span class="d-block consulta-container-list-card-subtext">
+                              Status:
+                              <span v-if="l.status == 'REALIZADO'">Realizado</span>
+                              <span v-else-if="l.status == 'AGUARDANDOC'">Aguardando Consulta</span>
+                              <span v-else-if="l.status == 'AGUARDANDOA'">Aguardando Atendimento</span>
+                              <span v-else-if="l.status == 'CANCELADO'">Cancelado</span>
+                            </span>
+                          </v-col>
+                        </v-row>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </div>
             <!-- Caso nao haja agendamentos -->
-            <div class="consulta-container-empty">
+            <div v-else class="consulta-container-empty">
               <svg width="449" height="313" viewBox="0 0 449 313" fill="none" xmlns="http://www.w3.org/2000/svg"  class="consulta-container-empty-image">
                 <g clip-path="url(#clip0)">
                 <rect width="449" height="313" fill="white"/>
@@ -166,12 +224,61 @@ export default {
       modalEditAtivo: false,
       data_atual: null,
       filtro_exp: 0,
-      filtros: ['0','1','2','3']
+      filtros: ['0','1','2','3'],
+      consultas: []
     }
+  },
+  async asyncData({ params, app }) {
+    let data = {
+      consultas: []
+    }
+    await app.$axios
+      .get(`/consulta`)
+      .then(res => {
+        data.consultas = res.data.dados
+      }).catch(err => {
+        console.log('err', err.response)
+      })
+    return data
   },
   mounted(){
     const offset = new Date().getTimezoneOffset()
     this.data_atual = new Date(new Date().getTime() - (offset*60*1000)).toISOString().split('T')[0]
+    console.log(this.consultaLista)
+    console.log(this.consultas)
+  },
+  computed: {
+    consultaLista(){
+      if(this.consultas.length > 0) {
+        return this.consultas.reduce((r, a) => {
+                  r[a.dt_inicio] = [...r[a.dt_inicio] || [], a];
+                  return r;
+                }, {});
+      } else return []
+    }
+  },
+  methods: {
+    formataData(data){
+      const [ano, mes, dia] = data.split('-')
+      const mesExtensos = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro']
+      return `${dia} de ${mesExtensos[parseInt(mes) - 1]} de ${ano}`
+    },
+    formataDataSimples(data){
+      const [ano, mes, dia] = data.split('-')
+      return `${dia}/${mes}/${ano}`
+    },
+    buscaDiaSemana(data){
+      const d = new Date(data + ' 00:00:00')
+      switch(d.getDay()){
+        case 0: return "Domingo"
+        case 1: return "Segunda-feira"
+        case 2: return "Terça-feira"
+        case 3: return "Quarta-feira"
+        case 4: return "Quinta-feira"
+        case 5: return "Sexta-feira"
+        case 6: return "Sábado"
+      }
+    }
   }
 }
 </script>
@@ -201,5 +308,15 @@ export default {
   }
   .consulta-container-filter::before{
     box-shadow: none !important;
+  }
+  .consulta-container-list-count{
+    text-align: right;
+  }
+  .consulta-container-list-card svg{
+    display: block;
+    margin: 10px auto;
+  }
+  .consulta-container-list-card-subtext{
+    font-size: .8rem;
   }
 </style>
