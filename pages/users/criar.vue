@@ -136,7 +136,7 @@ export default {
       console.log('Botao Criar apertado')
     },
 /*teste*/
-/*enviarDados(){
+enviarDados(){
         this.$axios.post('/usuario', info).then(res=>{
           this.limparDados()
           this.$emit('input', false) // Fecha modal
@@ -146,8 +146,6 @@ export default {
           console.log(err.response.data)
         })
       }
-
-*/
 /*fim teste*/
   }
 }
