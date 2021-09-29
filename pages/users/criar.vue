@@ -136,8 +136,8 @@ export default {
       console.log('Botao Criar apertado')
     },
 /*teste*/
-enviarDados(){
-        this.$axios.post('/criar', info).then(res=>{
+/*enviarDados(){
+        this.$axios.post('/usuario', info).then(res=>{
           this.limparDados()
           this.$emit('input', false) // Fecha modal
           alert('Usuario Cadastrado')
@@ -147,17 +147,7 @@ enviarDados(){
         })
       }
 
-    //new
-    /*
-    this.$axios.post('/paciente', info).then(res=>{
-          this.limparDados()
-          this.$emit('input', false) // Fecha modal
-          alert('Paciente Cadastrado')
-        }).catch(err => {
-          alert(JSON.stringify(err.response.data))
-          console.log(err.response.data)
-        })
-        */
+*/
 /*fim teste*/
   }
 }
