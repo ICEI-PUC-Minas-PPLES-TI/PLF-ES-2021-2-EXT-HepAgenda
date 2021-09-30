@@ -1,83 +1,76 @@
-const { Op } = require("sequelize");
-const yup = require("yup");
+const { Op } = require('sequelize')
+const yup = require('yup');
 
-const Paciente = require("../models/Paciente");
-const { SortPaginate } = require("../helpers/SortPaginate");
-const { telefoneRegExp } = require("../helpers/Regex");
+const Paciente = require('../models/Paciente');
+const { SortPaginate } = require('../helpers/SortPaginate')
+const PacienteHepB = require('../models/PacienteHepB');
+const PacienteHepC = require('../models/PacienteHepC');
+const { pacienteCreateScheme, pacienteUpdateScheme, hepatiteRequiredScheme } = require('../validation/PacienteValidation');
 
-class PacienteController {
-  async create(request, response) {
-    const scheme = yup.object().shape({
-      nome: yup
-        .string()
-        .max(120)
-        .required("Nome obrigatório!"),
-      data_nascimento: yup.date().required("Data de nacimento obrigatória!"),
-      registro_hc: yup
-        .string()
-        .max(20)
-        .required("Registro HC obrigatório!"),
-      sexo: yup
-        .mixed()
-        .oneOf(["M", "F"])
-        .required("Sexo do paciente obrigatório!"),
-      telefone: yup
-        .string()
-        .max(15)
-        .matches(telefoneRegExp)
-        .required("Telefone obrigatório!"),
-      nome_mae: yup
-        .string()
-        .max(120)
-        .required("Nome da mãe obrigatório!"),
-      email: yup
-        .string()
-        .email()
-        .max(50),
-      peso: yup.number().min(0),
-      altura: yup.number().min(0),
-      comorbidade: yup.mixed().oneOf(["HEPB", "HEPC", "OUTRO"]),
-      desfecho: yup.number()
-    });
+class PacienteController{
+  async create(request, response){
 
-    // Validando com o esquema criado:
-    try {
-      await scheme.validate(request.body, { abortEarly: false }); // AbortEarly para fazer todas as validações
-    } catch (err) {
-      return response.status(422).json({
-        "name:": err.name, // => 'ValidationError'
-        message: err.message,
-        errors: err.errors
+      const scheme = pacienteCreateScheme;
+
+      // Validando com o esquema criado:
+      try {
+          await scheme.validate(request.body, { abortEarly: false }); // AbortEarly para fazer todas as validações
+      } catch (err) {
+          return response.status(422).json({
+              'name:': err.name, // => 'ValidationError'
+              'message': err.message,
+              'errors': err.errors
+          })
+      }
+
+
+      //procura um registro_hc testar se é único
+      if (
+          await Paciente.findOne({
+              where: { registro_hc: request.body.registro_hc }
+          })
+      ){
+          return response.status(422).json({
+              'name:': "ValidationError", // => 'ValidationError'
+              'message': "O registro_hc já existe",
+              'errors': ["O registro_hc já existe"]
+          })
+      }
+
+      // atualiza o peso_atualizao se o peso for atualizado
+      if (request.body.peso){
+          request.body.peso_atualizacao = new Date().toISOString().replace('T', ' ').substr(0,19)
+      }
+
+      let hepcIds = [];
+      const paciente = await Paciente.create({
+          ...request.body,
+          comorbidade:
+              request.body.hepatiteb ? 'HEPB' : request.body.hepatitec ? 'HEPC' : 'OUTRO'
       });
-    }
+      if (request.body.hepatiteb){
+          await PacienteHepB.create({
+              paciente_id: paciente.id,
+              ...request.body.hepatiteb
+          });
+      }
+      else if (request.body.hepatitec){
+          await Promise.all(
+              request.body.hepatitec.map((hepc)=>{
+                  return PacienteHepC.create({
+                      paciente_id: paciente.id,
+                      ...hepc
+                  }).then((pacienteHepC)=>{
+                      hepcIds.push(pacienteHepC.id)
+                  })
+              })
+          )
+      }
 
-    //procura um registro_hc testar se é único
-    if (
-      await Paciente.findOne({
-        where: { registro_hc: request.body.registro_hc }
-      })
-    ) {
-      return response.status(422).json({
-        "name:": "ValidationError", // => 'ValidationError'
-        message: "O registro_hc já existe",
-        errors: ["O registro_hc já existe"]
+      return response.status(201).json({
+          id: paciente.id,
+          hepcIds
       });
-    }
-
-    if (request.body.peso) {
-      request.body.peso_atualizacao = new Date()
-        .toISOString()
-        .replace("T", " ")
-        .substr(0, 19);
-    }
-
-    const paciente = await Paciente.create({
-      ...request.body
-    });
-
-    return response.status(201).json({
-      id: paciente.id
-    });
   }
 
   async get(request, response) {

@@ -59,7 +59,7 @@
 
 <style>
   .main{
-    background: #E5E5E5;
+    background: #F2F2F0 !important;
     height: 100%;
     width: 100%;
     padding:0;
@@ -86,7 +86,7 @@
   .main-menu{
     list-style: none;
     margin-top: 5px;
-    
+
   }
   .main-menu-link{
     color: #000 !important;

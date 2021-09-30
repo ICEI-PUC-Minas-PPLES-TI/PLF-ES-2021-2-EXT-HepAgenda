@@ -29,7 +29,7 @@ class UsuarioController {
         }
 
         const token = jwt.sign({ id: usuario.id }, process.env.SECRET_KEY, {
-          expiresIn: 604800 // 1 semana expira
+          expiresIn: 604800 * 12 // expira 3 meses
         });
 
         res.status(200).send({ autenticado: true, acessoToken: token });
