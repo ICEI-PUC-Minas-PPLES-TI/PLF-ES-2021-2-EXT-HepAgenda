@@ -93,6 +93,30 @@
               ></v-text-field>
             </v-col>
           </v-row>
+          <!--FIM CONFIRMAR SENHA-->
+          <!--
+         <v-flex xs12 sm12 d-flex>
+        <v-select
+          :items="items"
+          box
+          label="TIPO DE USUÁRIO"
+          outlined
+        ></v-select>
+      </v-flex>-->
+          <v-flex xs12 sm12 d-flex>
+            <v-select
+              v-model="select"
+              :hint="`${select.state}`"
+              :items="items"
+              item-text="state"
+              label="Select"
+              persistent-hint
+              return-object
+              single-line
+              outlined
+            ></v-select>
+          </v-flex>
+
           <!--BOTAO-->
           <v-row class="mb-6" no-gutters>
             <v-btn color="#008BD9" large block @click="criarUsuario">
@@ -117,14 +141,29 @@ export default {
       formData: {
         email: null,
         senha: null,
-        confirmar_senha: null
+        confirmar_senha: null,
+        select: { state: "Florida" },
+        items: [
+          { state: "Florida" },
+          { state: "Georgia" },
+          { state: "Nebraska" },
+          { state: "California" },
+          { state: "New York" }
+        ]
       },
       rules: {
         required: value => !!value || "Obrigatório.",
-        min: v =>{
-          if(v && v.length >= 8 && /\d/.test(v) && /[a-z]/g.test(v) && /[A-Z]/g.test(v) )
-            return true
-          else return "Min 8 caracteres, 1 número, 1 letra minúscula e 1 letra maiúscula"
+        min: v => {
+          if (
+            v &&
+            v.length >= 8 &&
+            /\d/.test(v) &&
+            /[a-z]/g.test(v) &&
+            /[A-Z]/g.test(v)
+          )
+            return true;
+          else
+            return "Min 8 caracteres, 1 número, 1 letra minúscula e 1 letra maiúscula";
         },
         equal: v => v === this.formData.senha || "Senhas não conferem"
       }
@@ -132,23 +171,26 @@ export default {
   },
   /*FIM SENHA*/
   methods: {
-    criarUsuario(){
-      console.log('Botao Criar apertado')
+    criarUsuario() {
+      console.log("Botao Criar apertado");
     },
-/*teste*/
-enviarDados(){
-        this.$axios.post('/usuario', info).then(res=>{
-          this.limparDados()
-          this.$emit('input', false) // Fecha modal
-          alert('Usuario Cadastrado')
-        }).catch(err => {
-          alert(JSON.stringify(err.response.data))
-          console.log(err.response.data)
+    /*teste*/
+    enviarDados() {
+      this.$axios
+        .post("/usuario", this.formData)
+        .then(res => {
+          this.limparDados();
+          this.$emit("input", false); // Fecha modal
+          alert("Usuario Cadastrado");
         })
-      }
-/*fim teste*/
+        .catch(err => {
+          alert(JSON.stringify(err.response.data));
+          console.log(err.response.data);
+        });
+    }
+    /*fim teste*/
   }
-}
+};
 </script>
 
 <style>
