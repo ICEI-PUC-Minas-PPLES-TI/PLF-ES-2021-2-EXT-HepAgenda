@@ -47,7 +47,7 @@ class LogConsultaController {
     const logs = await LogConsulta.findAll({
       where: {
         consulta_id: id_consulta
-      },
+      }
     });
     return logs;
   }

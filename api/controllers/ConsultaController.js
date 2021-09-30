@@ -9,6 +9,7 @@ const AppError = require("../errors/AppError");
 const { Op } = require("sequelize");
 const yup = require("yup");
 const LogConsultaController = require("./LogConsultaController");
+const ConsultaService = require("../services/ConsultaService");
 
 class ConsultaController {
   async create(request, response) {
@@ -84,6 +85,13 @@ class ConsultaController {
       usuario_id_medico: usuario_id_medico ? usuario_id_medico : null
     });
 
+    const consultaService = new ConsultaService();
+    const primeiraConsulta = (await consultaService.getByPacienteId(
+      paciente_id
+    ))
+      ? false
+      : true;
+
     consulta
       .save()
       .then(function(consultaObj) {
@@ -97,7 +105,8 @@ class ConsultaController {
         logConsultaController.create(log_descricao, userId, consulta_id);
 
         return response.status(201).json({
-          id: consulta.id
+          id: consulta.id,
+          primeiraConsulta: primeiraConsulta
         });
       })
       .catch(function(erro) {
@@ -152,7 +161,6 @@ class ConsultaController {
       dt_desmarcadaTemp = null;
     }
     const dt_desmarcada = dt_desmarcadaTemp;
-    console.log(dt_desmarcada);
 
     let usuarioPacienteTemp = null;
     if (paciente_id) {
@@ -195,6 +203,13 @@ class ConsultaController {
     if (consulta == null) {
       throw new AppError("Consulta não encontrada!", 404);
     }
+
+    const consultaService = new ConsultaService();
+    const primeiraConsulta = (await consultaService.getByPacienteId(
+      paciente_id
+    ))
+      ? false
+      : true;
 
     const consultaData = consulta.dataValues;
     // TODO fazer o arquivo
@@ -281,7 +296,10 @@ class ConsultaController {
         ? usuario_id_medico
         : consultaData.usuario_id_medico
     });
-    response.status(200).json(consulta);
+    response.status(200).json({
+      consulta,
+      primeiraConsulta: primeiraConsulta
+    });
   }
 
   async get(request, response) {

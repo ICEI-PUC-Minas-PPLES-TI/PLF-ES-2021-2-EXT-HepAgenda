@@ -1,14 +1,15 @@
-const Paciente = require('../models/Paciente');
+const Paciente = require("../models/Paciente");
 
-class PacienteService{
+class PacienteService {
   async getById(id, atributos) {
-  const paciente = await Paciente.findOne({
-    where: {
-      id: id
-    },
-    attributes: atributos,
-  });
-  return paciente;
-}}
+    const paciente = await Paciente.findOne({
+      where: {
+        id: id
+      },
+      attributes: atributos
+    });
+    return paciente;
+  }
+}
 
 module.exports = PacienteService;

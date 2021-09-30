@@ -216,7 +216,11 @@ class UsuarioController {
   // URI de exemplo: http://localhost:3000/api/usuario?pagina=1&limite=5&atributo=nome&ordem=DESC
   // Todas as querys são opicionais
   async getAll(request, response) {
-    const atributos = Object.keys(Usuario.rawAttributes).filter(function(value) { return value != 'senha' });; /* Todos os atributos de usuario, de menos a senha. Para não ordenar por senha. */
+    const atributos = Object.keys(Usuario.rawAttributes).filter(function(
+      value
+    ) {
+      return value != "senha";
+    }); /* Todos os atributos de usuario, de menos a senha. Para não ordenar por senha. */
 
     Usuario.findAndCountAll()
       .then(dados => {
