@@ -252,3 +252,5 @@ class PacienteController{
     }
 
 }
+
+module.exports = PacienteController;
