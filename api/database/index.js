@@ -7,6 +7,8 @@ const Tratamento = require('../models/Tratamento');
 const Usuario = require('../models/Usuario');
 const Paciente = require('../models/Paciente');
 const LogConsulta = require("../models/LogConsulta");
+const PacienteHepB = require("../models/PacienteHepB");
+const PacienteHepC = require("../models/PacienteHepC");
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -29,6 +31,15 @@ module.exports = {
       Consulta.init(sequelize);
       Paciente.init(sequelize);
       LogConsulta.init(sequelize);
+      PacienteHepB.init(sequelize);
+      PacienteHepC.init(sequelize);
+
+      //Associações
+      Paciente.hasOne(PacienteHepB, {foreignKey: "paciente_id"});
+      Paciente.hasMany(PacienteHepC, {foreignKey: "paciente_id"});
+      PacienteHepB.hasOne(Tratamento, {foreignKey: "tratamento_id"})
+      PacienteHepC.hasOne(Tratamento, {foreignKey: "tratamento_id"})
+
       if (process.env.NODE_ENV === "dev") {
         console.log(
           `Conexão com '${process.env.DB_HOST}/${process.env.DB_DATABASE}' estabelecida`
