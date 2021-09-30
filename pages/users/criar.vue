@@ -57,7 +57,7 @@
               <v-text-field
                 hide-details="auto"
                 v-model="formData.email"
-                label="LOGIN"
+                label="EMAIL"
                 outlined
                 :rules="[rules.required]"
               ></v-text-field>
@@ -94,28 +94,20 @@
             </v-col>
           </v-row>
           <!--FIM CONFIRMAR SENHA-->
-          <!--
-         <v-flex xs12 sm12 d-flex>
-        <v-select
-          :items="items"
-          box
-          label="TIPO DE USUÁRIO"
-          outlined
-        ></v-select>
-      </v-flex>-->
-          <v-flex xs12 sm12 d-flex>
-            <v-select
-              v-model="select"
-              :hint="`${select.state}`"
-              :items="items"
-              item-text="state"
-              label="Select"
-              persistent-hint
-              return-object
-              single-line
-              outlined
-            ></v-select>
-          </v-flex>
+
+            <v-flex xs12 sm12 d-flex>
+              <p>Tipo de Usuário: {{tipo}}</p>
+              <select
+               v-model="formData.tipo"
+               outlined
+             >
+                <option value="Administrador">Administrador</option>
+                <option value="Medico">Médico</option>
+                <option value="Visualizador">Visualizador</option>
+              </select>
+             </v-flex>
+
+
 
           <!--BOTAO-->
           <v-row class="mb-6" no-gutters>
@@ -142,14 +134,7 @@ export default {
         email: null,
         senha: null,
         confirmar_senha: null,
-        select: { state: "Florida" },
-        items: [
-          { state: "Florida" },
-          { state: "Georgia" },
-          { state: "Nebraska" },
-          { state: "California" },
-          { state: "New York" }
-        ]
+         tipo: 'Administrador'
       },
       rules: {
         required: value => !!value || "Obrigatório.",
