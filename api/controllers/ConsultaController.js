@@ -204,13 +204,6 @@ class ConsultaController {
       throw new AppError("Consulta não encontrada!", 404);
     }
 
-    const consultaService = new ConsultaService();
-    const primeiraConsulta = (await consultaService.getByPacienteId(
-      paciente_id
-    ))
-      ? false
-      : true;
-
     const consultaData = consulta.dataValues;
     // TODO fazer o arquivo
 
@@ -296,10 +289,7 @@ class ConsultaController {
         ? usuario_id_medico
         : consultaData.usuario_id_medico
     });
-    response.status(200).json({
-      consulta,
-      primeiraConsulta: primeiraConsulta
-    });
+    response.status(200).json(consulta);
   }
 
   async get(request, response) {
