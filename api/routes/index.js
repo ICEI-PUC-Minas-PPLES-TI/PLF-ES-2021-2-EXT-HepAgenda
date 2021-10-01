@@ -35,6 +35,7 @@ router.post('/consulta', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmi
 router.get('/consulta/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], consultaController.get)
 router.get('/consulta', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], consultaController.getAll)
 router.put('/consulta/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], consultaController.update)
+router.get('/primeiraconsulta', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], consultaController.checkPrimeiraConsulta) // Verifica se é a primeira consulta de um paciente
 // Paciente
 router.post('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic] , pacienteController.create)
 router.put('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.update)

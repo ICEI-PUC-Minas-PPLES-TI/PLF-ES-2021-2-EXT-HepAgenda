@@ -407,6 +407,37 @@ class ConsultaController {
         throw new AppError(erro.message, 500);
       });
   }
+
+  async checkPrimeiraConsulta(request, response) {
+    const scheme = yup.object().shape({
+      paciente_id: yup
+        .number("'paciente_id' deve ser numérico!")
+        .required("'paciente_id' obrigatório!")
+    });
+
+    try {
+      await scheme.validate(request.body, { abortEarly: false });
+    } catch (erro) {
+      throw new AppError(erro.message, 422);
+    }
+
+    const { paciente_id } = request.body;
+
+    const pacienteService = new PacienteService();
+    const paciente = await pacienteService.getById(paciente_id);
+    if (!paciente) throw new AppError("'paciente_id' não encontrado!", 404);
+
+    const consultaService = new ConsultaService();
+    const primeiraConsulta = (await consultaService.getByPacienteId(
+      paciente_id
+    ))
+      ? false
+      : true;
+
+    return response.status(201).json({
+      primeiraConsulta: primeiraConsulta
+    });
+  }
 }
 
 module.exports = ConsultaController;
