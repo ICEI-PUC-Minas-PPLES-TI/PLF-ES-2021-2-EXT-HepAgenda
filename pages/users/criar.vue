@@ -56,8 +56,8 @@
             <v-col cols="12" sm="12">
               <v-text-field
                 hide-details="auto"
-                v-model="formData.email"
-                label="EMAIL"
+                v-model="formData.login"
+                label="LOGIN"
                 outlined
                 :rules="[rules.required]"
               ></v-text-field>
@@ -93,17 +93,6 @@
               ></v-text-field>
             </v-col>
           </v-row>
-          <!--FIM CONFIRMAR SENHA-->
-
-          <v-flex xs12 sm12 d-flex>
-            <p>Tipo de Usuário:</p>
-            <select v-model="formData.tipo" outlined>
-              <option value="Administrador">Administrador</option>
-              <option value="Medico">Médico</option>
-              <option value="Visualizador">Visualizador</option>
-            </select>
-          </v-flex>
-
           <!--BOTAO-->
           <v-row class="mb-6" no-gutters>
             <v-btn color="#008BD9" large block @click="criarUsuario">
@@ -126,10 +115,9 @@ export default {
       show1: false,
       show2: false,
       formData: {
-        email: null,
+        login: null,
         senha: null,
-        confirmar_senha: null,
-        tipo: "Administrador"
+        confirmar_senha: null
       },
       rules: {
         required: value => !!value || "Obrigatório.",
@@ -149,39 +137,12 @@ export default {
       }
     };
   },
-  /*FIM SENHA*/
   methods: {
-    /**teste*/
-    /*  enviarDados() {
-      this.$axios
-        .post("/usuario", this.formData)
-        .then(res => {
-          this.limparDados();
-          this.$emit("input", false); // Fecha modal
-          alert("Usuario Cadastrado");
-        })
-        .catch(err => {
-          alert(JSON.stringify(err.response.data));
-          console.log(err.response.data);
-        });
-    },*/
-    /*fim teste*/
     criarUsuario() {
       console.log("Botao Criar apertado");
-      this.$axios
-        .post("/usuario", this.formData)
-        .then(res => {
-          this.limparDados();
-          this.$emit("input", false); // Fecha modal
-          alert("Usuario Cadastrado");
-        })
-        .catch(err => {
-          alert(JSON.stringify(err.response.data));
-          console.log(err.response.data);
-        });
     }
   }
-};
+}; /*FIM SENHA*/
 </script>
 
 <style>
