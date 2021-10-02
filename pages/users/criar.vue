@@ -95,8 +95,8 @@
           </v-row>
           <!--FIM CONFIRMAR SENHA-->
 
-            <v-flex xs12 sm12 d-flex>
-              <p>Tipo de Usuário: {{tipo}}</p>
+           <v-flex xs12 sm12 d-flex>
+              <p>Tipo de Usuário:</p>
               <select
                v-model="formData.tipo"
                outlined
@@ -134,7 +134,7 @@ export default {
         email: null,
         senha: null,
         confirmar_senha: null,
-         tipo: 'Administrador'
+        tipo: 'Administrador'
       },
       rules: {
         required: value => !!value || "Obrigatório.",
@@ -156,11 +156,8 @@ export default {
   },
   /*FIM SENHA*/
   methods: {
-    criarUsuario() {
-      console.log("Botao Criar apertado");
-    },
-    /*teste*/
-    enviarDados() {
+    /**teste*/
+  /*  enviarDados() {
       this.$axios
         .post("/usuario", this.formData)
         .then(res => {
@@ -172,8 +169,25 @@ export default {
           alert(JSON.stringify(err.response.data));
           console.log(err.response.data);
         });
-    }
+    },*/
     /*fim teste*/
+    criarUsuario() {
+      console.log("Botao Criar apertado");
+     this.$axios
+        .post("/usuario", this.formData)
+        .then(res => {
+          this.limparDados();
+          this.$emit("input", false); // Fecha modal
+          alert("Usuario Cadastrado");
+        })
+        .catch(err => {
+          alert(JSON.stringify(err.response.data));
+          console.log(err.response.data);
+        });
+
+
+    }
+
   }
 };
 </script>
