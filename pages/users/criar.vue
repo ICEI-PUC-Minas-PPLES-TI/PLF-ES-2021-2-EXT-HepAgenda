@@ -95,19 +95,14 @@
           </v-row>
           <!--FIM CONFIRMAR SENHA-->
 
-           <v-flex xs12 sm12 d-flex>
-              <p>Tipo de Usuário:</p>
-              <select
-               v-model="formData.tipo"
-               outlined
-             >
-                <option value="Administrador">Administrador</option>
-                <option value="Medico">Médico</option>
-                <option value="Visualizador">Visualizador</option>
-              </select>
-             </v-flex>
-
-
+          <v-flex xs12 sm12 d-flex>
+            <p>Tipo de Usuário:</p>
+            <select v-model="formData.tipo" outlined>
+              <option value="Administrador">Administrador</option>
+              <option value="Medico">Médico</option>
+              <option value="Visualizador">Visualizador</option>
+            </select>
+          </v-flex>
 
           <!--BOTAO-->
           <v-row class="mb-6" no-gutters>
@@ -134,7 +129,7 @@ export default {
         email: null,
         senha: null,
         confirmar_senha: null,
-        tipo: 'Administrador'
+        tipo: "Administrador"
       },
       rules: {
         required: value => !!value || "Obrigatório.",
@@ -157,7 +152,7 @@ export default {
   /*FIM SENHA*/
   methods: {
     /**teste*/
-  /*  enviarDados() {
+    /*  enviarDados() {
       this.$axios
         .post("/usuario", this.formData)
         .then(res => {
@@ -173,7 +168,7 @@ export default {
     /*fim teste*/
     criarUsuario() {
       console.log("Botao Criar apertado");
-     this.$axios
+      this.$axios
         .post("/usuario", this.formData)
         .then(res => {
           this.limparDados();
@@ -184,10 +179,7 @@ export default {
           alert(JSON.stringify(err.response.data));
           console.log(err.response.data);
         });
-
-
     }
-
   }
 };
 </script>
