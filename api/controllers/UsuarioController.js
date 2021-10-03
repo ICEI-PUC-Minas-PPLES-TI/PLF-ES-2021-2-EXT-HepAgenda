@@ -176,20 +176,10 @@ class UsuarioController {
 
     const { nome, email, telefone, login, senha, tipo } = request.body;
 
-    const atributos = [
-      "id",
-      "login",
-      "nome",
-      "email",
-      "telefone",
-      "tipo",
-      "data_expira"
-    ];
     const usuario = await Usuario.findAll({
       where: {
         id: request.params.id
-      },
-      attributes: atributos
+      }
     });
     if (usuario[0] == null) {
       response.status(404).json(usuario);
@@ -211,20 +201,10 @@ class UsuarioController {
 
   // URI de exemplo: http://localhost:3000/api/usuario/1
   async get(request, response) {
-    const atributos = [
-      "id",
-      "login",
-      "nome",
-      "email",
-      "telefone",
-      "tipo",
-      "data_expira"
-    ];
     const usuario = await Usuario.findAll({
       where: {
         id: request.params.id
-      },
-      attributes: atributos
+      }
     });
     if (usuario[0] == null) {
       response.status(404).json(usuario);
@@ -233,37 +213,14 @@ class UsuarioController {
     }
   }
 
-  async getByID(id) {
-    const atributos = [
-      "id",
-      "login",
-      "nome",
-      "email",
-      "telefone",
-      "tipo",
-      "data_expira"
-    ];
-    const usuario = await Usuario.findOne({
-      where: {
-        id: id
-      },
-      attributes: atributos
-    });
-    return usuario;
-  }
-
   // URI de exemplo: http://localhost:3000/api/usuario?pagina=1&limite=5&atributo=nome&ordem=DESC
-  // todos as querys são opicionais
+  // Todas as querys são opicionais
   async getAll(request, response) {
-    const atributos = [
-      "id",
-      "login",
-      "nome",
-      "email",
-      "telefone",
-      "tipo",
-      "data_expira"
-    ];
+    const atributos = Object.keys(Usuario.rawAttributes).filter(function(
+      value
+    ) {
+      return value != "senha";
+    }); /* Todos os atributos de usuario, de menos a senha. Para não ordenar por senha. */
 
     Usuario.findAndCountAll()
       .then(dados => {
@@ -273,7 +230,6 @@ class UsuarioController {
           dados.count
         );
         Usuario.findAll({
-          attributes: atributos,
           ...SortPaginateOptions
         })
           .then(usuarios => {

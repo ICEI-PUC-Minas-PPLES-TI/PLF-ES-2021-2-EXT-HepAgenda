@@ -1,22 +1,19 @@
 const Consulta = require("../models/Consulta");
 
-const UsuarioController = require("./UsuarioController");
-const PacienteController = require("./PacienteController");
+const PacienteService = require("../services/PacienteService");
+const UsuarioService = require("../services/UsuarioService");
 
 const { SortPaginate } = require("../helpers/SortPaginate");
 const AppError = require("../errors/AppError");
 
+const { Op } = require("sequelize");
 const yup = require("yup");
 const LogConsultaController = require("./LogConsultaController");
+const ConsultaService = require("../services/ConsultaService");
 
 class ConsultaController {
   async create(request, response) {
-    const statusEnums = [
-      "AGUARDANDOC",
-      "AGUARDANDOA",
-      "REALIZADO",
-      "CANCELADO"
-    ];
+    const statusEnums = ["AGUARDANDOC", "AGUARDANDOA", "REALIZADO"];
 
     const scheme = yup.object().shape({
       paciente_id: yup
@@ -24,7 +21,6 @@ class ConsultaController {
         .required("'paciente_id' obrigatório!"),
       descricao: yup
         .string("'descricao' deve ser string!")
-        .required("'descricao' obrigatório!")
         .max(60, "'descricao' deve ter no máximo 60 caracteres!"),
       status: yup
         .mixed()
@@ -32,15 +28,10 @@ class ConsultaController {
         .required("'status' obrigatório!"),
       detalhes: yup
         .string("'detalhes' deve ser string!")
-        .required("'detalhes' obrigatório!")
         .max(65000, "'detalhes' deve ter no máximo 65000 caracteres!"),
       dt_inicio: yup
         .date("'dt_inicio' deve ser data!")
         .required("'dt_inicio' obrigatório!"),
-      dt_desmarcada: yup.date("'dt_desmarcada' deve ser data!"),
-      usuario_id_criador: yup
-        .number("'usuario_id_criador' deve ser numérico!")
-        .required("'usuario_id_criador' obrigatório!"),
       usuario_id_medico: yup.number("'usuario_id_medico' deve ser numérico!")
     });
 
@@ -56,52 +47,66 @@ class ConsultaController {
       status,
       detalhes,
       dt_inicio,
-      dt_desmarcada,
-      usuario_id_criador,
       usuario_id_medico
     } = request.body;
 
-    const pacienteController = new PacienteController();
-    const paciente = await pacienteController.getByID(paciente_id);
+    const pacienteService = new PacienteService();
+    const paciente = await pacienteService.getById(paciente_id);
     if (!paciente) throw new AppError("'paciente_id' não encontrado!", 404);
 
-    const usuarioController = new UsuarioController();
-    const usuario_criador = await usuarioController.getByID(usuario_id_criador);
-    const usuario_medico = await usuarioController.getByID(usuario_id_medico);
-    if (!usuario_criador)
-      throw new AppError("'usuario_id_criador' não encontrado!", 404);
+    const usuarioService = new UsuarioService();
+    const usuario_criador = await usuarioService.getById(request.userId);
+    const usuario_medico = await usuarioService.getById(usuario_id_medico);
     // Se enviar o id do médico, verificar se existe
     if (usuario_id_medico && !usuario_medico)
       throw new AppError("'usuario_id_medico' não encontrado!", 404);
-    // Se enviar o id do médico, verificar se é médico
-    if (usuario_id_medico && usuario_medico.dataValues.tipo != "M")
-      throw new AppError("'usuario_id_medico' não é médico!", 422);
+    /*
+      * Se enviar o id do médico, verificar se é médico
+      ! O médico da consulta pode ser um usuário administrador com essa regra
+      if (usuario_medico.dataValues.tipo != "M") Para delimitar apenas médico
+    */
+    if (
+      usuario_medico.dataValues.tipo != "M" &&
+      usuario_medico.dataValues.tipo != "A"
+    )
+      throw new AppError(
+        "'usuario_id_medico' não é médico nem administrador!",
+        422
+      );
 
     const consulta = Consulta.build({
       paciente_id: paciente_id,
-      descricao: descricao,
+      descricao: descricao ? descricao : null,
       status: status,
-      detalhes: detalhes,
+      detalhes: detalhes ? detalhes : null,
       dt_inicio: dt_inicio,
-      dt_desmarcada: dt_desmarcada ? dt_desmarcada : null,
-      usuario_id_criador: usuario_id_criador,
+      dt_desmarcada: null,
+      usuario_id_criador: request.userId,
       usuario_id_medico: usuario_id_medico ? usuario_id_medico : null
     });
+
+    const consultaService = new ConsultaService();
+    const primeiraConsulta = (await consultaService.getByPacienteId(
+      paciente_id
+    ))
+      ? false
+      : true;
 
     consulta
       .save()
       .then(function(consultaObj) {
-        // TODO: fazer o arquivo
+        // TODO fazer o arquivo
 
         // Salvando log de criação
         const logConsultaController = new LogConsultaController();
-        const log_descricao = `Consulta criada.`;
+        const log_descricao = `Consulta criada pelo usuário ${usuario_criador.dataValues.login}.`;
         const userId = request.userId;
         const consulta_id = consultaObj.dataValues.id;
         logConsultaController.create(log_descricao, userId, consulta_id);
 
         return response.status(201).json({
-          id: consulta.id
+          id: consulta.id,
+          primeiraConsulta: primeiraConsulta
         });
       })
       .catch(function(erro) {
@@ -118,7 +123,6 @@ class ConsultaController {
     ];
 
     const scheme = yup.object().shape({
-      id: yup.number("'id' deve ser numérico!").required("'id' é obrigatório!"),
       paciente_id: yup.number("'paciente_id' deve ser numérico!"),
       descricao: yup
         .string("'descricao' deve ser string!")
@@ -130,7 +134,6 @@ class ConsultaController {
         .string("'detalhes' deve ser string!")
         .max(65000, "'detalhes' deve ter no máximo 65000 caracteres!"),
       dt_inicio: yup.date("'dt_inicio' deve ser data!"),
-      dt_desmarcada: yup.date("'dt_desmarcada' deve ser data!"),
       usuario_id_medico: yup.number("'usuario_id_medico' deve ser numérico!")
     });
 
@@ -140,184 +143,251 @@ class ConsultaController {
       throw new AppError(erro.message, 422);
     }
 
+    const id = request.params.id;
     const {
-      id,
       paciente_id,
       descricao,
       status,
       detalhes,
       dt_inicio,
-      dt_desmarcada,
       usuario_id_medico
     } = request.body;
 
-    const pacienteController = new PacienteController();
-    const paciente = await pacienteController.getByID(paciente_id);
-    if (!paciente) throw new AppError("'paciente_id' não encontrado!", 404);
+    let dt_desmarcadaTemp = null;
+    const tempoAgora = Date.now();
+    if (status && status == "CANCELADO") {
+      dt_desmarcadaTemp = new Date(tempoAgora);
+    } else {
+      dt_desmarcadaTemp = null;
+    }
+    const dt_desmarcada = dt_desmarcadaTemp;
 
-    let usuarioMedicoTemp;
+    let usuarioPacienteTemp = null;
+    if (paciente_id) {
+      const pacienteService = new PacienteService();
+      usuarioPacienteTemp = await pacienteService.getById(paciente_id);
+      if (!usuarioPacienteTemp)
+        throw new AppError("'paciente_id' não encontrado!", 404);
+    }
+
+    let usuarioMedicoTemp = null;
     if (usuario_id_medico) {
-      const usuarioController = new UsuarioController();
-      const usuario_medico = await usuarioController.getByID(usuario_id_medico);
+      const usuarioService = new UsuarioService();
+      const usuario_medico = await usuarioService.getById(usuario_id_medico);
       usuarioMedicoTemp = usuario_medico;
       // Se enviar o id do médico, verificar se existe
       if (usuario_id_medico && !usuario_medico)
         throw new AppError("'usuario_id_medico' não encontrado!", 404);
-      // Se enviar o id do médico, verificar se é médico
-      if (usuario_id_medico && usuario_medico.dataValues.tipo != "M")
-        throw new AppError("'usuario_id_medico' não é médico!", 422);
+
+      /*
+        * Se enviar o id do médico, verificar se é médico
+        ! O médico da consulta pode ser um usuário administrador com essa regra
+        if (usuario_medico.dataValues.tipo != "M") Para delimitar apenas médico
+      */
+      if (
+        usuario_medico.dataValues.tipo != "M" &&
+        usuario_medico.dataValues.tipo != "A"
+      )
+        throw new AppError(
+          "'usuario_id_medico' não é médico nem administrador!",
+          422
+        );
     }
     const usuario_medico = usuarioMedicoTemp;
 
-    const atributos = [
-      "id",
-      "paciente_id",
-      "descricao",
-      "status",
-      "detalhes",
-      "dt_inicio",
-      "dt_desmarcada",
-      "usuario_id_medico"
-    ];
     const consulta = await Consulta.findOne({
       where: {
         id: id
-      },
-      attributes: atributos
+      }
     });
     if (consulta == null) {
       throw new AppError("Consulta não encontrada!", 404);
-    } else {
-      const consultaData = consulta.dataValues;
-      // TODO: fazer o arquivo
+    }
 
-      // Salvando log de criação
-      const logConsultaController = new LogConsultaController();
-      let nomeMedico;
+    const consultaData = consulta.dataValues;
+    // TODO fazer o arquivo
 
+    const usuarioService = new UsuarioService();
+    const usuario_criador = (
+      await usuarioService.getById(consultaData.usuario_id_criador)
+    ).dataValues;
+
+    // Salvando log de criação
+    if (
+      (status && status != consultaData.status) ||
+      (usuario_id_medico &&
+        usuario_id_medico != consultaData.usuario_id_medico) ||
+      (descricao && descricao != consultaData.descricao)
+    ) {
+      let nomeMedicoAtualTemp;
+      if (consultaData.usuario_id_medico) {
+        let usuario_medico_atual = await usuarioService.getById(
+          consultaData.usuario_id_medico
+        );
+        let nomes = usuario_medico_atual.dataValues.nome.split(" ");
+        nomeMedicoAtualTemp =
+          nomes[0] + `${nomes[1] ? " " + nomes[1].substr(0, 1) : ""}`;
+      }
+      const medicoAtual = nomeMedicoAtualTemp;
+
+      let nomeMedicoNovoTemp;
       if (usuario_medico) {
         let nomes = usuario_medico.dataValues.nome.split(" ");
-        nomeMedico = nomes[0] + " " + nomes[1].substr(0, 1);
+        nomeMedicoNovoTemp =
+          nomes[0] + `${nomes[1] ? " " + nomes[1].substr(0, 1) : ""}`;
       }
-      const medicoNovo = nomeMedico;
-
-      const log_descricao = `Consulta atualizada. ${
-        descricao ? "Descrição atualizada." : ""
-      } ${
-        status
-          ? "Status de: " + consultaData.status + " para " + status + "."
-          : ""
-      }${medicoNovo ? " Médico novo: " + medicoNovo + "." : "" + ""}`;
+      const medicoNovo = nomeMedicoNovoTemp;
 
       const userId = request.userId;
       const consulta_id = consultaData.id;
-      logConsultaController.create(log_descricao, userId, consulta_id);
 
-      consulta.update({
-        paciente_id: paciente_id ? paciente_id : consultaData.paciente_id,
-        descricao: descricao ? descricao : consultaData.descricao,
-        status: status ? status : consultaData.status,
-        detalhes: detalhes ? detalhes : consultaData.detalhes,
-        dt_inicio: dt_inicio ? dt_inicio : consultaData.dt_inicio,
-        dt_desmarcada: dt_desmarcada
-          ? dt_desmarcada
-          : consultaData.dt_desmarcada,
-        usuario_id_medico: usuario_id_medico
-          ? usuario_id_medico
-          : consultaData.usuario_id_medico
-      });
-      response.status(200).json(consulta);
+      const log_descricao = `${
+        descricao
+          ? "Usuário " + usuario_criador.login + " alterou a descrição."
+          : ""
+      }`;
+      const log_status = `${
+        status && status != consultaData.status
+          ? "Usuário " +
+            usuario_criador.login +
+            " alterou o status de " +
+            consultaData.status +
+            " para " +
+            status +
+            "."
+          : ""
+      }`;
+      const log_medico = `${
+        usuario_id_medico && usuario_id_medico != consultaData.usuario_id_medico
+          ? "Usuário " +
+            usuario_criador.login +
+            " alterou o médico de " +
+            medicoAtual +
+            " para " +
+            medicoNovo +
+            "."
+          : ""
+      }`;
+
+      const logConsultaController = new LogConsultaController();
+      if (log_descricao)
+        logConsultaController.create(log_descricao, userId, consulta_id);
+      if (log_status)
+        logConsultaController.create(log_status, userId, consulta_id);
+      if (log_medico)
+        logConsultaController.create(log_medico, userId, consulta_id);
     }
+
+    consulta.update({
+      paciente_id: paciente_id ? paciente_id : consultaData.paciente_id,
+      descricao: descricao ? descricao : consultaData.descricao,
+      status: status ? status : consultaData.status,
+      detalhes: detalhes ? detalhes : consultaData.detalhes,
+      dt_inicio: dt_inicio ? dt_inicio : consultaData.dt_inicio,
+      dt_desmarcada: dt_desmarcada,
+      usuario_id_medico: usuario_id_medico
+        ? usuario_id_medico
+        : consultaData.usuario_id_medico
+    });
+    response.status(200).json(consulta);
   }
 
   async get(request, response) {
-    const atributos = [
-      "id",
-      "paciente_id",
-      "descricao",
-      "status",
-      "detalhes",
-      "dt_inicio",
-      "dt_desmarcada",
-      "usuario_id_criador",
-      "usuario_id_medico"
-    ];
     const consulta = await Consulta.findOne({
       where: {
         id: request.params.id
-      },
-      attributes: atributos
+      }
     });
     if (consulta == null) {
       throw new AppError("Consulta não encontrada!", 404);
-    } else {
-      // Adicionando usuários e paciente no retorno
-      const usuarioController = new UsuarioController();
-      const pacienteController = new PacienteController();
-      consulta.dataValues.paciente = await pacienteController.getByID(
-        consulta.dataValues.paciente_id
-      );
-      consulta.dataValues.usuario_criador = await usuarioController.getByID(
-        consulta.dataValues.usuario_id_criador
-      );
-      consulta.dataValues.usuario_medico = await usuarioController.getByID(
-        consulta.dataValues.usuario_id_medico
-      );
-
-      // Adicionando logs
-      const logConsultaController = new LogConsultaController();
-      consulta.dataValues.logs = await logConsultaController.getAll(
-        consulta.dataValues.id
-      );
-
-      response.status(200).json(consulta);
     }
+    // Adicionando usuários e paciente no retorno
+    const usuarioService = new UsuarioService();
+    const pacienteService = new PacienteService();
+    consulta.dataValues.paciente = await pacienteService.getById(
+      consulta.dataValues.paciente_id
+    );
+    consulta.dataValues.usuario_criador = await usuarioService.getById(
+      consulta.dataValues.usuario_id_criador
+    );
+    consulta.dataValues.usuario_medico = await usuarioService.getById(
+      consulta.dataValues.usuario_id_medico
+    );
+
+    // Adicionando logs
+    const logConsultaController = new LogConsultaController();
+    consulta.dataValues.logs = await logConsultaController.getAll(
+      consulta.dataValues.id
+    );
+
+    response.status(200).json(consulta);
   }
 
+  // Rota exemplo:
+  // /api/consulta?pagina=1&limite=4&atributo=id&ordem=ASC&camposPaciente=id,nome&camposMedico=id,nome&dataInicio=2021-09-15&dataFim=2021-09-17
   async getAll(request, response) {
-    const atributos = [
-      "id",
-      "paciente_id",
-      "descricao",
-      "status",
-      "detalhes",
-      "dt_inicio",
-      "dt_desmarcada",
-      "usuario_id_criador",
-      "usuario_id_medico"
-    ];
+    let dataInicioTemp, dataFimTemp;
+    if (request.query.dataInicio && request.query.dataFim) {
+      dataInicioTemp = new Date(
+        request.query.dataInicio.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")
+      );
+      dataFimTemp = new Date(
+        request.query.dataFim.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")
+      );
+    }
+    const dataInicio = dataInicioTemp;
+    const dataFim = dataFimTemp;
 
     Consulta.findAndCountAll()
       .then(dados => {
         const { paginas, ...SortPaginateOptions } = SortPaginate(
           request.query,
-          atributos,
+          Object.keys(
+            Consulta.rawAttributes
+          ) /* Todos os atributos de consulta */,
           dados.count
         );
         Consulta.findAll({
-          attributes: atributos,
-          ...SortPaginateOptions
+          ...SortPaginateOptions,
+          where: {
+            dt_inicio: {
+              [Op.between]: [dataInicio, dataFim]
+            }
+          }
         })
           .then(async consultas => {
             // Adicionando usuários e paciente no retorno
             await Promise.all(
               consultas.map(async consulta => {
-                const usuarioController = new UsuarioController();
-                const pacienteController = new PacienteController();
-                consulta.dataValues.paciente = await pacienteController.getByID(
-                  consulta.dataValues.paciente_id
+                let atributosPacienteTemp = ["id", "nome"];
+                let atributosMedicoTemp = ["id", "nome"];
+                if (request.query.camposPaciente)
+                  atributosPacienteTemp = request.query.camposMedico.split(",");
+                if (request.query.camposMedico)
+                  atributosMedicoTemp = request.query.camposMedico.split(",");
+                const atributosPaciente = atributosPacienteTemp;
+                const atributosMedico = atributosMedicoTemp;
+                const usuarioService = new UsuarioService();
+                const pacienteService = new PacienteService();
+                // Adicionando dados do paciente
+                consulta.dataValues.paciente = await pacienteService.getById(
+                  consulta.dataValues.paciente_id,
+                  atributosPaciente
                 );
-                consulta.dataValues.usuario_criador = await usuarioController.getByID(
-                  consulta.dataValues.usuario_id_criador
+                // Adicionando dados do médico associado a consulta
+                consulta.dataValues.usuario_medico = await usuarioService.getById(
+                  consulta.dataValues.usuario_id_medico,
+                  atributosMedico
                 );
-                consulta.dataValues.usuario_medico = await usuarioController.getByID(
-                  consulta.dataValues.usuario_id_medico
-                );
-                // Adicionando logs
-                const logConsultaController = new LogConsultaController();
-                consulta.dataValues.logs = await logConsultaController.getAll(
-                  consulta.dataValues.id
-                );
+                // * Desativado: Adicionando dados do criador da consulta
+                // consulta.dataValues.usuario_criador = await usuarioService.getById(
+                //   consulta.dataValues.usuario_id_criador
+                // );
+                // * Desativado: Adicionando todos os logs da consulta
+                // const logConsultaController = new LogConsultaController();
+                // consulta.dataValues.logs = await logConsultaController.getAll(
+                //   consulta.dataValues.id
+                // );
               })
             );
 
@@ -336,6 +406,37 @@ class ConsultaController {
       .catch(function(erro) {
         throw new AppError(erro.message, 500);
       });
+  }
+
+  async checkPrimeiraConsulta(request, response) {
+    const scheme = yup.object().shape({
+      paciente_id: yup
+        .number("'paciente_id' deve ser numérico!")
+        .required("'paciente_id' obrigatório!")
+    });
+
+    try {
+      await scheme.validate(request.body, { abortEarly: false });
+    } catch (erro) {
+      throw new AppError(erro.message, 422);
+    }
+
+    const { paciente_id } = request.body;
+
+    const pacienteService = new PacienteService();
+    const paciente = await pacienteService.getById(paciente_id);
+    if (!paciente) throw new AppError("'paciente_id' não encontrado!", 404);
+
+    const consultaService = new ConsultaService();
+    const primeiraConsulta = (await consultaService.getByPacienteId(
+      paciente_id
+    ))
+      ? false
+      : true;
+
+    return response.status(201).json({
+      primeiraConsulta: primeiraConsulta
+    });
   }
 }
 
