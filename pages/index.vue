@@ -15,7 +15,7 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-date-picker v-model="data_atual" width="100%" :no-title="true"></v-date-picker>
+                <v-date-picker v-model="data_atual" width="100%" :no-title="true" @click:date="carregaConsultas"></v-date-picker>
               </v-col>
             </v-row>
             <v-row>
@@ -72,7 +72,7 @@
           </v-col>
           <!-- Coluna Agendamentos -->
           <v-col :sm="12" :md="8" :lg="9">
-            <div v-if="consultaLista" class="consulta-container-list" @scroll="scrollLista">
+            <div v-if="consultaLista" class="consulta-container-list" @scroll="scrollLista" ref="consultaList">
               <v-row>
                 <v-col>
                   <div class="lds-dual-ring"></div>
@@ -201,14 +201,14 @@
       </v-col>
     </v-row>
     <modalCreateConsulta v-model="modalCreateAtivo" />
-    <modalEditConsulta v-model="modalEditAtivo" />
+    <modalEditConsulta v-model="modalEditAtivo" :data="formEditData" />
   </v-container>
 </template>
 
 <script>
 import modalCreateConsulta from '@/components/consulta/modalCreate.vue'
 import modalEditConsulta from '@/components/consulta/modalEdit.vue'
-
+import debounce from '@/assets/js/debounce.js'
 export default {
   layout: 'main',
   components: {
@@ -225,6 +225,7 @@ export default {
       consultas: [],
       filtroDataInicio: null,
       filtroDataFim: null,
+      formEditData: null
     }
   },
   async asyncData({ params, app }) {
@@ -251,10 +252,11 @@ export default {
   mounted(){
     const offset = new Date().getTimezoneOffset()
     this.data_atual = new Date(new Date().getTime() - (offset*60*1000)).toISOString().split('T')[0]
+    this.$refs['consultaList'].scrollTop = 130
   },
   computed: {
     consultaLista(){
-      if(this.consultas.length > 0) {
+      if(this.consultas) {
         const c = this.consultas.reduce((r, a) => { // Agrupa os dados vindo da API pela data
                   r[a.dt_inicio] = [...r[a.dt_inicio] || [], a];
                   return r;
@@ -304,12 +306,44 @@ export default {
       this.$axios
         .get(`/consulta/${consultaId}`)
         .then(res => {
+          this.formEditData = res.data
           this.modalEditAtivo = true
         })
     },
-    scrollLista(ev){
-      if(ev.target.scrollTop/ev.target.offsetHeight < 0.12) // Menos de 12% do scroll da div
+    scrollLista: debounce(function(ev){
+      const t = this
+      if(ev.target.scrollTop/ev.target.offsetHeight < 0.12) { // Menos de 12% do scroll da div
         console.log('ta rolando', ev.target.offsetHeight, ev.target.scrollTop)
+        setTimeout(() => { // Esperar um tempo para que não seja engano
+          if(ev.target.scrollTop/ev.target.offsetHeight < 0.12) { // Verificar novamente se o usuário continua no canto superior
+            //console.log(ev.target.offsetHeight, ev.target.scrollTop)
+            const dataInicio = t.filtroDataInicio + ' 00:00:00'
+            const dtInicio = new Date(dataInicio);
+            dtInicio.setDate(new Date(dataInicio).getDate() - 7);
+            t.carregaConsultas(new Date(dtInicio.getTime() - (dtInicio.getTimezoneOffset() * 60000 )).toISOString().split("T")[0])
+          }
+        }, 2000)
+      }
+    }, 500),
+    carregaConsultas(dataInicio) {
+      dataInicio += ' 00:00:00'
+      const dtInicio = new Date(dataInicio);
+      const dtFim = new Date()
+      dtFim.setDate(new Date(dtInicio).getDate() + 7);
+      this.filtroDataInicio = new Date(dtInicio.getTime() - (dtInicio.getTimezoneOffset() * 60000 )).toISOString().split("T")[0]
+      this.filtroDataFim = new Date(dtFim.getTime() - (dtFim.getTimezoneOffset() * 60000 )).toISOString().split("T")[0]
+      this.consultas = []
+      this.$axios
+        .get(`/consulta?dataInicio=${this.filtroDataInicio}&dataFim=${this.filtroDataFim}`)
+        .then(res => {
+          this.consultas = res.data.dados
+          let t = this
+          setTimeout(() => {
+            t.$refs['consultaList'].scrollTop = 130
+          },500)
+        }).catch(err => {
+          console.log('err', err.response)
+        })
     }
   }
 }

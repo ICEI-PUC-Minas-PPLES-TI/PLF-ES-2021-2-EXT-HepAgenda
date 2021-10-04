@@ -1,15 +1,15 @@
 export default {
   name: 'modalEdit',
-  props: ['value'],
+  props: ['value','data'],
   data() {
     return {
       date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
       dataConsulta: '01/01/1111',
       paciente: {
         nome: 'João Silva',
-        dataNascimento: '11/11/1111 - 55 Anos',
-        mae: 'Neide Braulia',
-        registroHc: 'XXXXX XX',
+        data_nascimento: '11/11/1111 - 55 Anos',
+        nome_mae: 'Neide Braulia',
+        registro_hc: 'XXXXX XX',
       },
       historico: [
         {
@@ -50,6 +50,14 @@ export default {
   },
   mounted() {
     //this.listaPacientes();
+    console.log(this.data)
+  },
+  watch:{
+    data(newVal, oldVal){
+      console.log(oldVal, newVal)
+      if(newVal.paciente)
+        this.paciente = newVal.paciente
+    }
   },
   methods: {
     formatDate(date) {
