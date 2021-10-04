@@ -29,13 +29,13 @@ app.use(function(erro, request, response, next) {
   if (process.env.APP_DEBUG) {
     return response.status(500).json({
       status: "Error",
-      message: err.message,
-      stack: err.stack
+      message: erro.message,
+      stack: erro.stack
     });
   } else {
     return response.status(500).json({
       status: "Error",
-      message: `Internal server error ${err.message}`
+      message: `Internal server error ${erro.message}`
     });
   }
 });

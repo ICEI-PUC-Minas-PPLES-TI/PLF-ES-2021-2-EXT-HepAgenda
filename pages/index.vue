@@ -72,7 +72,12 @@
           </v-col>
           <!-- Coluna Agendamentos -->
           <v-col :sm="12" :md="8" :lg="9">
-            <div v-if="consultaLista" class="consulta-container-list">
+            <div v-if="consultaLista" class="consulta-container-list" @scroll="scrollLista">
+              <v-row>
+                <v-col>
+                  <div class="lds-dual-ring"></div>
+                </v-col>
+              </v-row>
               <v-row v-for="(li, lidx) in consultaLista" :key="lidx">
                 <v-col :sm="12">
                   <!-- Dia em extenso/Dia da semana e contador de consultas -->
@@ -88,7 +93,7 @@
                   <!-- Lista de Consultas -->
                   <v-row>
                     <v-col v-for="(l, ldx) in li" :key="ldx" :md="4" cols="12">
-                      <v-card class="consulta-container-list-card">
+                      <v-card class="consulta-container-list-card" @click="verConsulta(l.id)">
                         <v-row>
                           <!-- Icone -->
                           <v-col :sm="4" :lg="3" :cols="12">
@@ -195,14 +200,6 @@
         </v-row>
       </v-col>
     </v-row>
-    <!-- Isso aqui uma hora vai sumir -->
-    <v-row>
-      <v-col :md="10" :offset-md="1" class="consulta-container">
-        <v-btn color="primary" large @click="modalEditAtivo = !modalEditAtivo">
-          Editar Consulta
-        </v-btn>
-      </v-col>
-    </v-row>
     <modalCreateConsulta v-model="modalCreateAtivo" />
     <modalEditConsulta v-model="modalEditAtivo" />
   </v-container>
@@ -225,15 +222,25 @@ export default {
       data_atual: null,
       filtro_exp: 0,
       filtros: ['0','1','2','3'],
-      consultas: []
+      consultas: [],
+      filtroDataInicio: null,
+      filtroDataFim: null,
     }
   },
   async asyncData({ params, app }) {
     let data = {
-      consultas: []
+      consultas: [],
+      filtroDataInicio: null,
+      filtroDataFim: null,
     }
+    const dtInicio = new Date();
+    const dtFim = new Date()
+    dtFim.setDate(new Date().getDate() + 7);
+    data.filtroDataInicio = new Date(dtInicio.getTime() - (dtInicio.getTimezoneOffset() * 60000 )).toISOString().split("T")[0]
+    data.filtroDataFim = new Date(dtFim.getTime() - (dtFim.getTimezoneOffset() * 60000 )).toISOString().split("T")[0]
+
     await app.$axios
-      .get(`/consulta`)
+      .get(`/consulta?dataInicio=${data.filtroDataInicio}&dataFim=${data.filtroDataFim}`)
       .then(res => {
         data.consultas = res.data.dados
       }).catch(err => {
@@ -244,16 +251,30 @@ export default {
   mounted(){
     const offset = new Date().getTimezoneOffset()
     this.data_atual = new Date(new Date().getTime() - (offset*60*1000)).toISOString().split('T')[0]
-    console.log(this.consultaLista)
-    console.log(this.consultas)
   },
   computed: {
     consultaLista(){
       if(this.consultas.length > 0) {
-        return this.consultas.reduce((r, a) => {
+        const c = this.consultas.reduce((r, a) => { // Agrupa os dados vindo da API pela data
                   r[a.dt_inicio] = [...r[a.dt_inicio] || [], a];
                   return r;
                 }, {});
+        
+        for(let i=1;i<=7;i++) { // Completa com os dias que não vieram na api
+          const dtInicioCopia = new Date(this.filtroDataInicio)
+          dtInicioCopia.setDate(new Date(this.filtroDataInicio).getDate() + i)
+          const chave = new Date(dtInicioCopia.getTime() - (dtInicioCopia.getTimezoneOffset() * 60000 )).toISOString().split("T")[0]
+          if(!c[chave])
+            c[chave] = []
+        }
+        let c2 = {}
+        Object.keys(c).sort(function(a, b) { // Ordenar pela data
+          return a.split('/').reverse().join('').localeCompare(b.split('/').reverse().join(''));
+        }).forEach(function(key) {
+          c2[key] = c[key];
+        })
+
+        return c2
       } else return []
     }
   },
@@ -278,12 +299,23 @@ export default {
         case 5: return "Sexta-feira"
         case 6: return "Sábado"
       }
+    },
+    verConsulta(consultaId){
+      this.$axios
+        .get(`/consulta/${consultaId}`)
+        .then(res => {
+          this.modalEditAtivo = true
+        })
+    },
+    scrollLista(ev){
+      if(ev.target.scrollTop/ev.target.offsetHeight < 0.12) // Menos de 12% do scroll da div
+        console.log('ta rolando', ev.target.offsetHeight, ev.target.scrollTop)
     }
   }
 }
 </script>
 
-<style>
+<style lang="scss">
   .consulta-container{
     margin-top: 20px;
     border-radius: 10px;
@@ -309,6 +341,29 @@ export default {
   .consulta-container-filter::before{
     box-shadow: none !important;
   }
+  .consulta-container-list{
+    max-height: 600px;
+    padding: 15px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    &::-webkit-scrollbar {
+      width: 10px;
+    }
+    /* Track */
+    &::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 5px #EFEFEF; 
+      border-radius: 10px;
+    }
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+      background: #D0D0D0; 
+      border-radius: 1px;
+    }
+    /* Handle on hover */
+    &::-webkit-scrollbar-thumb:hover {
+      background: darken(#D0D0D0, 20%); 
+    }
+  }
   .consulta-container-list-count{
     text-align: right;
   }
@@ -318,5 +373,31 @@ export default {
   }
   .consulta-container-list-card-subtext{
     font-size: .8rem;
+  }
+  /* Icone de Loading */
+  .lds-dual-ring {
+    display: block;
+    margin: 0 auto;
+    width: 80px;
+    height: 80px;
+  }
+  .lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border-radius: 50%;
+    border: 6px solid #555;
+    border-color: #555 transparent #555 transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+  }
+  @keyframes lds-dual-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 </style>
