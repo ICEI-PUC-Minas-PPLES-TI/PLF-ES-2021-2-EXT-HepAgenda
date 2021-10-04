@@ -33,8 +33,8 @@ module.exports = {
       //Associações
       Paciente.hasOne(PacienteHepB, {foreignKey: "paciente_id"});
       Paciente.hasMany(PacienteHepC, {foreignKey: "paciente_id"});
-      PacienteHepB.hasOne(Tratamento, {foreignKey: "tratamento_id"})
-      PacienteHepC.hasOne(Tratamento, {foreignKey: "tratamento_id"})
+      PacienteHepB.hasOne(Tratamento, {foreignKey: "id"})
+      PacienteHepC.hasOne(Tratamento, {foreignKey: "id"})
 
       if (process.env.NODE_ENV === "dev") {
         console.log(

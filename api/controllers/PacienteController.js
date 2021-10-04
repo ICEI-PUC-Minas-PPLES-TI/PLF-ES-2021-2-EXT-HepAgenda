@@ -74,13 +74,14 @@ class PacienteController{
     }
 
     async get(request, response) {
-        
+
         const result = await Paciente.findOne({
             where: {
               id: request.params.id
             },
             include: {
-                all: true
+                all: true,
+                nested: true
             }
         });
         if (result)
@@ -132,7 +133,7 @@ class PacienteController{
                 where: { 
                     registro_hc: request.body.registro_hc,
                     id: {
-                        [Op.ne]: request.body.id
+                        [Op.ne]: request.params.id
                     }
                 }
             })
@@ -148,7 +149,8 @@ class PacienteController{
             request.body.peso_atualizacao = new Date().toISOString().replace('T', ' ').substr(0,19)
         }
 
-        const { id, hepatiteb, hepatitec, ...requestBody } = request.body;
+        const { id } = request.params;
+        const { hepatiteb, hepatitec, ...requestBody } = request.body;
 
         const paciente = await Paciente.findOne({
             where:{ id }
