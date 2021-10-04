@@ -56,16 +56,22 @@ class ConsultaController {
 
     const usuarioService = new UsuarioService();
     const usuario_criador = await usuarioService.getById(request.userId);
-    const usuario_medico = await usuarioService.getById(usuario_id_medico);
+
     // Se enviar o id do médico, verificar se existe
-    if (usuario_id_medico && !usuario_medico)
-      throw new AppError("'usuario_id_medico' não encontrado!", 404);
+    let usuario_medico_temp;
+    if (usuario_id_medico) {
+      usuario_medico_temp = await usuarioService.getById(usuario_id_medico);
+      if (!usuario_medico_temp)
+        throw new AppError("'usuario_id_medico' não encontrado!", 404);
+    }
+    const usuario_medico = usuario_medico_temp;
     /*
       * Se enviar o id do médico, verificar se é médico
       ! O médico da consulta pode ser um usuário administrador com essa regra
       if (usuario_medico.dataValues.tipo != "M") Para delimitar apenas médico
     */
     if (
+      usuario_medico &&
       usuario_medico.dataValues.tipo != "M" &&
       usuario_medico.dataValues.tipo != "A"
     )
@@ -335,10 +341,21 @@ class ConsultaController {
         request.query.dataFim.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")
       );
     }
-    const dataInicio = dataInicioTemp;
-    const dataFim = dataFimTemp;
+    const dataInicio = dataInicioTemp ? dataInicioTemp : new Date(
+      "1970-01-01".replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")
+    );
+    const dataFim = dataFimTemp? dataFimTemp : new Date(
+      Date.now()
+    );
 
-    Consulta.findAndCountAll()
+
+    Consulta.findAndCountAll({
+      where: {
+        dt_inicio: {
+          [Op.between]: [dataInicio, dataFim]
+        }
+      }
+    })
       .then(dados => {
         const { paginas, ...SortPaginateOptions } = SortPaginate(
           request.query,
