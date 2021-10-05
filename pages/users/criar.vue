@@ -56,6 +56,18 @@
             <v-col cols="12" sm="12">
               <v-text-field
                 hide-details="auto"
+                v-model="formData.nome"
+                label="NOME"
+                outlined
+                :rules="[rules.required]"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <!--LOGIN-->
+          <v-row class="mb-6">
+            <v-col cols="12" sm="12">
+              <v-text-field
+                hide-details="auto"
                 v-model="formData.email"
                 label="EMAIL"
                 outlined
@@ -94,15 +106,35 @@
             </v-col>
           </v-row>
           <!--FIM CONFIRMAR SENHA-->
-
+       <!--
           <v-flex xs12 sm12 d-flex>
             <p>Tipo de Usuário:</p>
             <select v-model="formData.tipo" outlined>
-              <option value="Administrador">Administrador</option>
-              <option value="Medico">Médico</option>
-              <option value="Visualizador">Visualizador</option>
+              <option value="A">Administrador</option>
+              <option value="M">Médico</option>
+              <option value="V">Visualizador</option>
             </select>
           </v-flex>
+-->
+        <v-row class="mb-6">
+        <v-col cols="12" sm="12">
+          <v-select
+          :items="[{
+            value: 'A',
+            text: 'Administrador'
+          },{
+            value: 'M',
+            text: 'Médico'
+          },{
+            value: 'V',
+            text: 'Visualizador'
+          }]"
+          label="TIPO"
+          v-model="formData.tipo"
+          outlined
+      ></v-select>
+        </v-col>
+        </v-row>
 
           <!--BOTAO-->
           <v-row class="mb-6" no-gutters>
@@ -126,10 +158,11 @@ export default {
       show1: false,
       show2: false,
       formData: {
+        nome: null,
         email: null,
         senha: null,
         confirmar_senha: null,
-        tipo: "Administrador"
+        tipo: ' '
       },
       rules: {
         required: value => !!value || "Obrigatório.",
@@ -171,8 +204,8 @@ export default {
       this.$axios
         .post("/usuario", this.formData)
         .then(res => {
-          this.limparDados();
-          this.$emit("input", false); // Fecha modal
+       /* this.limparDados();
+          this.$emit("input", false); // Fecha modal*/
           alert("Usuario Cadastrado");
         })
         .catch(err => {
