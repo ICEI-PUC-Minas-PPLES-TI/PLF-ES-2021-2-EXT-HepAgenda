@@ -76,7 +76,8 @@ class Paciente extends Model{
             timestamps: false,
             sequelize
         })
-    }
+
+    } 
 }
 
 module.exports = Paciente;
