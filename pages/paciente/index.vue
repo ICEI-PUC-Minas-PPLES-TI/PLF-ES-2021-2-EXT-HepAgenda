@@ -1,30 +1,53 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col :md="10" :offset-md="1" class="paciente-container">
+      <!-- <v-col :md="10" :offset-md="1" class="paciente-container">
         <v-btn color="primary" large @click="modalAtivo = !modalAtivo">
           Adicionar Paciente
         </v-btn>
         <modalPaciente v-model="modalAtivo" />
-      </v-col>
-    </v-row>
-  </v-container>
-</template>
+      </v-col> -->
+  <v-container fluid style="overflow: auto; padding:4vh;">
+    <modalPaciente v-model="modalAtivo" />
 
-<script>
-import modalPaciente from '@/components/paciente/modal.vue'
-export default {
-  layout: 'main',
-  components: {
-    modalPaciente
-  },
-  data(){
-    return {
-      modalAtivo: false
-    }
-  }
-}
-</script>
+    <v-card class="mx-auto" width="100%">
+        <div class="div-titulo-btn">
+            <v-card-title>
+                <span class="text-h6">Pacientes</span>
+            </v-card-title>
+            <v-card-actions>
+                <v-btn color="primary" background="primary" class="div-titulo-btn" @click="modalAtivo = !modalAtivo">
+                    Criar Paciente
+                </v-btn>
+            </v-card-actions>
+        </div>
+        <v-card-text class="text-h5 ">
+            <template>
+                <v-data-table :headers="headers" :items="pacientes" :items-per-page="5" class="elevation-1">
+                    <template v-slot:item.tipo="{ item }">
+                        {{ formataTipo(item.tipo) }}
+                    </template>
+                    <template v-slot:item.actions="{ item }">
+                        <v-icon  color="primary" class="mr-2" @click="editItem(item)">
+                            mdi-square-edit-outline
+                        </v-icon>
+                        <v-icon  color="primary" class="mr-1" @click="deleteItem(item)">
+                            mdi-clock-time-four-outline
+                        </v-icon>
+                        <v-icon  color="primary" @click="deleteItem(item)">
+                            mdi-trash-can-outline
+                        </v-icon>
+                    </template>
+                    <template v-slot:no-data>
+                        <v-btn color="primary" @click="initialize">
+                            Reset
+                        </v-btn>
+                    </template>
+                </v-data-table>
+            </template>
+        </v-card-text>
+    </v-card>
+</v-container>
+</template>
+<script src="./index.js"> </script>
 
 <style>
   .paciente-container{
@@ -32,4 +55,13 @@ export default {
     border-radius: 10px;
     background: #fff;
   }
+
+  .div-titulo-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between !important;
+  }
+
 </style>
