@@ -1,8 +1,8 @@
 <template>
   <!--Container-->
-  <v-container fluid>
+  <v-container class="grey-lighten-5">
     <!--Linha-->
-    <v-row no-gutters>
+    <v-row class="linha" no-gutters>
       <!--Coluna-->
       <v-col offset-md="4" md="4" xs="12" cols="12" class="colDois">
         <div class="coluna">
@@ -51,10 +51,11 @@
           <v-row>
             <h3>Cadastro de Usuário</h3>
           </v-row>
-          <!--LOGIN-->
+          <!--NOME-->
           <v-row class="mb-6">
             <v-col cols="12" sm="12">
               <v-text-field
+                dense
                 hide-details="auto"
                 v-model="formData.nome"
                 label="NOME"
@@ -67,6 +68,7 @@
           <v-row class="mb-6">
             <v-col cols="12" sm="12">
               <v-text-field
+                dense
                 hide-details="auto"
                 v-model="formData.email"
                 label="EMAIL"
@@ -79,6 +81,7 @@
           <v-row class="mb-6">
             <v-col cols="12" sm="12">
               <v-text-field
+                dense
                 v-model="formData.senha"
                 :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                 :rules="[rules.required, rules.min]"
@@ -93,7 +96,9 @@
           <!--CONFIRMAR SENHA-->
           <v-row class="mb-6">
             <v-col cols="12" sm="12">
+              <!-- diminuir altura do quadro com dense -->
               <v-text-field
+                dense
                 v-model="formData.confirmar_senha"
                 :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
                 :rules="[rules.required, rules.equal]"
@@ -106,35 +111,31 @@
             </v-col>
           </v-row>
           <!--FIM CONFIRMAR SENHA-->
-       <!--
-          <v-flex xs12 sm12 d-flex>
-            <p>Tipo de Usuário:</p>
-            <select v-model="formData.tipo" outlined>
-              <option value="A">Administrador</option>
-              <option value="M">Médico</option>
-              <option value="V">Visualizador</option>
-            </select>
-          </v-flex>
--->
-        <v-row class="mb-6">
-        <v-col cols="12" sm="12">
-          <v-select
-          :items="[{
-            value: 'A',
-            text: 'Administrador'
-          },{
-            value: 'M',
-            text: 'Médico'
-          },{
-            value: 'V',
-            text: 'Visualizador'
-          }]"
-          label="TIPO"
-          v-model="formData.tipo"
-          outlined
-      ></v-select>
-        </v-col>
-        </v-row>
+
+          <v-row class="mb-6">
+            <v-col cols="12" sm="12">
+              <v-select
+                dense
+                :items="[
+                  {
+                    value: 'A',
+                    text: 'Administrador'
+                  },
+                  {
+                    value: 'M',
+                    text: 'Médico'
+                  },
+                  {
+                    value: 'V',
+                    text: 'Visualizador'
+                  }
+                ]"
+                label="TIPO"
+                v-model="formData.tipo"
+                outlined
+              ></v-select>
+            </v-col>
+          </v-row>
 
           <!--BOTAO-->
           <v-row class="mb-6" no-gutters>
@@ -162,10 +163,10 @@ export default {
         email: null,
         senha: null,
         confirmar_senha: null,
-        tipo: ' '
+        tipo: " "
       },
       rules: {
-        required: value => !!value || "Obrigatório.",
+        required: value => !!value || "Obrigatório!",
         min: v => {
           if (
             v &&
@@ -184,28 +185,14 @@ export default {
   },
   /*FIM SENHA*/
   methods: {
-    /**teste*/
-    /*  enviarDados() {
-        this.$axios
-          .post("/usuario", this.formData)
-          .then(res => {
-            this.limparDados();
-            this.$emit("input", false); // Fecha modal
-            alert("Usuario Cadastrado");
-          })
-          .catch(err => {
-            alert(JSON.stringify(err.response.data));
-            console.log(err.response.data);
-          });
-      },*/
-    /*fim teste*/
+
     criarUsuario() {
       console.log("Botao Criar apertado");
       this.$axios
         .post("/usuario", this.formData)
         .then(res => {
-       /* this.limparDados();
-          this.$emit("input", false); // Fecha modal*/
+          /* this.limparDados();
+            this.$emit("input", false); // Fecha modal*/
           alert("Usuario Cadastrado");
         })
         .catch(err => {
@@ -224,6 +211,7 @@ h3.w {
 .pos {
   display: block;
   margin: 0 auto;
+  width: 70%;
 }
 
 .colDois {
@@ -232,11 +220,29 @@ h3.w {
 
 /*Espaçamento de borda*/
 .coluna {
-  margin: 10%;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 3%;
+    margin-bottom: 0%;
+    text-align: center;
 }
 .mb-6 {
-  height: 65px;
+  height: 45px;
 }
+
+.linha {
+  width: 100%;
+}
+
+.grey-lighten-5 {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 0%;
+    padding-right: 0%;
+  }
 
 /*Compatibilidade de tamanho para aparelhos menores*/
 
@@ -253,7 +259,6 @@ h3.w {
   }
   .pos {
     width: 40%;
-    margin-bottom: 30px;
   }
   .coluna {
     margin-left: 5%;
