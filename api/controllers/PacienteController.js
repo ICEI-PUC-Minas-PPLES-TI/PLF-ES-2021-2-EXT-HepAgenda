@@ -45,16 +45,16 @@ class PacienteController{
         let hepcIds = [];
         const paciente = await Paciente.create({
             ...request.body,
-            comorbidade: 
-                request.body.hepatiteb ? 'HEPB' : request.body.hepatitec ? 'HEPC' : 'OUTRO'
+            /*comorbidade: 
+                request.body.hepatiteb ? 'HEPB' : request.body.hepatitec ? 'HEPC' : 'OUTRO'*/
         });
-        if (request.body.hepatiteb){
+        if (request.body.comorbidade == 'HEPB'){
             await PacienteHepB.create({
                 paciente_id: paciente.id,
                 ...request.body.hepatiteb
             });
         }
-        else if (request.body.hepatitec){
+        else if (request.body.comorbidade == 'HEPC'){
             await Promise.all(
                 request.body.hepatitec.map((hepc)=>{
                     return PacienteHepC.create({

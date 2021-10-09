@@ -122,7 +122,7 @@
                   </v-text-field>
                 </v-col>
                 <v-col :md="2" :sm="12" cols="12">
-                  <v-text-field v-model="formData.altura" type="number" min="0" max="3" step='0.01' outlined :hide-details="true" label="Altura (Opcional)" @blur="salvarEmCache">
+                  <v-text-field v-model="formData.altura" type="text" v-mask="['#.##']" outlined :hide-details="true" label="Altura (Opcional)" @blur="salvarEmCache">
                     <span slot="append">
                       m
                     </span>
