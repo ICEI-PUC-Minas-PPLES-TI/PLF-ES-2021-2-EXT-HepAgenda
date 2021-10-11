@@ -6,7 +6,7 @@
         <modalPaciente v-model="modalAtivo" />
       </v-col> -->
   <v-container fluid style="overflow: auto; padding:4vh;">
-    <modalPaciente v-model="modalAtivo" />
+    <modalPaciente v-model="modalAtivo" v-bind:pacienteId="pacienteId" />
 
     <v-card class="mx-auto" width="100%">
         <div class="div-titulo-btn">
@@ -14,7 +14,7 @@
                 <span class="text-h6">Pacientes</span>
             </v-card-title>
             <v-card-actions>
-                <v-btn color="primary" background="primary" class="div-titulo-btn" @click="modalAtivo = !modalAtivo">
+                <v-btn color="primary" background="primary" class="div-titulo-btn" @click="abreModal(0)">
                     Criar Paciente
                 </v-btn>
             </v-card-actions>
@@ -26,10 +26,10 @@
                         {{ formataTipo(item.tipo) }}
                     </template>
                     <template v-slot:item.actions="{ item }">
-                        <v-icon  color="primary" class="mr-2" @click="editItem(item)">
+                        <v-icon  color="primary" class="mr-2" @click="abreModal(item.id)">
                             mdi-square-edit-outline
                         </v-icon>
-                        <v-icon  color="primary" class="mr-1" @click="deleteItem(item)">
+                        <v-icon  color="primary" class="mr-1">
                             mdi-clock-time-four-outline
                         </v-icon>
                         <v-icon  color="primary" @click="deleteItem(item)">

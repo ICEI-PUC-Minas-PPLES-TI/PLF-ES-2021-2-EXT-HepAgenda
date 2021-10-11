@@ -24,6 +24,8 @@ export default {
 
         }
       ],
+
+      pacienteId: 0,
       teste: '',
       modalAtivo: false
     }
@@ -52,6 +54,14 @@ export default {
         return "Visualizador"
       }
     }
+,
+    abreModal(id) {
+
+      this.pacienteId = id;
+
+      this.modalAtivo = !this.modalAtivo;
+
+    },
 
   }
 
