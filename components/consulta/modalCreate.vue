@@ -25,13 +25,14 @@
               <v-row class="mt-n5">
                 <v-col :md="12" :sm="12" :xl="12" cols="12">
                   <v-autocomplete
-                    v-model="pacienteId"
+                    v-model="consulta.paciente_id"
                     :items="pacientes"
                     hide-details="auto"
                     :clearable="true"
                     label="Paciente"
-                    item-text="nome"
+                    :item-text="item => item.nome + ' - ' + item.data_nascimento"
                     item-value="id"
+                    :rules="[v => !!v || 'Paciente obrigatório']"
                     outlined
                   />
                 </v-col>
@@ -49,17 +50,23 @@
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field
-                        :value="formatDate(dataConsulta)"
+                        v-model="dataConsulta"
                         outlined
                         hide-details="auto"
-                        append-icon="mdi-calendar"
+                        :rules="[v => !!v || 'Data da consulta obrigatória']"
                         label="Data da consulta"
-                        readonly
-                        v-bind="attrs"
-                        v-on="on"
-                      ></v-text-field>
+                        type="date"
+                        max="3000-01-01"
+                        class="paciente-modal-input-date"
+                      >
+                        <span slot="append">
+                          <v-icon v-bind="attrs" v-on="on">
+                            mdi-calendar
+                          </v-icon>
+                        </span>
+                      </v-text-field>
                     </template>
-                    <v-date-picker
+                      <v-date-picker
                       v-model="dataConsulta"
                       @input="menuDataConsulta = false"
                     ></v-date-picker>
@@ -69,7 +76,7 @@
               <v-row class="mt-n3">
                 <v-col :md="12" :sm="12" :xl="12" cols="12">
                   <v-select
-                    v-model="medico"
+                    v-model="consulta.usuario_id_medico"
                     :clearable="true"
                     hide-details="auto"
                     label="Médico (Opcional)"
@@ -83,7 +90,7 @@
               <v-row class="mt-n3">
                 <v-col :md="12" :sm="12" :xl="12" cols="12">
                   <v-textarea
-                    v-model="descricao"
+                    v-model="consulta.descricao"
                     hide-details="auto"
                     outlined
                     label="Descrição (Opcional)"
