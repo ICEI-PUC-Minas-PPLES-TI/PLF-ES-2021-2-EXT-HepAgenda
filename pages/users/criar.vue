@@ -185,14 +185,21 @@ export default {
   },
   /*FIM SENHA*/
   methods: {
-
+    limparDados() {
+      this.formData = {
+        nome: null,
+        email: null,
+        senha: null,
+        confirmar_senha: null,
+        tipo: " "
+      }
+    },
     criarUsuario() {
       console.log("Botao Criar apertado");
       this.$axios
         .post("/usuario", this.formData)
         .then(res => {
-          /* this.limparDados();
-            this.$emit("input", false); // Fecha modal*/
+          this.limparDados();
           alert("Usuario Cadastrado");
         })
         .catch(err => {
@@ -201,7 +208,7 @@ export default {
         });
     }
   }
-};
+}
 </script>
 
 <style>
@@ -220,11 +227,11 @@ h3.w {
 
 /*Espaçamento de borda*/
 .coluna {
-    margin-left: 10%;
-    margin-right: 10%;
-    margin-top: 3%;
-    margin-bottom: 0%;
-    text-align: center;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-top: 3%;
+  margin-bottom: 0%;
+  text-align: center;
 }
 .mb-6 {
   height: 45px;
@@ -235,14 +242,14 @@ h3.w {
 }
 
 .grey-lighten-5 {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-left: 0%;
-    padding-right: 0%;
-  }
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 0%;
+  padding-right: 0%;
+}
 
 /*Compatibilidade de tamanho para aparelhos menores*/
 
