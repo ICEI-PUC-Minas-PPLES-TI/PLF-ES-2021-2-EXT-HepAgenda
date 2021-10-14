@@ -20,7 +20,7 @@
         </v-card-title>
         <v-card-text>
           <v-container fluid>
-            <v-form>
+            <v-form ref="formConsulta" v-model="valid" lazy-validation>
               <!-- select pacientes -->
               <v-row class="mt-n5">
                 <v-col :md="12" :sm="12" :xl="12" cols="12">
@@ -30,49 +30,33 @@
                     hide-details="auto"
                     :clearable="true"
                     label="Paciente"
-                    :item-text="item => item.nome + ' - ' + item.data_nascimento"
+                    :item-text="
+                      (item) => item.nome + ' - ' + item.data_nascimento
+                    "
                     item-value="id"
-                    :rules="[v => !!v || 'Paciente obrigatório']"
+                    :rules="[(v) => !!v || 'Paciente obrigatório']"
                     outlined
                   />
                 </v-col>
               </v-row>
-              <!-- Data da consulta e select de médico -->
+              <!-- Data da consulta -->
               <v-row class="mt-n3">
                 <v-col :md="12" :sm="12" :xl="12" cols="12">
-                  <v-menu
-                    v-model="menuDataConsulta"
-                    :close-on-content-click="false"
-                    :nudge-right="40"
-                    transition="scale-transition"
-                    offset-y
-                    min-width="auto"
-                  >
-                    <template v-slot:activator="{ on, attrs }">
                       <v-text-field
-                        v-model="dataConsulta"
+                        v-model="consulta.dt_inicio"
                         outlined
                         hide-details="auto"
-                        :rules="[v => !!v || 'Data da consulta obrigatória']"
+                        :rules="[(v) => !!v || 'Data da consulta obrigatória']"
                         label="Data da consulta"
-                        type="date"
-                        max="3000-01-01"
+                        type="datetime-local"
+                        min="2017-06-01T08:30"
+                        max="2050-06-30T16:30"
                         class="paciente-modal-input-date"
                       >
-                        <span slot="append">
-                          <v-icon v-bind="attrs" v-on="on">
-                            mdi-calendar
-                          </v-icon>
-                        </span>
                       </v-text-field>
-                    </template>
-                      <v-date-picker
-                      v-model="dataConsulta"
-                      @input="menuDataConsulta = false"
-                    ></v-date-picker>
-                  </v-menu>
                 </v-col>
               </v-row>
+              <!-- select de médico -->
               <v-row class="mt-n3">
                 <v-col :md="12" :sm="12" :xl="12" cols="12">
                   <v-select
@@ -94,6 +78,7 @@
                     hide-details="auto"
                     outlined
                     label="Descrição (Opcional)"
+                    :rules="(v) =>(v && v.length <= 60) || 'Maximo de 60 caracteres'"
                     auto-grow
                   ></v-textarea>
                 </v-col>
@@ -112,23 +97,117 @@
       </v-card>
     </v-dialog>
 
-    <v-snackbar
-      v-model="toast"
-      shaped
-    >
+    <v-snackbar v-model="toast" shaped>
       {{ toastMensagem }}
 
       <template v-slot:action="{ attrs }">
-        <v-btn color="blue" text v-bind="attrs " @click="toast = false">
+        <v-btn color="blue" text v-bind="attrs" @click="toast = false">
           Ok
         </v-btn>
       </template>
     </v-snackbar>
-
   </div>
 </template>
 
-<script src="./modalCreate.js"></script>
+<script>
+export default {
+  name: "modalCreate",
+  props: ["value"],
+  data() {
+    return {
+      valid: true,
+
+      pacientes: [{ nome: "", id: 0 }],
+      medicos: [{ nome: "", id: 0 }],
+
+      consulta: {
+        paciente_id: "",
+        status: "AGUARDANDOC",
+        descricao: "",
+        //usuario_id_medico:'',
+        dt_inicio: "",
+      },
+
+      toast: false,
+      toastMensagem: "",
+    };
+  },
+  watch: {
+    value: function (val) {
+      this.listaPacientes();
+    },
+    "consulta.paciente_id": function (val) {
+      this.verificaPrimeraConsulta(val);
+    },
+  },
+  mounted() {
+    this.listaPacientes();
+  },
+  methods: {
+    marcaConsulta() {
+      if (this.$refs.formConsulta.validate()) {
+        this.consulta.dt_inicio = new Date(this.consulta.dt_inicio);
+
+        let consulta = JSON.parse(JSON.stringify(this.consulta));
+
+        this.$axios
+          .$post("/consulta", consulta)
+          .then((response) => {
+            this.limpaDados();
+            this.abreToast("Consulta agendada com sucesso!");
+          })
+          .catch((error) => {
+            this.abreToast(error.message);
+          });
+      }
+    },
+    verificaPrimeraConsulta(pacienteId) {
+      //query verificar se é a primeira consulta
+      console.log(pacienteId);
+      if (pacienteId) {
+        let paciente = JSON.parse(JSON.stringify({ paciente_id: pacienteId }));
+        this.$axios
+          .$post("/primeiraconsulta", paciente)
+          .then((response) => {
+            if (response.primeiraConsulta) {
+              this.abreToast("Primeira consulta desse paciente!");
+            }
+          })
+          .catch((error) => {
+            this.abreToast(error.message);
+          });
+      }
+    },
+
+    listaPacientes() {
+      this.$axios
+        .$get("/paciente")
+        .then((response) => {
+          this.pacientes = response.dados;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
+    abreToast(mensagem) {
+      this.toastMensagem = mensagem;
+      this.toast = true;
+    },
+
+    limpaDados() {
+      this .consulta = {
+        paciente_id: "",
+        status: "AGUARDANDOC",
+        descricao: "",
+        //usuario_id_medico:'',
+        dt_inicio: "",
+      }
+      this.$refs.formConsulta.reset();
+    },
+  },
+};
+</script>
 
 <style>
 .consulta-modal-title {
