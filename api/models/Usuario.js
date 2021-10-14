@@ -80,7 +80,12 @@ class Usuario extends Model {
         deletedAt: "data_excluido",
         createdAt: false,
         updatedAt: false,
-        sequelize
+        sequelize,
+        defaultScope: {
+          attributes: {
+            exclude: ['senha'],
+          }
+        },
       }
     );
   }

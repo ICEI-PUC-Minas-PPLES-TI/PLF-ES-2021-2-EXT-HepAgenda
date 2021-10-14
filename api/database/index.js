@@ -1,10 +1,12 @@
 require("dotenv").config();
 const { Sequelize } = require("sequelize");
+const Consulta = require("../models/Consulta");
 
 // Importar modelos aqui
 const Tratamento = require('../models/Tratamento');
 const Usuario = require('../models/Usuario');
 const Paciente = require('../models/Paciente');
+const LogConsulta = require("../models/LogConsulta");
 const PacienteHepB = require("../models/PacienteHepB");
 const PacienteHepC = require("../models/PacienteHepC");
 
@@ -26,7 +28,9 @@ module.exports = {
       // Iniciar modelos aqui
       Tratamento.init(sequelize);
       Usuario.init(sequelize);
+      Consulta.init(sequelize);
       Paciente.init(sequelize);
+      LogConsulta.init(sequelize);
       PacienteHepB.init(sequelize);
       PacienteHepC.init(sequelize);
 
