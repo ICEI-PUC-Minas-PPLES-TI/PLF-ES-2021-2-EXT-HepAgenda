@@ -20,7 +20,7 @@
       </div>
       <v-card-text class="text-h5">
         <v-text-field
-          v-model="search"
+          v-model="pesquisa"
           prepend-inner-icon="mdi-magnify"
           label="Nome do Paciente, mãe ou registro HC"
           filled
@@ -111,8 +111,9 @@ export default {
         },
       ],
 
-      pacienteId: 0,
+      pesquisa:'',
 
+      pacienteId: 0,
       modalAtivo: false,
       modalConfirm: false,
     };
