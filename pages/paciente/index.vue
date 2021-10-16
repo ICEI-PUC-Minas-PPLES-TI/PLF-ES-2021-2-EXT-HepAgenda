@@ -34,9 +34,6 @@
             :items-per-page="5"
             class="elevation-1"
           >
-            <template v-slot:item.data_nascimento="{ item }">
-              {{ formataData(item.data_nascimento) }}
-            </template>
             <template v-slot:item.actions="{ item }">
               <v-icon color="primary" class="mr-2" @click="abreModal(item.id)">
                 mdi-square-edit-outline
@@ -111,7 +108,7 @@ export default {
         },
       ],
 
-      pesquisa:'',
+      pesquisa: "",
 
       pacienteId: 0,
       modalAtivo: false,
@@ -126,6 +123,13 @@ export default {
       this.$axios
         .$get("/paciente")
         .then((response) => {
+          if (response.dados) {
+            response.dados.forEach((paciente) => {
+              paciente.data_nascimento = this.formataData(
+                paciente.data_nascimento
+              );
+            });
+          }
           this.pacientes = response.dados;
         })
         .catch((error) => {
