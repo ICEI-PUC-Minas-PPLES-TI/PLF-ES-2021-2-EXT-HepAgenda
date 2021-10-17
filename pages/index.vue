@@ -72,7 +72,7 @@
           </v-col>
           <!-- Coluna Agendamentos -->
           <v-col :sm="12" :md="8" :lg="9">
-            <div v-if="consultaLista" class="consulta-container-list" @scroll="scrollLista" ref="consultaList">
+            <div v-if="consultaLista && ((primeiroCarregamento && consultaLista.length > 0) || !primeiroCarregamento)" class="consulta-container-list" @scroll="scrollLista" ref="consultaList">
               <v-row>
                 <v-col>
                   <div class="lds-dual-ring"></div>
@@ -122,16 +122,21 @@
                             </span>
                             <span class="d-block consulta-container-list-card-subtext">
                               Status:
-                              <span v-if="l.status == 'REALIZADO'">Realizado</span>
-                              <span v-else-if="l.status == 'AGUARDANDOC'">Aguardando Consulta</span>
-                              <span v-else-if="l.status == 'AGUARDANDOA'">Aguardando Atendimento</span>
-                              <span v-else-if="l.status == 'CANCELADO'">Cancelado</span>
+                              <span title="Realizado" v-if="l.status == 'REALIZADO'">Realizado</span>
+                              <span title="Aguardando Consulta" v-else-if="l.status == 'AGUARDANDOC'">Aguardando Consulta</span>
+                              <span title="Aguardando Atendimento" v-else-if="l.status == 'AGUARDANDOA'">Aguardando Atendimento</span>
+                              <span title="Cancelado" v-else-if="l.status == 'CANCELADO'">Cancelado</span>
                             </span>
                           </v-col>
                         </v-row>
                       </v-card>
                     </v-col>
                   </v-row>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <div class="lds-dual-ring"></div>
                 </v-col>
               </v-row>
             </div>
@@ -225,7 +230,8 @@ export default {
       consultas: [],
       filtroDataInicio: null,
       filtroDataFim: null,
-      formEditData: null
+      formEditData: null,
+      primeiroCarregamento: true // Verificar se está recarregando a página, caso não haja consultas na semana vai aparecer a tela de "Nenhum agendamento marcado. "
     }
   },
   async asyncData({ params, app }) {
@@ -252,31 +258,36 @@ export default {
   mounted(){
     const offset = new Date().getTimezoneOffset()
     this.data_atual = new Date(new Date().getTime() - (offset*60*1000)).toISOString().split('T')[0]
-    this.$refs['consultaList'].scrollTop = 130
+    if(this.$refs['consultaList'])
+      this.$refs['consultaList'].scrollTop = 130
   },
   computed: {
     consultaLista(){
       if(this.consultas) {
-        const c = this.consultas.reduce((r, a) => { // Agrupa os dados vindo da API pela data
-                  r[a.dt_inicio] = [...r[a.dt_inicio] || [], a];
-                  return r;
-                }, {});
-        
-        for(let i=1;i<=7;i++) { // Completa com os dias que não vieram na api
-          const dtInicioCopia = new Date(this.filtroDataInicio)
-          dtInicioCopia.setDate(new Date(this.filtroDataInicio).getDate() + i)
-          const chave = new Date(dtInicioCopia.getTime() - (dtInicioCopia.getTimezoneOffset() * 60000 )).toISOString().split("T")[0]
-          if(!c[chave])
-            c[chave] = []
-        }
-        let c2 = {}
-        Object.keys(c).sort(function(a, b) { // Ordenar pela data
-          return a.split('/').reverse().join('').localeCompare(b.split('/').reverse().join(''));
-        }).forEach(function(key) {
-          c2[key] = c[key];
-        })
+        if(this.consultas.length == 0 && this.primeiroCarregamento)
+          return []
+        else {
+          const c = this.consultas.reduce((r, a) => { // Agrupa os dados vindo da API pela data
+                    r[a.dt_inicio] = [...r[a.dt_inicio] || [], a];
+                    return r;
+                  }, {});
+          
+          for(let i=1;i<=7;i++) { // Completa com os dias que não vieram na api
+            const dtInicioCopia = new Date(this.filtroDataInicio)
+            dtInicioCopia.setDate(new Date(this.filtroDataInicio).getDate() + i)
+            const chave = new Date(dtInicioCopia.getTime() - (dtInicioCopia.getTimezoneOffset() * 60000 )).toISOString().split("T")[0]
+            if(!c[chave])
+              c[chave] = []
+          }
+          let c2 = {}
+          Object.keys(c).sort(function(a, b) { // Ordenar pela data
+            return a.split('/').reverse().join('').localeCompare(b.split('/').reverse().join(''));
+          }).forEach(function(key) {
+            c2[key] = c[key];
+          })
 
-        return c2
+          return c2
+        }
       } else return []
     }
   },
@@ -313,13 +324,21 @@ export default {
     scrollLista: debounce(function(ev){
       const t = this
       if(ev.target.scrollTop/ev.target.offsetHeight < 0.12) { // Menos de 12% do scroll da div
-        console.log('ta rolando', ev.target.offsetHeight, ev.target.scrollTop)
         setTimeout(() => { // Esperar um tempo para que não seja engano
           if(ev.target.scrollTop/ev.target.offsetHeight < 0.12) { // Verificar novamente se o usuário continua no canto superior
             //console.log(ev.target.offsetHeight, ev.target.scrollTop)
             const dataInicio = t.filtroDataInicio + ' 00:00:00'
             const dtInicio = new Date(dataInicio);
             dtInicio.setDate(new Date(dataInicio).getDate() - 7);
+            t.carregaConsultas(new Date(dtInicio.getTime() - (dtInicio.getTimezoneOffset() * 60000 )).toISOString().split("T")[0])
+          }
+        }, 2000)
+      }else if(ev.target.scrollTop === (ev.target.scrollHeight - ev.target.offsetHeight)) { // No final da barra de rolagem da div
+        setTimeout(() => { // Esperar um tempo para que não seja engano
+          if(ev.target.scrollTop === (ev.target.scrollHeight - ev.target.offsetHeight)) { // Verificar novamente se o usuário continua no canto superior
+            const dataInicio = t.filtroDataInicio + ' 00:00:00'
+            const dtInicio = new Date(dataInicio);
+            dtInicio.setDate(new Date(dataInicio).getDate() + 7);
             t.carregaConsultas(new Date(dtInicio.getTime() - (dtInicio.getTimezoneOffset() * 60000 )).toISOString().split("T")[0])
           }
         }, 2000)
@@ -336,6 +355,7 @@ export default {
       this.$axios
         .get(`/consulta?dataInicio=${this.filtroDataInicio}&dataFim=${this.filtroDataFim}`)
         .then(res => {
+          this.primeiroCarregamento = false
           this.consultas = res.data.dados
           let t = this
           setTimeout(() => {
@@ -406,6 +426,10 @@ export default {
     margin: 10px auto;
   }
   .consulta-container-list-card-subtext{
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     font-size: .8rem;
   }
   /* Icone de Loading */
