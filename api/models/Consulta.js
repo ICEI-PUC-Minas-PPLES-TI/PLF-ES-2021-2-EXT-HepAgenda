@@ -16,7 +16,7 @@ class Consulta extends Model {
         },
         descricao: {
           type: DataTypes.STRING(60),
-          allowNull: false
+          allowNull: true
         },
         status: {
           type: DataTypes.ENUM(
@@ -30,7 +30,7 @@ class Consulta extends Model {
         },
         detalhes: {
           type: DataTypes.TEXT,
-          allowNull: false
+          allowNull: true
         },
         dt_inicio: {
           type: DataTypes.DATE,

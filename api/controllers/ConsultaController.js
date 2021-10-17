@@ -56,16 +56,22 @@ class ConsultaController {
 
     const usuarioService = new UsuarioService();
     const usuario_criador = await usuarioService.getById(request.userId);
-    const usuario_medico = await usuarioService.getById(usuario_id_medico);
+
     // Se enviar o id do médico, verificar se existe
-    if (usuario_id_medico && !usuario_medico)
-      throw new AppError("'usuario_id_medico' não encontrado!", 404);
+    let usuario_medico_temp;
+    if (usuario_id_medico) {
+      usuario_medico_temp = await usuarioService.getById(usuario_id_medico);
+      if (!usuario_medico_temp)
+        throw new AppError("'usuario_id_medico' não encontrado!", 404);
+    }
+    const usuario_medico = usuario_medico_temp;
     /*
       * Se enviar o id do médico, verificar se é médico
       ! O médico da consulta pode ser um usuário administrador com essa regra
       if (usuario_medico.dataValues.tipo != "M") Para delimitar apenas médico
     */
     if (
+      usuario_medico &&
       usuario_medico.dataValues.tipo != "M" &&
       usuario_medico.dataValues.tipo != "A"
     )
@@ -85,13 +91,6 @@ class ConsultaController {
       usuario_id_medico: usuario_id_medico ? usuario_id_medico : null
     });
 
-    const consultaService = new ConsultaService();
-    const primeiraConsulta = (await consultaService.getByPacienteId(
-      paciente_id
-    ))
-      ? false
-      : true;
-
     consulta
       .save()
       .then(function(consultaObj) {
@@ -105,8 +104,7 @@ class ConsultaController {
         logConsultaController.create(log_descricao, userId, consulta_id);
 
         return response.status(201).json({
-          id: consulta.id,
-          primeiraConsulta: primeiraConsulta
+          id: consulta.id
         });
       })
       .catch(function(erro) {
@@ -324,8 +322,30 @@ class ConsultaController {
   }
 
   // Rota exemplo:
-  // /api/consulta?pagina=1&limite=4&atributo=id&ordem=ASC&camposPaciente=id,nome&camposMedico=id,nome&dataInicio=2021-09-15&dataFim=2021-09-17
+  // /api/consulta?pagina=1&limite=4&atributo=id&ordem=ASC&camposPaciente=id,nome&camposMedico=id,nome&dataInicio=2021-09-18&dataFim=2021-09-20&status=AC,AA,R,C
   async getAll(request, response) {
+    const statusEnums = [
+      "AGUARDANDOC",
+      "AGUARDANDOA",
+      "REALIZADO",
+      "CANCELADO"
+    ];
+    let status = [];
+    let statusTemp = statusEnums;
+    if (request.query.status) {
+      statusTemp = request.query.status.split(",");
+      statusTemp.forEach(element => {
+        if (element == "AC") status.push("AGUARDANDOC");
+        else if (element == "AA") status.push("AGUARDANDOA");
+        else if (element == "R") status.push("REALIZADO");
+        else if (element == "C") status.push("CANCELADO");
+        else return response.status(404).json({erro: "'status' não encontrado"})
+      });
+    } else {
+      status = statusEnums;
+    }
+    const statusSolicitados = status ? status : statusEnums;
+
     let dataInicioTemp, dataFimTemp;
     if (request.query.dataInicio && request.query.dataFim) {
       dataInicioTemp = new Date(
@@ -335,10 +355,19 @@ class ConsultaController {
         request.query.dataFim.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")
       );
     }
-    const dataInicio = dataInicioTemp;
-    const dataFim = dataFimTemp;
+    const dataInicio = dataInicioTemp
+      ? dataInicioTemp
+      : new Date("1970-01-01".replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3"));
+    const dataFim = dataFimTemp ? dataFimTemp : new Date(Date.now());
 
-    Consulta.findAndCountAll()
+    Consulta.findAndCountAll({
+      where: {
+        dt_inicio: {
+          [Op.between]: [dataInicio, dataFim]
+        },
+        status: statusSolicitados,
+      }
+    })
       .then(dados => {
         const { paginas, ...SortPaginateOptions } = SortPaginate(
           request.query,
@@ -352,7 +381,8 @@ class ConsultaController {
           where: {
             dt_inicio: {
               [Op.between]: [dataInicio, dataFim]
-            }
+            },
+            status: statusSolicitados,
           }
         })
           .then(async consultas => {

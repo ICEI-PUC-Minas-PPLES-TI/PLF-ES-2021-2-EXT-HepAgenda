@@ -10,6 +10,7 @@ class UsuarioController {
     const { email, senha } = req.body;
 
     Usuario.findOne({
+      attributes: ['id', 'senha'],
       where: {
         email: email
       }
