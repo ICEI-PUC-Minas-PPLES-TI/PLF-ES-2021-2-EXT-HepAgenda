@@ -9,7 +9,7 @@ const { pacienteCreateScheme, pacienteUpdateScheme, hepatiteRequiredScheme } = r
 
 class PacienteController{
     async create(request, response){
-        
+
         const scheme = pacienteCreateScheme;
 
         // Validando com o esquema criado:
@@ -45,8 +45,8 @@ class PacienteController{
         let hepcIds = [];
         const paciente = await Paciente.create({
             ...request.body,
-            /*comorbidade: 
-                request.body.hepatiteb ? 'HEPB' : request.body.hepatitec ? 'HEPC' : 'OUTRO'*/
+            comorbidade:
+                request.body.hepatiteb ? 'HEPB' : request.body.hepatitec ? 'HEPC' : 'OUTRO'
         });
         if (request.body.comorbidade == 'HEPB'){
             await PacienteHepB.create({
@@ -91,7 +91,7 @@ class PacienteController{
     }
 
     async getAll(request, response) {
-        
+
         const atributos = ['id', 'data_nascimento', 'nome', 'email', 'telefone', 'registro_hc', 'nome_mae', 'peso', 'peso_atualizacao', 'altura'];
 
         Paciente.findAndCountAll()
@@ -130,7 +130,7 @@ class PacienteController{
         //procura um registro_hc testar se é único
         if (
             request.body.registro_hc && await Paciente.findOne({
-                where: { 
+                where: {
                     registro_hc: request.body.registro_hc,
                     id: {
                         [Op.ne]: request.params.id
@@ -200,7 +200,7 @@ class PacienteController{
                     hepatitec.map(async (hepc)=>{
                         const alreadyExists = registrosHepC.some( registroHC =>  hepc.id == registroHC.id )
                         // se o hepatitec já exsitir para esse paciente, apenas atualiza, se não cria um
-                        
+
                         if (alreadyExists){
                             registrosIdsAtualizadosHepC.push(hepc.id)
                             await PacienteHepC.update({
@@ -220,7 +220,7 @@ class PacienteController{
                                     'message': err.message,
                                     'errors': err.errors
                                 })
-                            } 
+                            }
                             await PacienteHepC.create({
                                 ...hepc,
                                 paciente_id: paciente.id
@@ -239,7 +239,7 @@ class PacienteController{
                             })
                     })
                 )
-                
+
             }
             return response.status(201).json({
                 mensagem: "Paciente atualizado com sucesso!"
@@ -250,7 +250,7 @@ class PacienteController{
                 mensagem: "Paciente não encontrado"
             })
         }
-        
+
     }
 
 }

@@ -18,10 +18,10 @@ app.use(routes);
 
 db.connect();
 
-app.use(function(err, request, response, next) {
-  if (err instanceof AppError) {
-    return response.status(err.statusCode).json({
-      message: err.message
+app.use(function(erro, request, response, next) {
+  if (erro instanceof AppError) {
+    return response.status(erro.statusCode).json({
+      message: erro.message
     });
   }
 
@@ -29,8 +29,8 @@ app.use(function(err, request, response, next) {
   if (process.env.APP_DEBUG) {
     return response.status(500).json({
       status: "Error",
-      message: err.message,
-      stack: err.stack
+      message: erro.message,
+      stack: erro.stack
     });
   } else {
     return response.status(500).json({
