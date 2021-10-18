@@ -49,7 +49,7 @@ router.get('/bloqueio/semana', [autenticacaoJwt.verificarToken, autenticacaoJwt.
 router.put('/bloqueio/semana/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], datasBloqueadasController.updateSemana)
 router.delete('/bloqueio/semana', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], datasBloqueadasController.deleteSemana)
 router.post('/bloqueio/dia', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], datasBloqueadasController.createDia)
-router.get('/bloqueio/dia', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], datasBloqueadasController.getAllDia)
+router.get('/bloqueio/dia', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedicOrViewer], datasBloqueadasController.getAllDia)
 router.put('/bloqueio/dia/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], datasBloqueadasController.updateDia)
 router.delete('/bloqueio/dia', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], datasBloqueadasController.deleteDia)
 

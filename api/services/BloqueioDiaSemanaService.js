@@ -40,13 +40,13 @@ class BloqueioDiaSemanaService {
   async getAll() {
     const semana = await BloqueioDiaSemana.findAll();
     let result = [
-      {diasemana: 0, ativo: true}, // Domingo ...
-      {diasemana: 1, ativo: true},
-      {diasemana: 2, ativo: true},
-      {diasemana: 3, ativo: true},
-      {diasemana: 4, ativo: true},
-      {diasemana: 5, ativo: true},
-      {diasemana: 6, ativo: true}, // ... Sábado
+      {diasemana: 0, ativo: false}, // Domingo ...
+      {diasemana: 1, ativo: false},
+      {diasemana: 2, ativo: false},
+      {diasemana: 3, ativo: false},
+      {diasemana: 4, ativo: false},
+      {diasemana: 5, ativo: false},
+      {diasemana: 6, ativo: false}, // ... Sábado
     ]
     semana.forEach(element => {
       result[element.dia_semana].ativo = element.ativo
