@@ -15,7 +15,7 @@
           </svg>
           <h4 class="paciente-modal-mobile-minitext">
             <span>
-              Cadastrar paciente
+              {{ formData && formData.id ? 'Editar': 'Cadastrar'}} paciente
             </span>
           </h4>
           <button class="paciente-modal-close" @click="$emit('input', false)">
@@ -289,7 +289,7 @@
                   </v-col>
                   <!-- Resultado - Alfafetoproteina -->
                   <v-col :md="3" :sm="12" cols="12">
-                    <v-text-field v-model="formData.hepatiteb.ultimo_resultado_alfa" type="text" outlined :hide-details="true" label="Resultado - Alfafetoproteina (Opcional)" @blur="salvarEmCache" />
+                    <v-text-field v-model="formData.hepatiteb.ultimo_resultado_alfa" type="number" outlined :hide-details="true" label="Resultado - Alfafetoproteina (Opcional)" @blur="salvarEmCache" />
                   </v-col>
                   <!-- Fibrose -->
                   <v-col :md="3" :sm="12" cols="12">
@@ -787,10 +787,11 @@ export default {
     },
   },
   watch:{
-    pacienteId: function(pacienteId){
+    pacienteId: function(pacienteId, oldPacienteid){
       if(pacienteId){
         this.getDados(pacienteId);
-      }
+      } else if(oldPacienteid > 0 && pacienteId == 0)
+        this.limparDados()
     }
   },
   mounted(){
@@ -940,7 +941,6 @@ export default {
         delete info.PacienteHepCs
         info.hepatiteb = info.PacienteHepB
         delete info.PacienteHepB
-      
         this.formData = info;
         let t = this
         setTimeout(function(){
