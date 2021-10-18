@@ -1,6 +1,6 @@
 <template>
   <v-container fluid style="overflow: auto; padding: 5vh">
-    <modalPaciente v-model="modalAtivo" v-bind:pacienteId="pacienteId" />
+    <modalPaciente v-model="modalAtivo" v-bind:pacienteId="pacienteId" @listaPacientes="listaPacientes" />
 
     <v-card class="mx-auto pa-5 mt-3" width="100%">
       <div class="div-titulo-btn">
@@ -120,6 +120,7 @@ export default {
   },
   methods: {
     listaPacientes() {
+      this.pacienteId = null
       this.$axios
         .$get("/paciente")
         .then((response) => {
