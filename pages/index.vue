@@ -76,7 +76,7 @@
           </v-col>
           <!-- Coluna Agendamentos -->
           <v-col :sm="12" :md="8" :lg="9">
-            <div v-if="consultaLista && ((primeiroCarregamento && consultaLista.length > 0) || !primeiroCarregamento)" class="consulta-container-list" @scroll="scrollLista" ref="consultaList">
+            <div v-if="consultaLista && ((primeiroCarregamento && Object.keys(consultaLista).length > 0) || !primeiroCarregamento)" class="consulta-container-list" @scroll="scrollLista" ref="consultaList">
               <v-row>
                 <v-col>
                   <div class="lds-dual-ring"></div>
