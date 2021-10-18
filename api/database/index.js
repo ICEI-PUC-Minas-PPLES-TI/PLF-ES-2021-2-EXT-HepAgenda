@@ -9,6 +9,8 @@ const Paciente = require('../models/Paciente');
 const LogConsulta = require("../models/LogConsulta");
 const PacienteHepB = require("../models/PacienteHepB");
 const PacienteHepC = require("../models/PacienteHepC");
+const BloqueioDiaSemana = require("../models/BloqueioDiaSemana");
+const BloqueioData = require("../models/BloqueioData");
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -33,12 +35,15 @@ module.exports = {
       LogConsulta.init(sequelize);
       PacienteHepB.init(sequelize);
       PacienteHepC.init(sequelize);
+      BloqueioDiaSemana.init(sequelize);
+      BloqueioData.init(sequelize);
 
       //Associações
       Paciente.hasOne(PacienteHepB, {foreignKey: "paciente_id"});
       Paciente.hasMany(PacienteHepC, {foreignKey: "paciente_id"});
       PacienteHepB.hasOne(Tratamento, {foreignKey: "id"})
       PacienteHepC.hasOne(Tratamento, {foreignKey: "id"})
+      BloqueioData.hasOne(Usuario, {foreignKey: "id", as: 'usuario'})
 
       if (process.env.NODE_ENV === "dev") {
         console.log(
