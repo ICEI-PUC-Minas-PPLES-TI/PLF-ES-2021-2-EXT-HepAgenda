@@ -32,8 +32,9 @@
                             v-model="filtros"
                             label="Aguardando Confirmação"
                             color="primary"
-                            value="0"
+                            value="AC"
                             hide-details
+                            @change="carregaConsultas(filtroDataInicio)"
                           />
                         </li>
                         <li>
@@ -41,8 +42,9 @@
                             v-model="filtros"
                             label="Aguardando Consulta"
                             color="#0049D6"
-                            value="1"
+                            value="AA"
                             hide-details
+                            @change="carregaConsultas(filtroDataInicio)"
                           />
                         </li>
                         <li>
@@ -50,8 +52,9 @@
                             v-model="filtros"
                             label="Atendimento Realizado"
                             color="#00BA34"
-                            value="2"
+                            value="R"
                             hide-details
+                            @change="carregaConsultas(filtroDataInicio)"
                           />
                         </li>
                         <li>
@@ -59,8 +62,9 @@
                             v-model="filtros"
                             label="Não compareceu"
                             color="#CE4B39"
-                            value="3"
+                            value="C"
                             hide-details
+                            @change="carregaConsultas(filtroDataInicio)"
                           />
                         </li>
                       </ul>
@@ -78,6 +82,7 @@
                   <div class="lds-dual-ring"></div>
                 </v-col>
               </v-row>
+              <br><br>
               <v-row v-for="(li, lidx) in consultaLista" :key="lidx">
                 <v-col :sm="12">
                   <!-- Dia em extenso/Dia da semana e contador de consultas -->
@@ -134,6 +139,7 @@
                   </v-row>
                 </v-col>
               </v-row>
+              <br><br><br>
               <v-row>
                 <v-col>
                   <div class="lds-dual-ring"></div>
@@ -226,7 +232,7 @@ export default {
       modalEditAtivo: false,
       data_atual: null,
       filtro_exp: 0,
-      filtros: ['0','1','2','3'],
+      filtros: ['AC','AA','R','C'],
       consultas: [],
       filtroDataInicio: null,
       filtroDataFim: null,
@@ -353,7 +359,7 @@ export default {
       this.filtroDataFim = new Date(dtFim.getTime() - (dtFim.getTimezoneOffset() * 60000 )).toISOString().split("T")[0]
       this.consultas = []
       this.$axios
-        .get(`/consulta?dataInicio=${this.filtroDataInicio}&dataFim=${this.filtroDataFim}`)
+        .get(`/consulta?dataInicio=${this.filtroDataInicio}&dataFim=${this.filtroDataFim}&status=${this.filtros.join()}`)
         .then(res => {
           this.primeiroCarregamento = false
           this.consultas = res.data.dados
