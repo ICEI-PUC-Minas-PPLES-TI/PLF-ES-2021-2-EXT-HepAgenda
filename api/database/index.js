@@ -39,6 +39,7 @@ module.exports = {
       Paciente.hasMany(PacienteHepC, {foreignKey: "paciente_id"});
       PacienteHepB.hasOne(Tratamento, {foreignKey: "id"})
       PacienteHepC.hasOne(Tratamento, {foreignKey: "id"})
+      Paciente.hasMany(Consulta, {foreignKey: "paciente_id"})
 
       if (process.env.NODE_ENV === "dev") {
         console.log(
