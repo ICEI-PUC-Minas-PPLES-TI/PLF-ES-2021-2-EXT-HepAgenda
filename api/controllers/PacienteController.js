@@ -45,9 +45,7 @@ class PacienteController{
 
         let hepcIds = [];
         const paciente = await Paciente.create({
-            ...request.body,
-            comorbidade:
-                request.body.hepatiteb ? 'HEPB' : request.body.hepatitec ? 'HEPC' : 'OUTRO'
+            ...request.body
         });
         if (request.body.comorbidade == 'HEPB'){
             await PacienteHepB.create({
