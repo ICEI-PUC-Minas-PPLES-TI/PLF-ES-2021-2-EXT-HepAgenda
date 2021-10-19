@@ -304,7 +304,7 @@ class ConsultaController {
       include: [
         {
           model: Arquivo, as: "arquivos",
-          attributes: ['nome', 'link'],
+          attributes: ['id', 'nome'],
         }
       ]
     });

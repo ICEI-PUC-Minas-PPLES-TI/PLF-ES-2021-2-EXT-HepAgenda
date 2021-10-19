@@ -24,6 +24,9 @@ const extensoesPermitidas = [
   '.wpt',
   '.wrd',
   '.wri',
+  '.xlsx',
+  '.xls',
+  ''
 ]
 
 module.exports = {

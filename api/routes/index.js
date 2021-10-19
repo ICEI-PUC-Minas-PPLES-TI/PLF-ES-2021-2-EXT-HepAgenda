@@ -9,6 +9,7 @@ const TratamentoController  = require('../controllers/TratamentoController.js');
 const UsuarioController  = require('../controllers/UsuarioController.js');
 const ConsultaController = require('../controllers/ConsultaController.js');
 const PacienteController  = require('../controllers/PacienteController.js');
+const ArquivoController = require('../controllers/ArquivoController.js');
 
 
 // Iniciar controllers
@@ -16,6 +17,7 @@ const tratamentoController = new TratamentoController();
 const usuarioController = new UsuarioController();
 const consultaController = new ConsultaController();
 const pacienteController = new PacienteController();
+const arquivoController = new ArquivoController();
 
 // const multer  = require('multer')
 // const upload = multer({ dest: 'uploads/' })
@@ -45,5 +47,7 @@ router.post('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmi
 router.put('/paciente/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.update)
 router.get('/paciente/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.get)
 router.get('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.getAll)
+// Arquivo
+router.get('/arquivo/:id', arquivoController.download)
 
 module.exports = router
