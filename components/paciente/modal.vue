@@ -122,7 +122,7 @@
                   </v-text-field>
                 </v-col>
                 <v-col :md="2" :sm="12" cols="12">
-                  <v-text-field v-model="formData.altura" type="number" min="0" max="3" step='0.01' outlined :hide-details="true" label="Altura (Opcional)" @blur="salvarEmCache">
+                  <v-text-field v-model="formData.altura" type="text" v-mask="['#.##']" outlined :hide-details="true" label="Altura (Opcional)" @blur="salvarEmCache">
                     <span slot="append">
                       m
                     </span>
@@ -724,7 +724,7 @@
 import {mask} from 'vue-the-mask'
 const MODALV = '0.0.1' // Versão dos dados no modal, caso seja diferente da versao salva no PC do usuario nao vai carregar dados anteriores
 export default {
-  props: ['value'],
+  props: ['value', 'pacienteId'],
   directives: {mask},
   data(){
     return {
@@ -785,6 +785,13 @@ export default {
       const result = this.formData.peso / (this.formData.altura * this.formData.altura)
       return isFinite(result) ? result.toFixed(3): 0;
     },
+  },
+  watch:{
+    pacienteId: function(pacienteId){
+      if(pacienteId){
+        this.getDados(pacienteId);
+      }
+    }
   },
   mounted(){
     // Buscar tratamentos
@@ -887,6 +894,7 @@ export default {
       localStorage.setItem('hepagenda-paciente', JSON.stringify(this.formData))
     },
     enviarDados(){
+
       if(this.$refs.formPaciente.validate()) {
         let info = JSON.parse(JSON.stringify(this.formData))
         info.telefone = info.telefone.replace(/\D/g,'')
@@ -894,11 +902,26 @@ export default {
           this.limparDados()
           this.$emit('input', false) // Fecha modal
           alert('Paciente Cadastrado')
+          this.$emit('listaPacientes')
         }).catch(err => {
           alert(JSON.stringify(err.response.data))
           console.log(err.response.data)
         })
       }
+
+    },
+
+    getDados(id){
+      this.limparDados();
+
+      this.$axios.$get('/paciente/' + id).then(response => {
+        this.formData = response;
+      }).catch(error => {
+        console.log(error)
+        alert(JSON.stringify(err.response.data))
+        this.errored = true
+      })
+
     }
   }
 }
