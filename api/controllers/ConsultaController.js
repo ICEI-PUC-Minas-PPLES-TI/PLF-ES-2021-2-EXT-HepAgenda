@@ -1,4 +1,5 @@
 const Consulta = require("../models/Consulta");
+const Arquivo = require("../models/Arquivo");
 
 const PacienteService = require("../services/PacienteService");
 const UsuarioService = require("../services/UsuarioService");
@@ -10,6 +11,7 @@ const { Op } = require("sequelize");
 const yup = require("yup");
 const LogConsultaController = require("./LogConsultaController");
 const ConsultaService = require("../services/ConsultaService");
+const ArquivoService = require("../services/ArquivoService");
 
 class ConsultaController {
   async create(request, response) {
@@ -94,8 +96,6 @@ class ConsultaController {
     consulta
       .save()
       .then(function(consultaObj) {
-        // TODO fazer o arquivo
-
         // Salvando log de criação
         const logConsultaController = new LogConsultaController();
         const log_descricao = `Consulta criada pelo usuário ${usuario_criador.dataValues.login}.`;
@@ -140,6 +140,8 @@ class ConsultaController {
     } catch (erro) {
       throw new AppError(erro.message, 422);
     }
+
+    console.log(request.files);
 
     const id = request.params.id;
     const {
@@ -203,7 +205,11 @@ class ConsultaController {
     }
 
     const consultaData = consulta.dataValues;
-    // TODO fazer o arquivo
+
+    if (Array.isArray(request.files) && request.files.length) {
+      const arquivoService = new ArquivoService();
+      await arquivoService.create(consultaData.id, request.files);
+    }
 
     const usuarioService = new UsuarioService();
     const usuario_criador = (
@@ -294,7 +300,13 @@ class ConsultaController {
     const consulta = await Consulta.findOne({
       where: {
         id: request.params.id
-      }
+      },
+      include: [
+        {
+          model: Arquivo, as: "arquivos",
+          attributes: ['nome', 'link'],
+        }
+      ]
     });
     if (consulta == null) {
       throw new AppError("Consulta não encontrada!", 404);
@@ -339,7 +351,8 @@ class ConsultaController {
         else if (element == "AA") status.push("AGUARDANDOA");
         else if (element == "R") status.push("REALIZADO");
         else if (element == "C") status.push("CANCELADO");
-        else return response.status(404).json({erro: "'status' não encontrado"})
+        else
+          return response.status(404).json({ erro: "'status' não encontrado" });
       });
     } else {
       status = statusEnums;
@@ -365,7 +378,7 @@ class ConsultaController {
         dt_inicio: {
           [Op.between]: [dataInicio, dataFim]
         },
-        status: statusSolicitados,
+        status: statusSolicitados
       }
     })
       .then(dados => {
@@ -382,7 +395,7 @@ class ConsultaController {
             dt_inicio: {
               [Op.between]: [dataInicio, dataFim]
             },
-            status: statusSolicitados,
+            status: statusSolicitados
           }
         })
           .then(async consultas => {
