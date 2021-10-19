@@ -30,30 +30,59 @@
                     hide-details="auto"
                     :clearable="true"
                     label="Paciente"
-                    :item-text="
-                      (item) => item.nome + ' - ' + item.data_nascimento
-                    "
+                    :search-input="procuraPacienteTxt"
+                    @update:search-input="procuraPaciente"
+                    item-text="nome"
                     item-value="id"
                     :rules="[(v) => !!v || 'Paciente obrigatório']"
                     outlined
-                  />
+                  >
+                  <template v-slot:item="data">
+                    <div style="white-space: nowrap;border-bottom: 1px solid #eee;width:100%" class="d-block">
+                      <b class="d-block">{{ data.item.nome }}</b>
+                      <small class="d-block">Nascimento: {{ formataData(data.item.data_nascimento) }}</small>
+                      <small class="d-block">Mãe: {{ data.item.nome_mae }}</small>
+                    </div>
+                  </template>
+                  </v-autocomplete>
                 </v-col>
               </v-row>
               <!-- Data da consulta -->
               <v-row class="mt-n3">
                 <v-col :md="12" :sm="12" :xl="12" cols="12">
+                  <v-menu
+                    v-model="menuData"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    transition="scale-transition"
+                    offset-y
+                    class="paciente-modal-input-date"
+                    min-width="auto"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
                       <v-text-field
                         v-model="consulta.dt_inicio"
                         outlined
                         hide-details="auto"
                         :rules="[(v) => !!v || 'Data da consulta obrigatória']"
                         label="Data da consulta"
-                        type="datetime-local"
-                        min="2017-06-01T08:30"
-                        max="2050-06-30T16:30"
+                        type="date"
+                        min="2017-06-01"
+                        max="2050-06-30"
                         class="paciente-modal-input-date"
                       >
+                        <span slot="append">
+                          <v-icon v-bind="attrs" v-on="on">
+                            mdi-calendar
+                          </v-icon>
+                        </span>
                       </v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="consulta.dt_inicio"
+                      @input="menuData = false"
+                    ></v-date-picker>
+                  </v-menu>
                 </v-col>
               </v-row>
               <!-- select de médico -->
@@ -78,7 +107,7 @@
                     hide-details="auto"
                     outlined
                     label="Descrição (Opcional)"
-                    :rules="(v) =>(v && v.length <= 60) || 'Maximo de 60 caracteres'"
+                    :rules="[(v) =>(v && v.length <= 60) || 'Maximo de 60 caracteres']"
                     auto-grow
                   ></v-textarea>
                 </v-col>
@@ -125,11 +154,13 @@ export default {
         status: "AGUARDANDOC",
         descricao: "",
         //usuario_id_medico:'',
-        dt_inicio: "",
+        dt_inicio: null,
       },
 
       toast: false,
       toastMensagem: "",
+      menuData: false,
+      procuraPacienteTxt: null
     };
   },
   watch: {
@@ -138,7 +169,7 @@ export default {
     },
     "consulta.paciente_id": function (val) {
       this.verificaPrimeraConsulta(val);
-    },
+    }
   },
   mounted() {
     this.listaPacientes();
@@ -146,9 +177,9 @@ export default {
   methods: {
     marcaConsulta() {
       if (this.$refs.formConsulta.validate()) {
-        this.consulta.dt_inicio = new Date(this.consulta.dt_inicio);
-
+        
         let consulta = JSON.parse(JSON.stringify(this.consulta));
+        consulta.dt_inicio = new Date(this.consulta.dt_inicio);
 
         this.$axios
           .$post("/consulta", consulta)
@@ -178,10 +209,9 @@ export default {
           });
       }
     },
-
-    listaPacientes() {
+    listaPacientes(limit = 20, search = null) {
       this.$axios
-        .$get("/paciente")
+        .$get(`/paciente?limite=${limit}&pesquisar=${search ? search: ''}`)
         .then((response) => {
           this.pacientes = response.dados;
         })
@@ -189,22 +219,33 @@ export default {
           console.log(error);
         });
     },
-
     abreToast(mensagem) {
       this.toastMensagem = mensagem;
       this.toast = true;
     },
-
     limpaDados() {
       this .consulta = {
         paciente_id: "",
         status: "AGUARDANDOC",
         descricao: "",
         //usuario_id_medico:'',
-        dt_inicio: "",
+        dt_inicio: null,
       }
       this.$refs.formConsulta.reset();
     },
+    procuraPaciente(val){
+      if(val && val.length > 3) {
+        this.procuraPacienteTxt = val
+        this.listaPacientes(10, val)
+      } else if(val == null)
+        this.listaPacientes()
+    },
+    formataData(data){
+      if(data) {
+        const dataSplit = data.split('-')
+        return dataSplit.length == 3 ? `${dataSplit[2]}/${dataSplit[1]}/${dataSplit[0]}`: ''
+      } else return ''
+    }
   },
 };
 </script>
