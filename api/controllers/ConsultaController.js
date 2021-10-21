@@ -32,7 +32,7 @@ class ConsultaController {
       dt_inicio: yup
         .date("'dt_inicio' deve ser data!")
         .required("'dt_inicio' obrigatório!"),
-      usuario_id_medico: yup.number("'usuario_id_medico' deve ser numérico!")
+      usuario_id_medico: yup.number("'usuario_id_medico' deve ser numérico!").nullable()
     });
 
     try {

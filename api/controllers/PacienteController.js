@@ -92,13 +92,26 @@ class PacienteController{
 
         const atributos = ['id', 'data_nascimento', 'nome', 'email', 'telefone', 'registro_hc', 'nome_mae', 'peso', 'peso_atualizacao', 'altura'];
 
-        Paciente.findAndCountAll()
+        let search = request.query.pesquisar
+        let whre = {}
+
+        if(search)
+            whre = {
+                [Op.or]: [
+                    {nome: { [Op.like]: '%'+search+'%' }},
+                    {nome_mae: { [Op.like]: '%'+search+'%' }},
+                    {registro_hc: { [Op.like]: '%'+search+'%' }},
+                ], 
+            }
+
+        Paciente.findAndCountAll({
+            where: whre
+        })
         .then((dados) => {
-
             const { paginas, ...SortPaginateOptions } = SortPaginate( request.query, atributos, dados.count );
-
             Paciente.findAll({
-                ...SortPaginateOptions
+                ...SortPaginateOptions,
+                where: whre
             })
             .then((pacientes) => {
                 response.status(200).json({ 'dados': pacientes, 'registros': dados.count, 'paginas': paginas });
