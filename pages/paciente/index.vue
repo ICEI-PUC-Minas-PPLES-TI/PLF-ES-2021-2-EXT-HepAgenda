@@ -78,6 +78,16 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+
+      <v-snackbar v-model="toast" shaped>
+        {{ toastMensagem }}
+
+        <template v-slot:action="{ attrs }">
+          <v-btn color="blue" text v-bind="attrs" @click="toast = false">
+            Ok
+          </v-btn>
+        </template>
+      </v-snackbar>
     </v-card>
   </v-container>
 </template>
@@ -95,6 +105,7 @@ export default {
         { text: "PACIENTE", value: "nome" },
         { text: "MÃE", value: "nome_mae" },
         { text: "NASCIMENTO", value: "data_nascimento" },
+        { text: "STATUS", value: "status" },
         { text: "ÚLTIMA CONSULTA", value: "ultima_consulta" },
         { text: "AÇÕES", value: "actions", sortable: false },
       ],
@@ -105,9 +116,12 @@ export default {
           data_nascimento: "",
           ultima_consulta: "",
           nome_mae: "",
+          status: "",
         },
       ],
 
+      toast: false,
+      toastMensagem: "",
       pesquisa: "",
 
       pacienteId: 0,
@@ -128,8 +142,23 @@ export default {
               paciente.data_nascimento = this.formataData(
                 paciente.data_nascimento
               );
+
+              paciente.status = "ATIVO";
+
+              if (paciente.ativo == 0) {
+                paciente.status = "DESATIVADO";
+              }
+
+              if (paciente.Consulta.length > 0) {
+                paciente.ultima_consulta = this.formataData(
+                  new Date(paciente.Consulta[0].dt_inicio)
+                    .toISOString()
+                    .substring(0, 10)
+                );
+              }
             });
           }
+
           this.pacientes = response.dados;
         })
         .catch((error) => {
@@ -144,7 +173,21 @@ export default {
     },
 
     deletePaciente() {
-      console.log(this.pacienteId);
+      this.$axios
+        .put("/paciente/" + this.pacienteId, {
+          id: this.pacienteId,
+          ativo: false,
+        })
+        .then((res) => {
+          this.abreToast(res.data.mensagem);
+          this.listaPacientes();
+        })
+        .catch((err) => {
+          //this.abreToast(err.response.data);
+          console.log(err);
+        });
+
+      this.modalConfirm = false;
       this.pacienteId = 0;
     },
 
@@ -156,6 +199,11 @@ export default {
     formataData(data) {
       let dArr = data.split("-"); // ex input "2010-01-18"
       return dArr[2] + "/" + dArr[1] + "/" + dArr[0]; //ex out: "18/01/10"
+    },
+
+    abreToast(mensagem) {
+      this.toast = true;
+      this.toastMensagem = mensagem;
     },
   },
 };
