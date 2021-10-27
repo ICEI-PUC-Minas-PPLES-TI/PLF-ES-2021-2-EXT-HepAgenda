@@ -904,6 +904,9 @@ export default {
             delete info.hepatiteb
           else if(info.comorbidade == 'HEPC')
             delete info.hepatitec
+        } else if(!info.comorbidade){
+          delete info.hepatiteb
+          delete info.hepatitec
         }
         if(!this.formData.id) {
           this.$axios.post('/paciente', info).then(res=>{
