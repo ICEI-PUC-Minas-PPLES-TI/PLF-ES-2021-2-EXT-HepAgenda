@@ -373,7 +373,7 @@ export default {
             dtInicio.setDate(new Date(dataInicio).getDate() - 7);
             t.carregaConsultas(new Date(dtInicio.getTime() - (dtInicio.getTimezoneOffset() * 60000 )).toISOString().split("T")[0])
           }
-        }, 2000)
+        }, 1000)
       }else if(ev.target.scrollTop === (ev.target.scrollHeight - ev.target.offsetHeight)) { // No final da barra de rolagem da div
         setTimeout(() => { // Esperar um tempo para que não seja engano
           if(ev.target.scrollTop === (ev.target.scrollHeight - ev.target.offsetHeight)) { // Verificar novamente se o usuário continua no canto superior
@@ -382,7 +382,7 @@ export default {
             dtInicio.setDate(new Date(dataInicio).getDate() + 7);
             t.carregaConsultas(new Date(dtInicio.getTime() - (dtInicio.getTimezoneOffset() * 60000 )).toISOString().split("T")[0])
           }
-        }, 2000)
+        }, 1000)
       }
     }, 500),
     carregaConsultas(dataInicio) {
