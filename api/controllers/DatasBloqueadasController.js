@@ -1,23 +1,20 @@
 const BloqueioDiaSemanaService = require("../services/BloqueioDiaSemanaService");
 const BloqueioDataService = require("../services/BloqueioDataService");
 const AppError = require("../errors/AppError");
-const yup = require('yup');
+const { createSemanaValidation,
+  updateSemanaValidation,
+  deleteSemanaValidation,
+  createDiaValidation,
+  getAllDiaValidation,
+  updateDiaValidation,
+  deleteDiaValidation 
+} = require('../validation/BloqueioValidation.js');
+
 
 class DatasBloqueadasController {
   async createSemana(request, response) {
-    const scheme = yup.object().shape({
-      dia_semana: yup
-        .number("'dia_semana' deve ser numérico!")
-        .min(0)
-        .max(6)
-        .required("'dia_semana' obrigatório!"),
-      ativo: yup
-        .boolean()
-        .required("'ativo' obrigatório!")
-    });
-
     try {
-      await scheme.validate(request.body, { abortEarly: false });
+      await createSemanaValidation.validate(request.body, { abortEarly: false });
     } catch (erro) {
       throw new AppError(erro.message, 422);
     }
@@ -33,14 +30,8 @@ class DatasBloqueadasController {
   }
 
   async updateSemana(request, response) {
-    const scheme = yup.object().shape({
-      ativo: yup
-        .boolean()
-        .required("'ativo' obrigatório!")
-    });
-
     try {
-      await scheme.validate(request.body, { abortEarly: false });
+      await updateSemanaValidation.validate(request.body, { abortEarly: false });
     } catch (erro) {
       throw new AppError(erro.message, 422);
     }
@@ -50,13 +41,8 @@ class DatasBloqueadasController {
   }
 
   async deleteSemana(request, response) {
-    const scheme = yup.object().shape({
-      id: yup
-        .number()
-        .required("'id' obrigatório!")
-    });
     try {
-      await scheme.validate(request.query, { abortEarly: false });
+      await deleteSemanaValidation.validate(request.query, { abortEarly: false });
     } catch (erro) {
       throw new AppError(erro.message, 422);
     }
@@ -66,17 +52,8 @@ class DatasBloqueadasController {
   }
 
   async createDia(request, response) {
-    const scheme = yup.object().shape({
-      data: yup
-        .date()
-        .required("'data' obrigatório!"),
-      ativo: yup
-        .boolean()
-        .required("'ativo' obrigatório!")
-    });
-
     try {
-      await scheme.validate(request.body, { abortEarly: false });
+      await createDiaValidation.validate(request.body, { abortEarly: false });
     } catch (erro) {
       throw new AppError(erro.message, 422);
     }
@@ -87,27 +64,8 @@ class DatasBloqueadasController {
   }
 
   async getAllDia(request, response) {
-    const scheme = yup.object().shape({
-      ano: yup
-        .number()
-        .min(1900)
-        .max(3000)
-        .nullable(),
-      mes: yup
-        .number()
-        .min(1)
-        .max(12)
-        .nullable(),
-      ativo: yup
-        .boolean()
-        .nullable(),
-      simples: yup
-        .boolean()
-        .nullable(),
-    });
-
     try {
-      await scheme.validate(request.query, { abortEarly: false });
+      await getAllDiaValidation.validate(request.query, { abortEarly: false });
     } catch (erro) {
       throw new AppError(erro.message, 422);
     }
@@ -118,14 +76,8 @@ class DatasBloqueadasController {
   }
 
   async updateDia(request, response) {
-    const scheme = yup.object().shape({
-      ativo: yup
-        .boolean()
-        .required("'ativo' obrigatório!")
-    });
-
     try {
-      await scheme.validate(request.body, { abortEarly: false });
+      await updateDiaValidation.validate(request.body, { abortEarly: false });
     } catch (erro) {
       throw new AppError(erro.message, 422);
     }
@@ -135,13 +87,8 @@ class DatasBloqueadasController {
   }
 
   async deleteDia(request, response) {
-    const scheme = yup.object().shape({
-      id: yup
-        .number()
-        .required("'id' obrigatório!")
-    });
     try {
-      await scheme.validate(request.query, { abortEarly: false });
+      await deleteDiaValidation.validate(request.query, { abortEarly: false });
     } catch (erro) {
       throw new AppError(erro.message, 422);
     }
