@@ -141,8 +141,6 @@ class ConsultaController {
       throw new AppError(erro.message, 422);
     }
 
-    console.log(request.files);
-
     const id = request.params.id;
     const {
       paciente_id,
