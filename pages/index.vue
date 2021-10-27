@@ -10,10 +10,10 @@
     </v-row>
     <v-row>
       <v-col :md="10" :offset-md="1" class="consulta-container">
-        <v-btn color="primary" large @click="modalEditAtivo = !modalEditAtivo">
+        <v-btn color="primary" large @click="abreModal(12)">
           Editar Consulta
         </v-btn>
-        <modalEditConsulta v-model="modalEditAtivo" />
+        <modalEditConsulta v-model="modalEditAtivo" v-bind:consultaId="consultaId" />
       </v-col>
     </v-row>
   </v-container>
@@ -33,6 +33,13 @@ export default {
     return {
       modalCreateAtivo: false,
       modalEditAtivo: false,
+      consultaId:''
+    }
+  },
+  methods: {
+    abreModal(id){
+      this.consultaId = id;
+      this.modalEditAtivo = !this.modalEditAtivo;
     }
   }
 }
