@@ -91,3 +91,6 @@ sw.*
 
 # Vim swap files
 *.swp
+
+# pasta de uploads de arquivos
+api/uploads/*

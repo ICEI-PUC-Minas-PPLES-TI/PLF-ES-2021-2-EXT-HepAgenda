@@ -47,10 +47,23 @@ const isAdminOrMedic = (req, res, next) => {
   });
 };
 
+const isAdminOrMedicOrViewer = (req, res, next) => {
+  Usuario.findByPk(req.userId).then(usuario => {
+    if (usuario.tipo === "A" || usuario.tipo === "M" || usuario.tipo === "V") {
+      next();
+      return;
+    }
+
+    res.status(403).send("Necessita de ser um usuário administrador ou médico ou visualizador!");
+    return;
+  });
+};
+
 const autenticacaoJwt = {
   verificarToken,
   isAdmin,
-  isAdminOrMedic
+  isAdminOrMedic,
+  isAdminOrMedicOrViewer
 };
 
 module.exports = autenticacaoJwt;
