@@ -627,6 +627,7 @@
               <v-row>
                 <v-col :md="2">
                   <v-btn
+                    v-if="!formData.id"
                     block
                     large
                     color="warning"
@@ -840,6 +841,7 @@ export default {
   },
   methods: {
     limparDados(){
+      this.$refs.formPaciente.resetValidation()
       this.formData = {
         nome: null,
         data_nascimento: null,
@@ -904,7 +906,7 @@ export default {
             delete info.hepatiteb
           else if(info.comorbidade == 'HEPC')
             delete info.hepatitec
-        } else if(!info.comorbidade){
+        } else if(!info.comorbidade || info.comorbidade == 'OUTRO'){
           delete info.hepatiteb
           delete info.hepatitec
         }

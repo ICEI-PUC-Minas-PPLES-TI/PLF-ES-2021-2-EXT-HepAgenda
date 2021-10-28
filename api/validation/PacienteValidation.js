@@ -30,9 +30,9 @@ const hepatiteBCreateScheme = yup.object().shape({
     ultimo_resultado_alfa: yup.number().nullable(),
     data_antiretroviral: yup.date(),
     portador_inativo: yup.boolean().required("portador_inativo obrigatória!"),
-    data_ultra: yup.date(),
+    data_ultra: yup.date().nullable(),
     ultimo_resultado_ultra: yup.string().max(200).nullable(),
-    data_carga: yup.date(),
+    data_carga: yup.date().nullable(),
     ultimo_resultado_carga: yup.number().nullable()
 })
 
