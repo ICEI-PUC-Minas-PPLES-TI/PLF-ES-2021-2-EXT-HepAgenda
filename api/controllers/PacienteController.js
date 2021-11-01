@@ -5,6 +5,7 @@ const Paciente = require('../models/Paciente');
 const { SortPaginate } = require('../helpers/SortPaginate')
 const PacienteHepB = require('../models/PacienteHepB');
 const PacienteHepC = require('../models/PacienteHepC');
+const PacienteService = require("../services/PacienteService");
 const { pacienteCreateScheme, pacienteUpdateScheme, hepatiteRequiredScheme } = require('../validation/PacienteValidation');
 
 class PacienteController{
@@ -249,6 +250,36 @@ class PacienteController{
             })
         }
 
+    }
+
+    async deepSearch(request, response) {
+      const validationSchema = yup.object().shape({
+        campos: yup.array()
+          .of(
+            yup.object().shape({
+              campo: yup.string().required(),
+              comparador: yup.mixed().oneOf(['MAIOR', 'MENOR','IGUAL','COMECA','TERMINA','CONTEM','EXISTE','NAOEXISTE']).required(),
+              valor: yup.string().required(),
+            })
+          )
+          .required('Campos obrigatorios'),
+        operador: yup.mixed().oneOf(['AND', 'OR']).required(),
+      })
+
+       // Validando com o esquema criado:
+       try {
+          await validationSchema.validate(request.body, { abortEarly: false }); // AbortEarly para fazer todas as validações
+        } catch (err) {
+          return response.status(422).json({
+              'name:': err.name, // => 'ValidationError'
+              'message': err.message,
+              'errors': err.errors
+          })
+        }
+
+      const pacienteService = new PacienteService();
+      const paciente = await pacienteService.deepSearch(request.body.campos, request.body.operador, request.query.pagina);
+      return response.status(200).json(paciente)
     }
 
 }
