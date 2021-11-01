@@ -53,6 +53,7 @@ module.exports = {
       console.log(
         `Não foi possível estabelecer a conexão com '${process.env.DB_HOST}/${process.env.DB_DATABASE}'`
       );
+      console.log(error)
     }
   },
 
