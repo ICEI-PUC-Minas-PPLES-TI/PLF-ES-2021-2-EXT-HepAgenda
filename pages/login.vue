@@ -30,9 +30,7 @@
           <v-row class="meio">
             <div class="login-box">
               <svg
-                class="imgPrinc"
-                width="322"
-                height="175"
+                width="222"
                 viewBox="0 0 322 175"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -117,13 +115,14 @@
                   fill="white"
                 />
               </svg>
+              <br><br>
 
               <!--LOGIN-->
               <v-text-field
                 class="caixaDeTexto"
                 hide-details="auto"
                 v-model="formData.email"
-                label="EMAIL"
+                label="LOGIN"
                 outlined
                 :rules="[rules.required]"
               ></v-text-field>
@@ -134,14 +133,14 @@
                 class="caixaDeTexto"
                 v-model="formData.senha"
                 :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                :rules="[rules.required, rules.min]"
+                :rules="[rules.required]"
                 :type="show1 ? 'text' : 'password'"
                 label="SENHA"
-                hint="Pelo menos 8 caracteres, 1 número, 1 letra minúscula e 1 letra maiúscula"
+                :error-messages="loginErrors"
                 @click:append="show1 = !show1"
                 outlined
               ></v-text-field>
-
+              <br>
               <v-btn
                 color="#008BD9"
                 style="color: #fff"
@@ -152,7 +151,7 @@
               </v-btn>
               <!--  <v-checkbox v-model="checkValue" label="LEMBRAR SENHA"></v-checkbox> -->
             </div>
-            <span class="login-forget">Esqueci a Senha</span>
+            <b class="login-forget d-none">Esqueci a Senha</b>
           </v-row>
         </div>
       </v-col>
@@ -201,36 +200,25 @@ export default {
         senha: null
       },
       rules: {
-        required: value => !!value || "Obrigatório!",
-        min: v => {
-          if (
-            v &&
-            v.length >= 8 &&
-            /\d/.test(v) &&
-            /[a-z]/g.test(v) &&
-            /[A-Z]/g.test(v)
-          )
-            return true;
-          else
-            return "Min 8 caracteres, 1 número, 1 letra minúscula e 1 letra maiúscula";
-        },
-        equal: v => v === this.formData.senha
-        //|| "Senhas não conferem"
-      }
+        required: value => !!value || "Obrigatório!"
+      },
+      loginErrors: []
     };
   },
   methods: {
     realizarLogin() {
-      console.log("Botao Login apertado");
+      this.loginErrors = []
       this.$axios
         .post("/signin", this.formData)
         .then(res => {
-          alert("Login efetuado com sucesso!");
-          this.$router.push("/");
+          this.$store.dispatch('login/userLogin', {
+            loginData: res.data.acessoToken,
+            router: this.$router
+          })
         })
         .catch(err => {
-          alert(JSON.stringify(err.response.data));
-          console.log(err.response.data);
+          console.log(err)
+          this.loginErrors = [err.response.data]
         });
     }
   }
@@ -293,11 +281,8 @@ export default {
   font-size: 20px;
   text-align: center;
 }
-.login-box h4 {
-  text-align: right;
-}
 .login-forget {
-  font-family: "Roboto" f, sans-serif;
+  font-family: "Roboto" , sans-serif;
   color: #000000;
   text-align: center;
   display: block;
@@ -320,12 +305,6 @@ export default {
   }
   .figuraDireita {
     width: 0%;
-  }
-}
-
-@media (max-width: 350px) {
-  .imgPrinc {
-    width: 100%;
   }
 }
 </style>

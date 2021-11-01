@@ -22,11 +22,7 @@ class UsuarioController {
 
         const senhaValida = bcrypt.compareSync(senha, usuario.senha);
         if (!senhaValida) {
-          return res.status(401).send({
-            autenticado: false,
-            acessoToken: null,
-            razao: "Senha incorreta!"
-          });
+          return res.status(401).send("Senha incorreta!");
         }
 
         const token = jwt.sign({ id: usuario.id }, process.env.SECRET_KEY, {
