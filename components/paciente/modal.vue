@@ -841,7 +841,6 @@ export default {
   },
   methods: {
     limparDados(){
-      this.$refs.formPaciente.resetValidation()
       this.formData = {
         nome: null,
         data_nascimento: null,
@@ -871,6 +870,7 @@ export default {
       }
       this.adicionarHepatiteC()
       this.salvarEmCache()
+      this.$refs.formPaciente?.resetValidation()
     },
     adicionarHepatiteC(){
       this.formData.hepatitec.push({
@@ -945,8 +945,26 @@ export default {
         info.hepatitec = info.PacienteHepCs
         delete info.PacienteHepCs
         info.hepatiteb = info.PacienteHepB
+        if(!info.hepatiteb)
+          info.hepatiteb = {
+            tratamento_id: null,
+            inicio_tratamento: null,
+            fibrose: null,
+            cirrotico: false,
+            data_alfa: null,
+            ultimo_resultado_alfa: null,
+            portador_inativo: false,
+            data_ultra: null,
+            ultimo_resultado_ultra: null,
+            data_carga: null,
+            ultimo_resultado_carga: null
+          }
         delete info.PacienteHepB
         this.formData = info;
+        if(!this.formData.hepatitec) {
+          this.formData.hepatitec = []
+          this.adicionarHepatiteC()
+        }
         let t = this
         setTimeout(function(){
           t.formData.telefone += ' '
