@@ -1,8 +1,8 @@
 require("dotenv").config();
 const { Sequelize } = require("sequelize");
-const Consulta = require("../models/Consulta");
 
 // Importar modelos aqui
+const Consulta = require("../models/Consulta");
 const Tratamento = require('../models/Tratamento');
 const Usuario = require('../models/Usuario');
 const Paciente = require('../models/Paciente');
@@ -11,6 +11,7 @@ const PacienteHepB = require("../models/PacienteHepB");
 const PacienteHepC = require("../models/PacienteHepC");
 const BloqueioDiaSemana = require("../models/BloqueioDiaSemana");
 const BloqueioData = require("../models/BloqueioData");
+const Arquivo = require("../models/Arquivo");
 
 const sequelize = new Sequelize(
   process.env.DB_DATABASE,
@@ -37,8 +38,11 @@ module.exports = {
       PacienteHepC.init(sequelize);
       BloqueioDiaSemana.init(sequelize);
       BloqueioData.init(sequelize);
+      Arquivo.init(sequelize);
 
-      //Associações
+      // Associações
+      Consulta.hasMany(Arquivo, {as: 'arquivos', foreignKey: "consulta_id"});
+      Arquivo.belongsTo(Consulta, {foreignKey: "consulta_id"});
       Paciente.hasOne(PacienteHepB, {foreignKey: "paciente_id"});
       Paciente.hasMany(PacienteHepC, {foreignKey: "paciente_id"});
       PacienteHepB.hasOne(Tratamento, {foreignKey: "id"})

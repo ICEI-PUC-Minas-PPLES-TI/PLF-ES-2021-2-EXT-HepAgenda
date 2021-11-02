@@ -22,11 +22,7 @@ class UsuarioController {
 
         const senhaValida = bcrypt.compareSync(senha, usuario.senha);
         if (!senhaValida) {
-          return res.status(401).send({
-            autenticado: false,
-            acessoToken: null,
-            razao: "Senha incorreta!"
-          });
+          return res.status(401).send("Senha incorreta!");
         }
 
         const token = jwt.sign({ id: usuario.id }, process.env.SECRET_KEY, {
@@ -72,10 +68,6 @@ class UsuarioController {
           senhaRegEx,
           "Senha deve ter no mínimo 8 caracteres, 1 maiúsculo, 1 minúsculo e 1 número!"
         ),
-      senhaRepetida: yup
-        .string()
-        .required("Senhas repetida é obrigatória!")
-        .oneOf([yup.ref("senha"), null], "Senhas devem ser iguais"),
 
       tipo: yup
         .mixed()
@@ -101,7 +93,7 @@ class UsuarioController {
       nome,
       email,
       telefone: telefone,
-      login: login,
+      login: login ? login: email,
       senha: password,
       tipo: tipo
     });

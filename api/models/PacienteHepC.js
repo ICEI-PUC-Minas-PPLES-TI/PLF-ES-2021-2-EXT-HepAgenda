@@ -28,8 +28,7 @@ class PacienteHepC extends Model{
                 allowNull: false
             },
             fibrose: {
-                type: DataTypes.ENUM(['F0', 'F1', 'F2', 'F3', 'F4', 'F5']),
-                allowNull: false
+                type: DataTypes.ENUM(['F0', 'F1', 'F2', 'F3', 'F4', 'F5'])
             },
             tratado: {
                 type: DataTypes.TINYINT(1)
