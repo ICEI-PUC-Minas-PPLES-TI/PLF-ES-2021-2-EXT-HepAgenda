@@ -1,6 +1,6 @@
 <template>
   <v-container fluid style="overflow: auto; padding: 5vh">
-    <modalPaciente v-model="modalAtivo" v-bind:pacienteId="pacienteId" @listaPacientes="listaPacientes" />
+    <modalPaciente v-model="modalAtivo" v-bind:pacienteId="pacienteId" @listaPacientes="listaPacientes" @input="mudaStatusModal" />
 
     <v-card class="mx-auto pa-5 mt-3" width="100%">
       <div class="div-titulo-btn">
@@ -158,6 +158,10 @@ export default {
       let dArr = data.split("-"); // ex input "2010-01-18"
       return dArr[2] + "/" + dArr[1] + "/" + dArr[0]; //ex out: "18/01/10"
     },
+    mudaStatusModal(val){
+      if(!val)
+        this.pacienteId = null
+    }
   },
 };
 </script>
