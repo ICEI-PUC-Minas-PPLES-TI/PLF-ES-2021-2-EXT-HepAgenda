@@ -8,6 +8,7 @@ const TratamentoController  = require('../controllers/TratamentoController.js');
 const UsuarioController  = require('../controllers/UsuarioController.js');
 const ConsultaController = require('../controllers/ConsultaController.js');
 const PacienteController  = require('../controllers/PacienteController.js');
+const { isAdmin } = require('./verificarJwtToken.js');
 
 
 // Iniciar controllers
@@ -22,6 +23,7 @@ const pacienteController = new PacienteController();
 router.post('/tratamento', tratamentoController.create)
 router.get('/tratamento/:id', tratamentoController.get)
 router.get('/tratamento', tratamentoController.getAll)
+router.delete('/tratamento/:id', tratamentoController.delete)
 // Usuario
 router.post('/signin', usuarioController.signin)
 router.post('/usuario', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], usuarioController.create)
