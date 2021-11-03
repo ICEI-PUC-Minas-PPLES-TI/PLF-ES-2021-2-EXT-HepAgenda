@@ -34,10 +34,10 @@
                 </li>
               </template>
               <v-list>
-                <v-list-item  @click="filtroOperador = 'AND'">
+                <v-list-item  @click="filtroOperador = 'AND';listaPacientes()">
                   <v-list-item-title>E</v-list-item-title>
                 </v-list-item>
-                <v-list-item @click="filtroOperador = 'OR'">
+                <v-list-item @click="filtroOperador = 'OR';listaPacientes()">
                   <v-list-item-title>OU</v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -73,6 +73,7 @@
                     <v-icon v-if="fil.type == 'text'">mdi-format-color-text</v-icon>
                     <v-icon v-else-if="fil.type == 'number'">mdi-numeric</v-icon>
                     <v-icon v-else-if="fil.type == 'date'">mdi-calendar-range</v-icon>
+                    <v-icon v-else-if="fil.type == 'enum'">mdi-ab-testing</v-icon>
                   </v-list-item-icon>
                   <v-list-item-title>{{ fil.label }}</v-list-item-title>
                 </v-list-item>
@@ -82,7 +83,14 @@
                   <v-list-item-title>
                     <v-radio-group v-model="filtroComparador" @change="filtroValor = null">
                       <v-radio label="Igual á" value="IGUAL" />
-                      <v-text-field v-if="filtroComparador == 'IGUAL'" v-model="filtroValor" outlined/>
+                      <v-text-field v-if="filtroComparador == 'IGUAL' && filtroMarcando.type != 'enum'" :type="filtroMarcando.type" v-model="filtroValor" outlined/>
+                      <v-select
+                        v-if="filtroMarcando.type == 'enum' && filtroComparador == 'IGUAL'"
+                        v-model="filtroValor"
+                        :items="filtroMarcando.values"
+                        label="Selecione"
+                        outlined
+                      />
                       <v-radio v-if="filtroMarcando.type == 'text'" label="Começa com" value="COMECA" />
                       <v-text-field v-if="filtroComparador == 'COMECA'" v-model="filtroValor" outlined/>
                       <v-radio v-if="filtroMarcando.type == 'text'" label="Termina com" value="TERMINA" />
@@ -121,7 +129,7 @@
           v-if="tipoFiltro == 0"
           v-model="pesquisa"
           prepend-inner-icon="mdi-magnify"
-          append-icon="mdi-auto-fix"
+          append-icon="mdi-filter-plus-outline"
           label="Nome do Paciente, mãe ou registro HC"
           filled
           rounded
@@ -131,6 +139,7 @@
         <br>
         <template>
           <v-data-table
+            v-if="pacientes && pacientes.length > 0"
             :headers="headers"
             :items="pacientes"
             :items-per-page="30"
@@ -162,6 +171,7 @@
               <v-btn color="primary" @click="initialize"> Reset </v-btn>
             </template>
           </v-data-table>
+          <span class="d-block text-center" v-else>Nenhum Registro Encontrado</span>
           <br>
           <span class="text-muted text-right d-block">
             Total de Items: {{ totalItems }}

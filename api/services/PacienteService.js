@@ -1,6 +1,6 @@
 const AppError = require("../errors/AppError");
 const Paciente = require("../models/Paciente");
-const { Op } = require('sequelize')
+const { Op, Sequelize } = require('sequelize')
 
 class PacienteService {
   async getById(id, atributos) {
@@ -25,6 +25,7 @@ class PacienteService {
       'data_nascimento': {tipo: 'DATE'},
       'sexo': {tipo: 'ENUM', opcoes: ['M','F']},
       'comorbidade': {tipo: 'ENUM', opcoes: ['HEPB','HEPC','OUTRO']},
+      'idade': {tipo: 'NUMBER', custom: true},
     }
     const comparacoesValidas = {
       'STRING': ['IGUAL','COMECA','TERMINA','CONTEM','EXISTE','NAOEXISTE'],
@@ -54,10 +55,15 @@ class PacienteService {
       if(comparacoesValidas[tipo].indexOf(campo['comparador']) == -1)
         throw new AppError(`Comparador do ${campo['campo']} nao pode ser usado, utilize ${comparacoesValidas[tipo].join(' ou ')}`, 405)
 
+      if(tipo == 'DATE')
+        campo['valor'] = Sequelize.literal(`'${campo['valor']}'`) // Por algum motivo o sequelize não funciona o = no DATE aí tem esse trem
+
       let comp = null
+      let compString = null
       switch (campo['comparador']) {
         case 'IGUAL':
           comp = Op.eq
+          compString = ' = ' // Para uso em idade
           break;
         case 'COMECA':
           comp = Op.startsWith
@@ -70,23 +76,32 @@ class PacienteService {
           break;
         case 'MAIOR':
           comp = Op.gt
+          compString = ' > ' // Para uso em idade
           break;
         case 'MENOR':
           comp = Op.lt
+          compString = ' < ' // Para uso em idade
           break;
         case 'EXISTE':
           comp = Op.not
           campo['valor'] = null
+          compString = ' IS NOT NULL' // Para uso em idade
           break;
         case 'NAOEXISTE':
           comp = Op.is
           campo['valor'] = null
+          compString = ' IS NULL' // Para uso em idade
           break;
       }
-      
-      whre[symb].push({
-        [campo['campo']]: { [comp]: campo['valor'] }
-      })
+
+      if(camposValidos[campo['campo']]?.custom){
+        if(campo['campo'] == 'idade' && (/^\d+$/.test(campo['valor']) || !campo['valor'])) // Verificar se é numero ou nulo (Evitar caracteres improprias)
+          whre[symb].push(Sequelize.literal("TIMESTAMPDIFF(YEAR, data_nascimento, CURDATE()) " + compString + (campo['valor'] ? campo['valor']: '') ))
+      } else {
+        whre[symb].push({
+          [campo['campo']]: { [comp]: campo['valor'] }
+        })
+      }
 
     });
 

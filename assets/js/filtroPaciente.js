@@ -28,9 +28,30 @@ const attributes = [
     field: 'peso',
     type: 'number'
   }, {
+    label: 'Idade',
+    field: 'idade',
+    type: 'number'
+  }, {
     label: 'Data de Nascimento',
     field: 'data_nascimento',
     type: 'date'
+  }, {
+    label: 'Comorbidade',
+    field: 'comorbidade',
+    type: 'enum',
+    values: [
+      'HEPB',
+      'HEPC',
+      'OUTRO',
+    ]
+  }, {
+    label: 'Sexo',
+    field: 'sexo',
+    type: 'enum',
+    values: [
+      'M',
+      'F'
+    ]
   }
 ]
 
