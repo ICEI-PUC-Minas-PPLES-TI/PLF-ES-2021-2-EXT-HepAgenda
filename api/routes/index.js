@@ -49,5 +49,6 @@ router.get('/paciente/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isA
 router.get('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.getAll)
 // Arquivo
 router.get('/arquivo/:id', arquivoController.download)
+router.delete('/arquivo/:id', arquivoController.delete)
 
 module.exports = router
