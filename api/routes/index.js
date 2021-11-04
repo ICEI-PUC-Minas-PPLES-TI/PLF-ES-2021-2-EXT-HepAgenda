@@ -20,10 +20,10 @@ const pacienteController = new PacienteController();
 
 // Adicionar rotas
 // Tratamento
-router.post('/tratamento', tratamentoController.create)
-router.get('/tratamento/:id', tratamentoController.get)
-router.get('/tratamento', tratamentoController.getAll)
-router.delete('/tratamento/:id', tratamentoController.delete)
+router.post('/tratamento', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], tratamentoController.create)
+router.get('/tratamento/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], tratamentoController.get)
+router.get('/tratamento', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedicOrViewer], tratamentoController.getAll)
+router.delete('/tratamento/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], tratamentoController.delete)
 // Usuario
 router.post('/signin', usuarioController.signin)
 router.post('/usuario', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], usuarioController.create)
