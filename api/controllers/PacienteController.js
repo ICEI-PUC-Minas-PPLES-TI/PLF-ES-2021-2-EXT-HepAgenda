@@ -46,13 +46,13 @@ class PacienteController{
         const paciente = await Paciente.create({
             ...request.body
         });
-        if (request.body.comorbidade == 'HEPB'){
+        if (request.body.hepatiteb){
             await PacienteHepB.create({
                 paciente_id: paciente.id,
                 ...request.body.hepatiteb
             });
         }
-        else if (request.body.comorbidade == 'HEPC'){
+        if (request.body.hepatitec){
             await Promise.all(
                 request.body.hepatitec.map((hepc)=>{
                     return PacienteHepC.create({
@@ -184,7 +184,7 @@ class PacienteController{
                     })
                 }
             }
-            else if (hepatitec){
+            if (hepatitec){
                 // percorre todo vetor de hepatitec, criando ou atualizando os dados
                 const registrosHepC = await PacienteHepC.findAll({
                     where: {

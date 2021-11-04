@@ -82,7 +82,6 @@ const hepatiteBUpdateScheme = yup.object().shape({
 })
 
 const pacienteUpdateScheme = yup.object({
-    id: yup.number().required("É necessário passar o id do paciente que se deseja atualizar!"),
     nome: yup.string().max(120),
     data_nascimento: yup.date(),
     registro_hc: yup.string().max(20),
