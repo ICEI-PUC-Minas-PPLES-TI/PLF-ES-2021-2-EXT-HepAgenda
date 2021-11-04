@@ -13,7 +13,7 @@ const verificarToken = (req, res, next) => {
 
   jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
     if (err) {
-      return res.status(500).send({
+      return res.status(403).send({
         autenticado: false,
         message: "Falha ao autenticar o token. Erro -> " + err
       });
