@@ -43,7 +43,7 @@
               </v-list>
             </v-menu>
             <li class="paciente-filtro-item">
-              {{ `${fsitem.label} ${fsitem.comparador.toLowerCase()} ${fsitem.valor?fsitem.valor:''}`  }}
+              {{ `${fsitem.label} ${fsitem.comparador != 'NAOEXISTE' ? fsitem.comparador.toLowerCase(): 'não possui valor'} ${fsitem.valor?fsitem.valor:''}`  }}
               <v-icon class="paciente-filtro-item-icon" @click="filtrosSelecionados.splice(fsindex, 1);listaPacientes()" color="red">
                 mdi-close-box
               </v-icon>

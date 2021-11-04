@@ -259,7 +259,7 @@ class PacienteController{
             yup.object().shape({
               campo: yup.string().required(),
               comparador: yup.mixed().oneOf(['MAIOR', 'MENOR','IGUAL','COMECA','TERMINA','CONTEM','EXISTE','NAOEXISTE']).required(),
-              valor: yup.string().required(),
+              valor: yup.string().nullable(),
             })
           )
           .required('Campos obrigatorios'),

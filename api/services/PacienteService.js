@@ -23,8 +23,8 @@ class PacienteService {
       'peso': {tipo: 'NUMBER'},
       'altura': {tipo: 'NUMBER'},
       'data_nascimento': {tipo: 'DATE'},
-      'sexo': {tipo: 'ENUM', opcoes: ['M','F']},
-      'comorbidade': {tipo: 'ENUM', opcoes: ['HEPB','HEPC','OUTRO']},
+      'sexo': {tipo: 'ENUM', opcoes: ['M','F',null]},
+      'comorbidade': {tipo: 'ENUM', opcoes: ['HEPB','HEPC','OUTRO',null]},
       'idade': {tipo: 'NUMBER', custom: true},
     }
     const comparacoesValidas = {
