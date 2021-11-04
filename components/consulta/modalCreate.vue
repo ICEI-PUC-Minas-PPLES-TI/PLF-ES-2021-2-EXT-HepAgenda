@@ -30,6 +30,7 @@
                     hide-details="auto"
                     :clearable="true"
                     label="Paciente"
+                    :filter="customFilterPaciente"
                     :search-input="procuraPacienteTxt"
                     @update:search-input="procuraPaciente"
                     item-text="nome"
@@ -40,7 +41,7 @@
                   <template v-slot:item="data">
                     <div style="white-space: nowrap;border-bottom: 1px solid #eee;width:100%" class="d-block">
                       <b class="d-block">{{ data.item.nome }}</b>
-                      <small class="d-block">Nascimento: {{ formataData(data.item.data_nascimento) }}</small>
+                      <small class="d-block">Reg. HC: {{ data.item.registro_hc }}</small>
                       <small class="d-block">Mãe: {{ data.item.nome_mae }}</small>
                     </div>
                   </template>
@@ -240,11 +241,13 @@ export default {
       } else if(val == null)
         this.listaPacientes()
     },
-    formataData(data){
-      if(data) {
-        const dataSplit = data.split('-')
-        return dataSplit.length == 3 ? `${dataSplit[2]}/${dataSplit[1]}/${dataSplit[0]}`: ''
-      } else return ''
+    customFilterPaciente(item, queryText){
+      const textOne = item.nome.toLowerCase()
+      const textTwo = item.nome_mae.toLowerCase()
+      const textThree = item.registro_hc.toLowerCase()
+      const searchText = queryText.toLowerCase()
+
+      return textOne.indexOf(searchText) > -1 || textTwo.indexOf(searchText) > -1 || textThree.indexOf(searchText) > -1
     }
   },
 };
