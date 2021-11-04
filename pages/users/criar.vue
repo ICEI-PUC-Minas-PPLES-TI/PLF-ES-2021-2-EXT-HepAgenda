@@ -1,8 +1,8 @@
 <template>
   <!--Container-->
-  <v-container fluid>
+  <v-container class="grey-lighten-5">
     <!--Linha-->
-    <v-row no-gutters>
+    <v-row class="linha" no-gutters>
       <!--Coluna-->
       <v-col offset-md="4" md="4" xs="12" cols="12" class="colDois">
         <div class="coluna">
@@ -51,16 +51,37 @@
           <v-row>
             <h3>Cadastro de Usuário</h3>
           </v-row>
+          <!--NOME-->
+          <v-row class="mb-6">
+            <v-col cols="12" sm="12">
+              <v-text-field
+                dense
+                hide-details="auto"
+                v-model="formData.nome"
+                label="NOME"
+                outlined
+                :rules="[rules.required]"
+              ></v-text-field>
+            </v-col>
+          </v-row>
           <!--LOGIN-->
           <v-row class="mb-6">
             <v-col cols="12" sm="12">
-              <v-text-field hide-details="auto" v-model="formData.login" label="LOGIN" outlined :rules="[rules.required]"></v-text-field>
+              <v-text-field
+                dense
+                hide-details="auto"
+                v-model="formData.email"
+                label="EMAIL"
+                outlined
+                :rules="[rules.required]"
+              ></v-text-field>
             </v-col>
           </v-row>
           <!--SENHA-->
           <v-row class="mb-6">
             <v-col cols="12" sm="12">
               <v-text-field
+                dense
                 v-model="formData.senha"
                 :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                 :rules="[rules.required, rules.min]"
@@ -75,7 +96,9 @@
           <!--CONFIRMAR SENHA-->
           <v-row class="mb-6">
             <v-col cols="12" sm="12">
+              <!-- diminuir altura do quadro com dense -->
               <v-text-field
+                dense
                 v-model="formData.confirmar_senha"
                 :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
                 :rules="[rules.required, rules.equal]"
@@ -87,13 +110,39 @@
               ></v-text-field>
             </v-col>
           </v-row>
+          <!--FIM CONFIRMAR SENHA-->
+
+          <v-row class="mb-6">
+            <v-col cols="12" sm="12">
+              <v-select
+                dense
+                :items="[
+                  {
+                    value: 'A',
+                    text: 'Administrador'
+                  },
+                  {
+                    value: 'M',
+                    text: 'Médico'
+                  },
+                  {
+                    value: 'V',
+                    text: 'Visualizador'
+                  }
+                ]"
+                label="TIPO"
+                v-model="formData.tipo"
+                outlined
+              ></v-select>
+            </v-col>
+          </v-row>
+
           <!--BOTAO-->
           <v-row class="mb-6" no-gutters>
             <v-btn color="#008BD9" large block @click="criarUsuario">
               <h3 class="w">Criar usuário</h3>
             </v-btn>
           </v-row>
-          
         </div>
       </v-col>
     </v-row>
@@ -110,27 +159,56 @@ export default {
       show1: false,
       show2: false,
       formData: {
-        login: null,
+        nome: null,
+        email: null,
         senha: null,
-        confirmar_senha: null
+        confirmar_senha: null,
+        tipo: " "
       },
       rules: {
-        required: value => !!value || "Obrigatório.",
-        min: v =>{
-          if(v && v.length >= 8 && /\d/.test(v) && /[a-z]/g.test(v) && /[A-Z]/g.test(v) )
-            return true
-          else return "Min 8 caracteres, 1 número, 1 letra minúscula e 1 letra maiúscula"
+        required: value => !!value || "Obrigatório!",
+        min: v => {
+          if (
+            v &&
+            v.length >= 8 &&
+            /\d/.test(v) &&
+            /[a-z]/g.test(v) &&
+            /[A-Z]/g.test(v)
+          )
+            return true;
+          else
+            return "Min 8 caracteres, 1 número, 1 letra minúscula e 1 letra maiúscula";
         },
         equal: v => v === this.formData.senha || "Senhas não conferem"
       }
     };
   },
+  /*FIM SENHA*/
   methods: {
-    criarUsuario(){
-      console.log('Botao Criar apertado')
+    limparDados() {
+      this.formData = {
+        nome: null,
+        email: null,
+        senha: null,
+        confirmar_senha: null,
+        tipo: " "
+      }
+    },
+    criarUsuario() {
+      console.log("Botao Criar apertado");
+      this.$axios
+        .post("/usuario", this.formData)
+        .then(res => {
+          this.limparDados();
+          alert("Usuario Cadastrado");
+        })
+        .catch(err => {
+          alert(JSON.stringify(err.response.data));
+          console.log(err.response.data);
+        });
     }
   }
-}; /*FIM SENHA*/
+}
 </script>
 
 <style>
@@ -140,6 +218,7 @@ h3.w {
 .pos {
   display: block;
   margin: 0 auto;
+  width: 70%;
 }
 
 .colDois {
@@ -148,10 +227,28 @@ h3.w {
 
 /*Espaçamento de borda*/
 .coluna {
-  margin: 10%;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-top: 3%;
+  margin-bottom: 0%;
+  text-align: center;
 }
 .mb-6 {
-  height: 65px;
+  height: 45px;
+}
+
+.linha {
+  width: 100%;
+}
+
+.grey-lighten-5 {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 0%;
+  padding-right: 0%;
 }
 
 /*Compatibilidade de tamanho para aparelhos menores*/
@@ -164,12 +261,11 @@ h3.w {
 }
 /*Responsividade dispositivo virado*/
 @media (max-height: 500px) {
-  .mb-6{
+  .mb-6 {
     height: 40px;
   }
   .pos {
     width: 40%;
-    margin-bottom: 30px;
   }
   .coluna {
     margin-left: 5%;
