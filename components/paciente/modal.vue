@@ -15,7 +15,7 @@
           </svg>
           <h4 class="paciente-modal-mobile-minitext">
             <span>
-              Cadastrar paciente
+              {{ formData && formData.id ? 'Editar': 'Cadastrar'}} paciente
             </span>
           </h4>
           <button class="paciente-modal-close" @click="$emit('input', false)">
@@ -164,7 +164,7 @@
                   <!-- Tratamento -->
                   <v-col :md="3" :sm="12" cols="12">
                     <v-select
-                      v-model="formData.hepatiteb.tratamento"
+                      v-model="formData.hepatiteb.tratamento_id"
                       :items="tratamentoBItems"
                       label="Tratamento (Opcional)"
                       item-text="label"
@@ -289,7 +289,7 @@
                   </v-col>
                   <!-- Resultado - Alfafetoproteina -->
                   <v-col :md="3" :sm="12" cols="12">
-                    <v-text-field v-model="formData.hepatiteb.resultado_alfa" type="text" outlined :hide-details="true" label="Resultado - Alfafetoproteina (Opcional)" @blur="salvarEmCache" />
+                    <v-text-field v-model="formData.hepatiteb.ultimo_resultado_alfa" type="number" outlined :hide-details="true" label="Resultado - Alfafetoproteina (Opcional)" @blur="salvarEmCache" />
                   </v-col>
                   <!-- Fibrose -->
                   <v-col :md="3" :sm="12" cols="12">
@@ -316,7 +316,7 @@
                     >
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                          v-model="formData.hepatiteb.data_ultrasom"
+                          v-model="formData.hepatiteb.data_ultra"
                           outlined
                           :hide-details="true"
                           label="Data - Ultrassom (Opcional)"
@@ -324,7 +324,7 @@
                           type="date"
                           max="3000-01-01"
                           class="paciente-modal-input-date"
-                          @click:clear="formData.hepatiteb.data_ultrasom = null;salvarEmCache()"
+                          @click:clear="formData.hepatiteb.data_ultra = null;salvarEmCache()"
                         >
                           <span slot="append">
                             <v-icon v-bind="attrs" v-on="on">
@@ -334,7 +334,7 @@
                         </v-text-field>
                       </template>
                       <v-date-picker
-                        v-model="formData.hepatiteb.data_ultrasom"
+                        v-model="formData.hepatiteb.data_ultra"
                         @input="menuUltra = false"
                         @change="salvarEmCache"
                       ></v-date-picker>
@@ -342,7 +342,7 @@
                   </v-col>
                   <!-- Resultado - Ultrassom -->
                   <v-col :md="3" :sm="12" cols="12">
-                    <v-text-field v-model="formData.hepatiteb.resultado_ultrasom" type="text" outlined :hide-details="true" label="Resultado - Ultrassom (Opcional)" @blur="salvarEmCache" />
+                    <v-text-field v-model="formData.hepatiteb.ultimo_resultado_ultra" type="text" outlined :hide-details="true" label="Resultado - Ultrassom (Opcional)" @blur="salvarEmCache" />
                   </v-col>
                   <!-- Data - Carga Viral -->
                   <v-col :md="3" :sm="12" cols="12">
@@ -356,7 +356,7 @@
                     >
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                          v-model="formData.hepatiteb.data_cargaviral"
+                          v-model="formData.hepatiteb.data_carga"
                           outlined
                           :hide-details="true"
                           label="Data - Carga Viral (Opcional)"
@@ -364,7 +364,7 @@
                           type="date"
                           max="3000-01-01"
                           class="paciente-modal-input-date"
-                          @click:clear="formData.hepatiteb.data_cargaviral = null;salvarEmCache()"
+                          @click:clear="formData.hepatiteb.data_carga = null;salvarEmCache()"
                         >
                           <span slot="append">
                             <v-icon v-bind="attrs" v-on="on">
@@ -374,7 +374,7 @@
                         </v-text-field>
                       </template>
                       <v-date-picker
-                        v-model="formData.hepatiteb.data_cargaviral"
+                        v-model="formData.hepatiteb.data_carga"
                         @input="menuCarga = false"
                         @change="salvarEmCache"
                       ></v-date-picker>
@@ -382,7 +382,7 @@
                   </v-col>
                   <!-- Resultado - Carga Viral -->
                   <v-col :md="3" :sm="12" cols="12">
-                    <v-text-field v-model="formData.hepatiteb.resultado_cargaviral" type="number" outlined :hide-details="true" label="Resultado - Carga Viral (Opcional)" @blur="salvarEmCache" />
+                    <v-text-field v-model="formData.hepatiteb.ultimo_resultado_carga" type="number" outlined :hide-details="true" label="Resultado - Carga Viral (Opcional)" @blur="salvarEmCache" />
                   </v-col>
                 </v-row>
               </div>
@@ -408,7 +408,7 @@
                   <!-- Tratamento -->
                   <v-col :md="3" :sm="12" cols="12">
                     <v-select
-                      v-model="formData.hepatitec[lidx].tratamento"
+                      v-model="formData.hepatitec[lidx].tratamento_id"
                       :items="tratamentoCItems"
                       label="Tratamento (Opcional)"
                       item-text="label"
@@ -509,7 +509,7 @@
                   </v-col>
                   <!-- Resultado - Alfafetoproteina -->
                   <v-col :md="3" :sm="12" cols="12">
-                    <v-text-field v-model="formData.hepatitec[lidx].resultado_alfa" type="text" outlined :hide-details="true" label="Resultado - Alfafetoproteina (Opcional)" @blur="salvarEmCache" />
+                    <v-text-field v-model="formData.hepatitec[lidx].ultimo_resultado_alfa" type="text" outlined :hide-details="true" label="Resultado - Alfafetoproteina (Opcional)" @blur="salvarEmCache" />
                   </v-col>
                   <!-- Data - Ultrassom -->
                   <v-col :md="3" :sm="12" cols="12">
@@ -523,7 +523,7 @@
                     >
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                          v-model="formData.hepatitec[lidx].data_ultrasom"
+                          v-model="formData.hepatitec[lidx].data_ultra"
                           outlined
                           :hide-details="true"
                           label="Data - Ultrassom (Opcional)"
@@ -531,7 +531,7 @@
                           max="3000-01-01"
                           class="paciente-modal-input-date"
                           clearable
-                          @click:clear="formData.hepatitec[lidx].data_ultrasom = null;salvarEmCache()"
+                          @click:clear="formData.hepatitec[lidx].data_ultra = null;salvarEmCache()"
                         >
                           <span slot="append">
                             <v-icon v-bind="attrs" v-on="on">
@@ -541,7 +541,7 @@
                         </v-text-field>
                       </template>
                       <v-date-picker
-                        v-model="formData.hepatitec[lidx].data_ultrasom"
+                        v-model="formData.hepatitec[lidx].data_ultra"
                         @input="menuHepatiteC[lidx].menuUltra = false"
                         @change="salvarEmCache"
                       ></v-date-picker>
@@ -549,7 +549,7 @@
                   </v-col>
                   <!-- Resultado - Ultrassom -->
                   <v-col :md="3" :sm="12" cols="12">
-                    <v-text-field v-model="formData.hepatitec[lidx].resultado_ultrasom" type="text" outlined :hide-details="true" label="Resultado - Ultrassom (Opcional)" @blur="salvarEmCache" />
+                    <v-text-field v-model="formData.hepatitec[lidx].ultimo_resultado_ultra" type="text" outlined :hide-details="true" label="Resultado - Ultrassom (Opcional)" @blur="salvarEmCache" />
                   </v-col>
                   <!-- Data - Carga Viral -->
                   <v-col :md="3" :sm="12" cols="12">
@@ -563,7 +563,7 @@
                     >
                       <template v-slot:activator="{ on, attrs }">
                         <v-text-field
-                          v-model="formData.hepatitec[lidx].data_cargaviral"
+                          v-model="formData.hepatitec[lidx].data_carga"
                           outlined
                           :hide-details="true"
                           label="Data - Carga Viral (Opcional)"
@@ -571,7 +571,7 @@
                           type="date"
                           max="3000-01-01"
                           class="paciente-modal-input-date"
-                          @click:clear="formData.hepatitec[lidx].data_cargaviral = null;salvarEmCache()"
+                          @click:clear="formData.hepatitec[lidx].data_carga = null;salvarEmCache()"
                         >
                           <span slot="append">
                             <v-icon v-bind="attrs" v-on="on">
@@ -581,7 +581,7 @@
                         </v-text-field>
                       </template>
                       <v-date-picker
-                        v-model="formData.hepatitec[lidx].data_cargaviral"
+                        v-model="formData.hepatitec[lidx].data_carga"
                         @input="menuHepatiteC[lidx].menuCarga = false"
                         @change="salvarEmCache"
                       ></v-date-picker>
@@ -589,7 +589,7 @@
                   </v-col>
                   <!-- Resultado - Carga Viral -->
                   <v-col :md="3" :sm="12" cols="12">
-                    <v-text-field v-model="formData.hepatitec[lidx].resultado_cargaviral" type="number" outlined :hide-details="true" label="Resultado - Carga Viral (Opcional)" @blur="salvarEmCache" />
+                    <v-text-field v-model="formData.hepatitec[lidx].ultimo_resultado_carga" type="number" outlined :hide-details="true" label="Resultado - Carga Viral (Opcional)" @blur="salvarEmCache" />
                   </v-col>
                   <!-- Portador Inativo -->
                   <v-col :md="3" :sm="12" cols="12">
@@ -627,6 +627,7 @@
               <v-row>
                 <v-col :md="2">
                   <v-btn
+                    v-if="!formData.id"
                     block
                     large
                     color="warning"
@@ -722,7 +723,7 @@
 
 <script>
 import {mask} from 'vue-the-mask'
-const MODALV = '0.0.1' // Versão dos dados no modal, caso seja diferente da versao salva no PC do usuario nao vai carregar dados anteriores
+const MODALV = '0.0.2' // Versão dos dados no modal, caso seja diferente da versao salva no PC do usuario nao vai carregar dados anteriores
 export default {
   props: ['value', 'pacienteId'],
   directives: {mask},
@@ -787,10 +788,11 @@ export default {
     },
   },
   watch:{
-    pacienteId: function(pacienteId){
+    pacienteId: function(pacienteId, oldPacienteid){
       if(pacienteId){
         this.getDados(pacienteId);
-      }
+      } else if(oldPacienteid > 0 && pacienteId == 0)
+        this.limparDados()
     }
   },
   mounted(){
@@ -852,36 +854,37 @@ export default {
         comorbidade: null,
         desfecho: null,
         hepatiteb: {
-          tratamento: null,
+          tratamento_id: null,
           inicio_tratamento: null,
           fibrose: null,
           cirrotico: false,
           data_alfa: null,
-          resultado_alfa: null,
+          ultimo_resultado_alfa: null,
           portador_inativo: false,
-          data_ultrasom: null,
-          resultado_ultrasom: null,
-          data_cargaviral: null,
-          resultado_cargaviral: null
+          data_ultra: null,
+          ultimo_resultado_ultra: null,
+          data_carga: null,
+          ultimo_resultado_carga: null
         },
         hepatitec: []
       }
       this.adicionarHepatiteC()
       this.salvarEmCache()
+      this.$refs.formPaciente?.resetValidation()
     },
     adicionarHepatiteC(){
       this.formData.hepatitec.push({
-        tratamento: null,
+        tratamento_id: null,
         tratado: false,
         fibrose: null,
         cirrotico: false,
         data_alfa: null,
-        resultado_alfa: null,
+        ultimo_resultado_alfa: null,
         portador_inativo: false,
-        data_ultrasom: null,
-        resultado_ultrasom: null,
-        data_cargaviral: null,
-        resultado_cargaviral: null
+        data_ultra: null,
+        ultimo_resultado_ultra: null,
+        data_carga: null,
+        ultimo_resultado_carga: null
       })
       this.menuHepatiteC.push({
         menuAlfa: false,
@@ -898,15 +901,37 @@ export default {
       if(this.$refs.formPaciente.validate()) {
         let info = JSON.parse(JSON.stringify(this.formData))
         info.telefone = info.telefone.replace(/\D/g,'')
-        this.$axios.post('/paciente', info).then(res=>{
-          this.limparDados()
-          this.$emit('input', false) // Fecha modal
-          alert('Paciente Cadastrado')
-          this.$emit('listaPacientes')
-        }).catch(err => {
-          alert(JSON.stringify(err.response.data))
-          console.log(err.response.data)
-        })
+        if(info.comorbidade) {
+          if(info.comorbidade == 'HEPC')
+            delete info.hepatiteb
+          else if(info.comorbidade == 'HEPC')
+            delete info.hepatitec
+        } else if(!info.comorbidade || info.comorbidade == 'OUTRO'){
+          delete info.hepatiteb
+          delete info.hepatitec
+        }
+        if(!this.formData.id) {
+          this.$axios.post('/paciente', info).then(res=>{
+            this.limparDados()
+            this.$emit('input', false) // Fecha modal
+            alert('Paciente Cadastrado')
+            this.$emit('listaPacientes')
+          }).catch(err => {
+            alert(JSON.stringify(err.response.data))
+            console.log(err.response.data)
+          })
+        } else {
+          this.$axios.put('/paciente/' + info.id, info).then(res=>{
+            this.limparDados()
+            this.$emit('input', false) // Fecha modal
+            alert('Paciente Alterado')
+            this.$emit('listaPacientes')
+          }).catch(err => {
+            alert(JSON.stringify(err.response.data))
+            console.log(err.response.data)
+          })
+        }
+        
       }
 
     },
@@ -915,7 +940,35 @@ export default {
       this.limparDados();
 
       this.$axios.$get('/paciente/' + id).then(response => {
-        this.formData = response;
+        let info = JSON.parse(JSON.stringify(response))
+        
+        info.hepatitec = info.PacienteHepCs
+        delete info.PacienteHepCs
+        info.hepatiteb = info.PacienteHepB
+        if(!info.hepatiteb)
+          info.hepatiteb = {
+            tratamento_id: null,
+            inicio_tratamento: null,
+            fibrose: null,
+            cirrotico: false,
+            data_alfa: null,
+            ultimo_resultado_alfa: null,
+            portador_inativo: false,
+            data_ultra: null,
+            ultimo_resultado_ultra: null,
+            data_carga: null,
+            ultimo_resultado_carga: null
+          }
+        delete info.PacienteHepB
+        this.formData = info;
+        if(!this.formData.hepatitec) {
+          this.formData.hepatitec = []
+          this.adicionarHepatiteC()
+        }
+        let t = this
+        setTimeout(function(){
+          t.formData.telefone += ' '
+        }, 1000)
       }).catch(error => {
         console.log(error)
         alert(JSON.stringify(err.response.data))
