@@ -40,8 +40,8 @@ class TratamentoController {
 
   async getAll(request, response) {
     const tratamentoService = new TratamentoService();
-    const {identificacao, direcionado, ativo} = request.query;
-    const tratamentos = await tratamentoService.getAll(identificacao, direcionado, ativo);
+    const {identificacao, direcionado, ativo, pagina} = request.query;
+    const tratamentos = await tratamentoService.getAll(identificacao, direcionado, ativo, pagina);
     return response.status(200).json(tratamentos);
   }
 }

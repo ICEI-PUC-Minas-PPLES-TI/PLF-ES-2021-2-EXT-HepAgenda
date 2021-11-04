@@ -1,6 +1,6 @@
 const AppError = require("../errors/AppError");
 const Tratamento = require("../models/Tratamento");
-const { Sequelize } = require("sequelize");
+const { Sequelize, Op } = require("sequelize");
 
 class TratamentoService {
 
@@ -30,23 +30,32 @@ class TratamentoService {
     return tratamento;
   }
 
-  async getAll(identificacao = null, direcionado = null, ativo = null) {
-    console.log(identificacao, direcionado, ativo);
-
-    const tratamentos = await Tratamento.findAll({
-      where: Sequelize.literal(
-        `identificacao ${
-          identificacao ? ` LIKE %${identificacao}%` : "IS NOT NULL"
-        } && direcionado ${
-          direcionado ? ` = ${direcionado}` : "IS NOT NULL"
-        } && ativo ${ativo ? `= ${ativo}` : "IS NOT NULL"}`
-      )
+  async getAll(identificacao = null, direcionado = null, ativo = null, pagina = 1) {
+    let filtro = {
+      [Op.and]:[]
+    }
+    if(ativo){
+      filtro[Op.and].push({ativo:ativo})
+    }
+    if(direcionado){
+      filtro[Op.and].push({direcionado:direcionado})
+    }
+    if(identificacao){
+      filtro[Op.and].push({identificacao:{[Op.like]:`%${identificacao}%`}})
+    }
+    const limite = 2;
+    const tratamentos = await Tratamento.findAndCountAll({
+      where: filtro,
+      limit:limite,
+      offset:0+((pagina-1)*limite)
     });
-    return tratamentos;
+    return {
+      dados:tratamentos.rows,
+      registros:tratamentos.count,
+      paginas:Math.ceil(tratamentos.count/limite)
+    };
   }
-}
 
-//const escapedSearch = sequelize.escape(`%${myVar}%`);
-//sequelize.literal(`"foo".name ILIKE ${escapedSearch}`);
+}
 
 module.exports = TratamentoService;
