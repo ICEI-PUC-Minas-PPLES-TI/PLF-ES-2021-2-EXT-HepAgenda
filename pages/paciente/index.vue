@@ -281,6 +281,8 @@ export default {
             this.tabelaCarregando = false
           });
       } else if(this.tipoFiltro == 1) {
+        if(this.filtrosSelecionados.length <= 1)
+          this.filtroOperador = 'AND'
         this.$axios
           .$post(`/paciente/pesquisa?pagina=${this.tabelaPaginaAtual}`, {
             campos: this.filtrosSelecionados,
