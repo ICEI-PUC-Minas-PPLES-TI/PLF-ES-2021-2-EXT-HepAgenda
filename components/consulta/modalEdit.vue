@@ -196,26 +196,23 @@
               <v-row class="row-arquivos">
                 <v-col cols="12" :xs="12" :sm="6" :md="3">
                   <v-file-input
-                    accept="image/*"
                     label="Anexar arquivos"
+                    multiple
+                    v-model="files"
                     filled
                     rounded
                     dense
                     outlined
                     prepend-inner-icon="mdi-paperclip"
                     prepend-icon=""
-                    :rules="[
-                      (v) =>
-                        !v ||
-                        v.size < 2000000 ||
-                        'Arquivo deve ser menor que 2 MB!',
-                    ]"
+
                   />
                 </v-col>
-                <v-col cols="12" :xs="12" :sm="6" :md="3">
+                <!-- <v-col cols="12" :xs="12" :sm="6" :md="3">
                   <v-file-input
-                    accept="image/*"
                     label="Exame de sangue"
+                    multiple
+                    v-model="consulta.arquivos"
                     filled
                     rounded
                     dense
@@ -223,50 +220,35 @@
                     prepend-inner-icon="mdi-file-document-outline"
                     prepend-icon=""
                     x-small
-                    :rules="[
-                      (v) =>
-                        !v ||
-                        v.size < 2000000 ||
-                        'Arquivo deve ser menor que 2 MB!',
-                    ]"
                   />
                 </v-col>
                 <v-col cols="12" :xs="12" :sm="6" :md="3">
                   <v-file-input
-                    accept="image/*"
                     label="Exame de sangue2"
+                    multiple
+                    v-model="consulta.arquivos"
                     filled
                     rounded
                     dense
                     outlined
                     prepend-inner-icon="mdi-file-document-outline"
                     prepend-icon=""
-                    :rules="[
-                      (v) =>
-                        !v ||
-                        v.size < 2000000 ||
-                        'Arquivo deve ser menor que 2 MB!',
-                    ]"
+
                   />
                 </v-col>
                 <v-col cols="12" :xs="12" :sm="6" :md="3">
                   <v-file-input
-                    accept="image/*"
                     label="Exame de sangue.png"
+                    multiple
+                    v-model="consulta.arquivos"
                     filled
                     rounded
                     dense
                     outlined
                     prepend-inner-icon="mdi-file-image-outline"
                     prepend-icon=""
-                    :rules="[
-                      (v) =>
-                        !v ||
-                        v.size < 2000000 ||
-                        'Arquivo deve ser menor que 2 MB!',
-                    ]"
                   />
-                </v-col>
+                </v-col> -->
               </v-row>
               <!-- Botão de marcarConsulta -->
               <v-row class="mx-auto">
@@ -331,7 +313,7 @@ export default {
 
       consulta: {
         id: "",
-
+        status:"",
         dt_inicio: "",
         detalhes: "",
         descricao: "",
@@ -355,11 +337,17 @@ export default {
           id: "",
           nome: "",
         },
+
+        arquivos: [{
+          id: "",
+          nome: ""
+        }]
       },
 
       medicoAtual: "Não definido",
       menuDataConsulta: false,
       modalConfirm: false,
+      files: []
     };
   },
   mounted() {
@@ -386,18 +374,33 @@ export default {
 
     update() {
       if (this.$refs.formConsulta.validate()) {
-      }
-      // this.$axios
-      //   .$put("/consulta/" + consultaId)
-      //   .then((response) => {
-      //     response.dt_inicio = this.formataData(response.dt_inicio);
+      let consulta = JSON.parse(JSON.stringify(this.consulta));
 
-      //     this.consulta = response;
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //   });
+      let formData = new FormData();
+
+      if(this.files){
+        console.log(this.files);
+        for(let i = 0 ; i < this.files.length; i++){
+          formData.append("arquivos", this.files[i])
+        }
+      }
+      for ( var key in consulta ) {
+        if(typeof consulta[key] != 'object'){
+          formData.append(key, consulta[key]);
+        }
+      }
+
+      this.$axios
+        .$put("/consulta/" + this.consultaId, formData)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      }
     },
+
 
     formataData(data) {
       let dt = new Date(data)
