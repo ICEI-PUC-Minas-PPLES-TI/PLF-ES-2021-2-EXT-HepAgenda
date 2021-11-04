@@ -30,9 +30,6 @@ class ArquivoService {
 
   async deleteById(id) {
     const arquivo = await this.findById(id);
-
-    console.log(arquivo.dataValues.nome)
-    console.log(arquivo.dataValues.link);
     
     // Deletando o arquivo binário
     fs.unlink(arquivo.dataValues.link, (erro) => {
