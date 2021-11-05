@@ -156,7 +156,7 @@
                 </v-col>
               </v-row>
               <!-- Secao HEPB se Marcada -->
-              <div v-if="formData.comorbidade == 'HEPB'">
+              <div v-if="formData.comorbidade == 'HEPB' || formData.comorbidade == 'HEPBC'">
                 <v-row>
                   <span class="paciente-modal-subtitle">Hepatite B</span>
                 </v-row>
@@ -443,7 +443,7 @@
                 </v-row>
               </div>
               <!-- Secao HEPC se Marcada -->
-              <div v-else-if="formData.comorbidade == 'HEPC'" class="paciente-model-hepatitec">
+              <div v-if="formData.comorbidade == 'HEPC' || formData.comorbidade == 'HEPBC'" class="paciente-model-hepatitec">
                 <v-row>
                   <span class="paciente-modal-subtitle">Hepatite C</span>
                 </v-row>
@@ -774,6 +774,9 @@ export default {
           label: 'Hepatite C',
           value: 'HEPC'
         },{
+          label: 'Hepatite B e C',
+          value: 'HEPBC'
+        },{
           label: 'Outro',
           value: 'OUTRO'
         }
@@ -942,9 +945,13 @@ export default {
         if(info.comorbidade) {
           if(info.comorbidade == 'HEPC')
             delete info.hepatiteb
-          else if(info.comorbidade == 'HEPC')
+          else if(info.comorbidade == 'HEPB')
             delete info.hepatitec
-        } else if(!info.comorbidade || info.comorbidade == 'OUTRO'){
+          else if(info.comorbidade == 'OUTRO') {
+            delete info.hepatiteb
+            delete info.hepatitec
+          }
+        } else if(!info.comorbidade){
           delete info.hepatiteb
           delete info.hepatitec
         }
