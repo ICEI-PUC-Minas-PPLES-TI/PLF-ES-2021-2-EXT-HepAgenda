@@ -24,17 +24,19 @@ class PacienteController{
         }
 
 
-        //procura um registro_hc testar se é único
-        if (
-            await Paciente.findOne({
-                where: { registro_hc: request.body.registro_hc }
-            })
-        ){
-            return response.status(422).json({
-                'name:': "ValidationError", // => 'ValidationError'
-                'message': "O registro_hc já existe",
-                'errors': ["O registro_hc já existe"]
-            })
+        if(request.body.registro_hc) {
+            //procura um registro_hc testar se é único (caso venha)
+            if (
+                await Paciente.findOne({
+                    where: { registro_hc: request.body.registro_hc }
+                })
+            ){
+                return response.status(422).json({
+                    'name:': "ValidationError", // => 'ValidationError'
+                    'message': "O registro_hc já existe",
+                    'errors': ["O registro_hc já existe"]
+                })
+            }
         }
 
         // atualiza o peso_atualizao se o peso for atualizado
@@ -125,22 +127,24 @@ class PacienteController{
             })
         }
 
-        //procura um registro_hc testar se é único
-        if (
-            request.body.registro_hc && await Paciente.findOne({
-                where: {
-                    registro_hc: request.body.registro_hc,
-                    id: {
-                        [Op.ne]: request.params.id
+        if(request.body.registro_hc){
+            //procura um registro_hc testar se é único
+            if (
+                request.body.registro_hc && await Paciente.findOne({
+                    where: {
+                        registro_hc: request.body.registro_hc,
+                        id: {
+                            [Op.ne]: request.params.id
+                        }
                     }
-                }
-            })
-        ){
-            return response.status(422).json({
-                'name:': "ValidationError", // => 'ValidationError'
-                'message': "O registro_hc já existe",
-                'errors': ["O registro_hc já existe"]
-            })
+                })
+            ){
+                return response.status(422).json({
+                    'name:': "ValidationError", // => 'ValidationError'
+                    'message': "O registro_hc já existe",
+                    'errors': ["O registro_hc já existe"]
+                })
+            }
         }
 
         if (request.body.peso){
