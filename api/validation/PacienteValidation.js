@@ -8,32 +8,32 @@ const hepatiteRequiredScheme = yup.object().shape({
 })
 
 const hepatiteCCreateScheme = yup.object().shape({
-    tratamento_id: yup.number(),
+    tratamento_id: yup.number().nullable(),
     fibrose: yup.mixed().oneOf(['F0', 'F1', 'F2', 'F3', 'F4', 'F5',null]),
     cirrotico: yup.boolean().required("cirrotico obrigatória!"),
     data_alfa: yup.date().nullable(),
-    ultimo_resultado_alfa: yup.number(),
-    data_antiretroviral: yup.date().nullable(),
+    ultimo_resultado_alfa: yup.number().nullable(),
+    data_antiretroviral: yup.date().nullable(), //?
     portador_inativo: yup.boolean().required("portador_inativo obrigatória!"),
     data_ultra: yup.date().nullable(),
-    ultimo_resultado_ultra: yup.string().max(200),
+    ultimo_resultado_ultra: yup.string().max(200).nullable(),
     data_carga: yup.date().nullable(),
-    ultimo_resultado_carga: yup.number()
+    ultimo_resultado_carga: yup.number().nullable()
 });
 
 const hepatiteBCreateScheme = yup.object().shape({
-    tratamento_id: yup.number(),
+    tratamento_id: yup.number().nullable(),
     inicio_tratamento: yup.date().nullable(),
     fibrose: yup.mixed().oneOf(['F0', 'F1', 'F2', 'F3', 'F4', 'F5',null]),
     cirrotico: yup.boolean().required("cirrotico obrigatória!"),
     data_alfa: yup.date().nullable(),
-    ultimo_resultado_alfa: yup.number(),
+    ultimo_resultado_alfa: yup.number().nullable(),
     data_antiretroviral: yup.date(),
     portador_inativo: yup.boolean().required("portador_inativo obrigatória!"),
-    data_ultra: yup.date(),
-    ultimo_resultado_ultra: yup.string().max(200),
-    data_carga: yup.date(),
-    ultimo_resultado_carga: yup.number()
+    data_ultra: yup.date().nullable(),
+    ultimo_resultado_ultra: yup.string().max(200).nullable(),
+    data_carga: yup.date().nullable(),
+    ultimo_resultado_carga: yup.number().nullable()
 })
 
 const pacienteCreateScheme = yup.object({
@@ -54,32 +54,32 @@ const pacienteCreateScheme = yup.object({
 }))
 
 const hepatiteCUpdateScheme = yup.object().shape({
-    tratamento_id: yup.number(),
+    tratamento_id: yup.number().nullable(),
     fibrose: yup.mixed().oneOf(['F0', 'F1', 'F2', 'F3', 'F4', 'F5',null]),
     cirrotico: yup.boolean().required("cirrotico obrigatória!"),
-    data_alfa: yup.date(),
-    ultimo_resultado_alfa: yup.number(),
-    data_antiretroviral: yup.date(),
+    data_alfa: yup.date().nullable(),
+    ultimo_resultado_alfa: yup.number().nullable(),
+    data_antiretroviral: yup.date().nullable(),
     portador_inativo: yup.boolean().required("portador_inativo obrigatória!"),
-    data_ultra: yup.date(),
-    ultimo_resultado_ultra: yup.string().max(200),
-    data_carga: yup.date(),
-    ultimo_resultado_carga: yup.number()
+    data_ultra: yup.date().nullable(),
+    ultimo_resultado_ultra: yup.string().max(200).nullable(),
+    data_carga: yup.date().nullable(),
+    ultimo_resultado_carga: yup.number().nullable()
 });
 
 const hepatiteBUpdateScheme = yup.object().shape({
-    tratamento_id: yup.number(),
-    inicio_tratamento: yup.date(),
+    tratamento_id: yup.number().nullable(),
+    inicio_tratamento: yup.date().nullable(),
     fibrose: yup.mixed().oneOf(['F0', 'F1', 'F2', 'F3', 'F4', 'F5',null]),
     cirrotico: yup.boolean().required("cirrotico obrigatória!"),
-    data_alfa: yup.date(),
-    ultimo_resultado_alfa: yup.number(),
-    data_antiretroviral: yup.date(),
+    data_alfa: yup.date().nullable(),
+    ultimo_resultado_alfa: yup.number().nullable(),
+    data_antiretroviral: yup.date().nullable(),
     portador_inativo: yup.boolean().required("portador_inativo obrigatória!"),
-    data_ultra: yup.date(),
-    ultimo_resultado_ultra: yup.string().max(200),
-    data_carga: yup.date(),
-    ultimo_resultado_carga: yup.number()
+    data_ultra: yup.date().nullable(),
+    ultimo_resultado_ultra: yup.string().max(200).nullable(),
+    data_carga: yup.date().nullable(),
+    ultimo_resultado_carga: yup.number().nullable()
 })
 
 const pacienteUpdateScheme = yup.object({
@@ -89,10 +89,10 @@ const pacienteUpdateScheme = yup.object({
     sexo: yup.mixed().oneOf(['M', 'F']),
     telefone: yup.string().max(15).matches(telefoneRegExp),
     nome_mae: yup.string().max(120),
-    email: yup.string().email().max(50),
-    peso: yup.number().min(0),
-    altura: yup.number().min(0),
-    desfecho: yup.number(),
+    email: yup.string().email().max(50).nullable(),
+    peso: yup.number().min(0).nullable(),
+    altura: yup.number().min(0).nullable(),
+    desfecho: yup.number().nullable(),
     comorbidade: yup.mixed().oneOf(['HEPB', 'HEPC', 'HEPBC', 'OUTRO']).nullable()
 }).concat(yup.object().shape({
     hepatiteb: hepatiteBUpdateScheme.default(null).nullable(),

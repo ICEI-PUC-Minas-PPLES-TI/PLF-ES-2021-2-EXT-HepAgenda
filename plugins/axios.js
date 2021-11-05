@@ -1,19 +1,27 @@
-export default function({ $axios, req }) {
+export default function({ $axios, store, req }) {
     if (req) {
       let cookies = JSON.parse(getCookie('vuex', req.headers.cookie))
       if (cookies) {
         $axios.defaults.headers.common[
           'x-access-token'
-        ] = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjMyODYwOTMyLCJleHAiOjE2NDAxMTg1MzJ9.Gawm6DaxianxA66R0rrGMTxfTdSJSm5AwaVSUBny_c8`
+        ] = `${cookies.login.token}`
       }
     }
   
     $axios.onRequest(config => {
       if (!req)
-        config.headers.common['x-access-token'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNjMyODYwOTMyLCJleHAiOjE2NDAxMTg1MzJ9.Gawm6DaxianxA66R0rrGMTxfTdSJSm5AwaVSUBny_c8'
+        config.headers.common['x-access-token'] = `${store.getters['login/token']}`
     })
   
     $axios.onError(error => {
+      const code = parseInt(error.response && error.response.status)
+      //const data = error.response.data
+      if (code === 403) {
+        store.dispatch('login/userLogout', {
+          router: null
+        })
+        redirect('/login')
+      }
       // Tratamento de Erro
     })
   }
