@@ -18,6 +18,7 @@ const verificarToken = (req, res, next) => {
         message: "Falha ao autenticar o token. Erro -> " + err
       });
     }
+    req.user = decoded;
     req.userId = decoded.id;
     next();
   });

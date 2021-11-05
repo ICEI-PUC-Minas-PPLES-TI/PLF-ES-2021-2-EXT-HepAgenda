@@ -32,6 +32,7 @@ router.get('/tratamento/:id', tratamentoController.get)
 router.get('/tratamento', tratamentoController.getAll)
 // Usuario
 router.post('/signin', usuarioController.signin)
+router.get('/me', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedicOrViewer] , usuarioController.me)
 router.post('/usuario', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], usuarioController.create)
 router.get('/usuario/:id', [autenticacaoJwt.verificarToken], usuarioController.get)
 //router.get('/usuario', [autenticacaoJwt.verificarToken], usuarioController.getAll)
