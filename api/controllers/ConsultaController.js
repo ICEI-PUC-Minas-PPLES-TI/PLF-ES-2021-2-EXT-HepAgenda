@@ -57,12 +57,12 @@ class ConsultaController {
     if (!paciente) throw new AppError("Paciente não encontrado!", 404, ["'paciente_id' não encontrado!"]);
 
     const usuarioService = new UsuarioService();
-    const usuario_criador = await usuarioService.getById(request.userId);
+    const usuario_criador = await usuarioService.findById(1);
 
     // Se enviar o id do médico, verificar se existe
     let usuario_medico_temp;
     if (usuario_id_medico) {
-      usuario_medico_temp = await usuarioService.getById(usuario_id_medico);
+      usuario_medico_temp = await usuarioService.findById(usuario_id_medico);
       if (!usuario_medico_temp)
         throw new AppError("Médico não encontrado!", 404, ["'usuario_id_medico' não encontrado!"]);
     }
@@ -172,7 +172,7 @@ class ConsultaController {
     let usuarioMedicoTemp = null;
     if (usuario_id_medico) {
       const usuarioService = new UsuarioService();
-      const usuario_medico = await usuarioService.getById(usuario_id_medico);
+      const usuario_medico = await usuarioService.findById(usuario_id_medico);
       usuarioMedicoTemp = usuario_medico;
       // Se enviar o id do médico, verificar se existe
       if (usuario_id_medico && !usuario_medico)
@@ -212,7 +212,7 @@ class ConsultaController {
 
     const usuarioService = new UsuarioService();
     const usuario_criador = (
-      await usuarioService.getById(consultaData.usuario_id_criador)
+      await usuarioService.findById(consultaData.usuario_id_criador)
     ).dataValues;
 
     // Salvando log de criação
@@ -224,7 +224,7 @@ class ConsultaController {
     ) {
       let nomeMedicoAtualTemp;
       if (consultaData.usuario_id_medico) {
-        let usuario_medico_atual = await usuarioService.getById(
+        let usuario_medico_atual = await usuarioService.findById(
           consultaData.usuario_id_medico
         );
         let nomes = usuario_medico_atual.dataValues.nome.split(" ");
@@ -317,10 +317,10 @@ class ConsultaController {
     consulta.dataValues.paciente = await pacienteService.getById(
       consulta.dataValues.paciente_id
     );
-    consulta.dataValues.usuario_criador = await usuarioService.getById(
+    consulta.dataValues.usuario_criador = await usuarioService.findById(
       consulta.dataValues.usuario_id_criador
     );
-    consulta.dataValues.usuario_medico = await usuarioService.getById(
+    consulta.dataValues.usuario_medico = await usuarioService.findById(
       consulta.dataValues.usuario_id_medico
     );
 
@@ -418,12 +418,12 @@ class ConsultaController {
                   atributosPaciente
                 );
                 // Adicionando dados do médico associado a consulta
-                consulta.dataValues.usuario_medico = await usuarioService.getById(
+                consulta.dataValues.usuario_medico = await usuarioService.findById(
                   consulta.dataValues.usuario_id_medico,
                   atributosMedico
                 );
                 // * Desativado: Adicionando dados do criador da consulta
-                // consulta.dataValues.usuario_criador = await usuarioService.getById(
+                // consulta.dataValues.usuario_criador = await usuarioService.findById(
                 //   consulta.dataValues.usuario_id_criador
                 // );
                 // * Desativado: Adicionando todos os logs da consulta
