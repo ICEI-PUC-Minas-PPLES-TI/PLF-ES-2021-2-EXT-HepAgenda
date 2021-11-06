@@ -3,9 +3,9 @@ const { Sequelize } = require("sequelize");
 
 // Importar modelos aqui
 const Consulta = require("../models/Consulta");
-const Tratamento = require('../models/Tratamento');
-const Usuario = require('../models/Usuario');
-const Paciente = require('../models/Paciente');
+const Tratamento = require("../models/Tratamento");
+const Usuario = require("../models/Usuario");
+const Paciente = require("../models/Paciente");
 const LogConsulta = require("../models/LogConsulta");
 const PacienteHepB = require("../models/PacienteHepB");
 const PacienteHepC = require("../models/PacienteHepC");
@@ -41,14 +41,14 @@ module.exports = {
       Arquivo.init(sequelize);
 
       // Associações
-      Consulta.hasMany(Arquivo, {as: 'arquivos', foreignKey: "consulta_id"});
-      Arquivo.belongsTo(Consulta, {foreignKey: "consulta_id"});
-      Paciente.hasOne(PacienteHepB, {foreignKey: "paciente_id"});
-      Paciente.hasMany(PacienteHepC, {foreignKey: "paciente_id"});
-      PacienteHepB.hasOne(Tratamento, {foreignKey: "id"})
-      PacienteHepC.hasOne(Tratamento, {foreignKey: "id"})
-      Paciente.hasMany(Consulta, {foreignKey: "paciente_id"})
-      BloqueioData.hasOne(Usuario, {foreignKey: "id", as: 'usuario'})
+      Consulta.hasMany(Arquivo, { as: "arquivos", foreignKey: "consulta_id" });
+      Arquivo.belongsTo(Consulta, { foreignKey: "consulta_id" });
+      Paciente.hasOne(PacienteHepB, { foreignKey: "paciente_id" });
+      Paciente.hasMany(PacienteHepC, { foreignKey: "paciente_id" });
+      PacienteHepB.hasOne(Tratamento, { foreignKey: "id" });
+      PacienteHepC.hasOne(Tratamento, { foreignKey: "id" });
+      Paciente.hasMany(Consulta, { foreignKey: "paciente_id" });
+      BloqueioData.hasOne(Usuario, { foreignKey: "id", as: "usuario" });
 
       if (process.env.NODE_ENV === "dev") {
         console.log(
@@ -59,7 +59,7 @@ module.exports = {
       console.log(
         `Não foi possível estabelecer a conexão com '${process.env.DB_HOST}/${process.env.DB_DATABASE}'`
       );
-      console.log(error)
+      console.log(error);
     }
   },
 

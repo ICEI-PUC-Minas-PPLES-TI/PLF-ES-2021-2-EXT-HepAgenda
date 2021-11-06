@@ -39,8 +39,8 @@ class ConsultaController {
 
     try {
       await scheme.validate(request.body, { abortEarly: false });
-    } catch (erro) {
-      throw new AppError(erro.message, 422);
+    } catch (error) {
+      throw new AppError(error.name, 422, error.errors);
     }
 
     const {
@@ -54,7 +54,7 @@ class ConsultaController {
 
     const pacienteService = new PacienteService();
     const paciente = await pacienteService.getById(paciente_id);
-    if (!paciente) throw new AppError("'paciente_id' não encontrado!", 404);
+    if (!paciente) throw new AppError("Paciente não encontrado!", 404, ["'paciente_id' não encontrado!"]);
 
     const usuarioService = new UsuarioService();
     const usuario_criador = await usuarioService.getById(request.userId);
@@ -64,13 +64,13 @@ class ConsultaController {
     if (usuario_id_medico) {
       usuario_medico_temp = await usuarioService.getById(usuario_id_medico);
       if (!usuario_medico_temp)
-        throw new AppError("'usuario_id_medico' não encontrado!", 404);
+        throw new AppError("Médico não encontrado!", 404, ["'usuario_id_medico' não encontrado!"]);
     }
     const usuario_medico = usuario_medico_temp;
     /*
       * Se enviar o id do médico, verificar se é médico
       ! O médico da consulta pode ser um usuário administrador com essa regra
-      if (usuario_medico.dataValues.tipo != "M") Para delimitar apenas médico
+      if (usuario_medico && usuario_medico.dataValues.tipo != "M") Para delimitar apenas médico
     */
     if (
       usuario_medico &&
@@ -78,8 +78,9 @@ class ConsultaController {
       usuario_medico.dataValues.tipo != "A"
     )
       throw new AppError(
-        "'usuario_id_medico' não é médico nem administrador!",
-        422
+        "Usuário não é médico nem administrador!",
+        403,
+        ["'usuario_id_medico' não é médico nem administrador!"]
       );
 
     const consulta = Consulta.build({
@@ -137,8 +138,8 @@ class ConsultaController {
 
     try {
       await scheme.validate(request.body, { abortEarly: false });
-    } catch (erro) {
-      throw new AppError(erro.message, 422);
+    } catch (error) {
+      throw new AppError(error.name, 422, error.errors);
     }
 
     const id = request.params.id;
@@ -301,8 +302,9 @@ class ConsultaController {
       },
       include: [
         {
-          model: Arquivo, as: "arquivos",
-          attributes: ['id', 'nome'],
+          model: Arquivo,
+          as: "arquivos",
+          attributes: ["id", "nome"]
         }
       ]
     });
@@ -458,8 +460,8 @@ class ConsultaController {
 
     try {
       await scheme.validate(request.body, { abortEarly: false });
-    } catch (erro) {
-      throw new AppError(erro.message, 422);
+    } catch (error) {
+      throw new AppError(error.name, 422, error.errors);
     }
 
     const { paciente_id } = request.body;

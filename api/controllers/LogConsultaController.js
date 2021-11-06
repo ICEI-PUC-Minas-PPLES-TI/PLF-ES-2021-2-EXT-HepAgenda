@@ -25,8 +25,8 @@ class LogConsultaController {
 
     try {
       await scheme.validate(log, { abortEarly: false });
-    } catch (err) {
-      throw new AppError(err.message, 422);
+    } catch (error) {
+      throw new AppError(error.name, 422, error.errors);
     }
 
     await LogConsulta.create({

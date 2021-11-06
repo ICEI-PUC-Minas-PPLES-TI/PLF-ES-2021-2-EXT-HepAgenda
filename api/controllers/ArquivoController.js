@@ -10,7 +10,7 @@ class ArquivoController {
       }
     });
 
-    if (!arquivo) throw new AppError("Arquivo não encontrado!", 404);
+    if (!arquivo) throw new AppError("Arquivo não encontrado!", 404, ["'id' do arquivo não encontrado!"]);
 
     const arquivoDir = path.resolve(process.cwd(), arquivo.dataValues.link);
 

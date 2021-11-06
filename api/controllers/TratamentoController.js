@@ -14,12 +14,8 @@ class TratamentoController {
     // Validando com o esquema criado:
     try {
       await scheme.validate(request.body, { abortEarly: false }); // AbortEarly para fazer todas as validações
-    } catch (err) {
-      return response.status(422).json({
-        "name:": err.name, // => 'ValidationError'
-        message: err.message,
-        errors: err.errors
-      });
+    } catch (error) {
+      throw new AppError(error.name, 422, error.errors);
     }
 
     const { identificacao, direcionado } = request.body;

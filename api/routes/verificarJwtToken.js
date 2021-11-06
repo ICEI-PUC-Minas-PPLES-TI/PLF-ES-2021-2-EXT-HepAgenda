@@ -42,7 +42,9 @@ const isAdminOrMedic = (req, res, next) => {
       return;
     }
 
-    res.status(403).send("Necessita de ser um usuário administrador ou médico!");
+    res
+      .status(403)
+      .send("Necessita de ser um usuário administrador ou médico!");
     return;
   });
 };
@@ -54,7 +56,11 @@ const isAdminOrMedicOrViewer = (req, res, next) => {
       return;
     }
 
-    res.status(403).send("Necessita de ser um usuário administrador ou médico ou visualizador!");
+    res
+      .status(403)
+      .send(
+        "Necessita de ser um usuário administrador ou médico ou visualizador!"
+      );
     return;
   });
 };

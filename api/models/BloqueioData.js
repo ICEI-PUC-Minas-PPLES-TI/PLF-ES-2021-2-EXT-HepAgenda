@@ -22,7 +22,7 @@ class BloqueioData extends Model {
         usuario_id_criador: {
           type: DataTypes.INTEGER,
           required: true
-        },
+        }
       },
       {
         tableName: "bloqueio_data",
