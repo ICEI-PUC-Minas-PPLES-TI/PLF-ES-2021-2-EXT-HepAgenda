@@ -96,6 +96,7 @@ const pacienteUpdateScheme = yup.object({
     altura: yup.number().min(0).nullable(),
     desfecho: yup.number().nullable(),
     comorbidade: yup.mixed().oneOf(['HEPB', 'HEPC', 'HEPBC', 'OUTRO']).nullable()
+    ativo: yup.bool().nullable
 }).concat(yup.object().shape({
     hepatiteb: hepatiteBUpdateScheme.default(null).nullable(),
     hepatitec: yup.array().of( hepatiteCUpdateScheme )

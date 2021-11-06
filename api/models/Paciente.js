@@ -16,6 +16,9 @@ class Paciente extends Model{
                 type: DataTypes.DATE,
                 allowNull: false
             },
+            ativo:{
+                type: DataTypes.TINYINT(1)
+            },
             registro_hc: {
                 type: DataTypes.STRING(20),
                 allowNull: true,
