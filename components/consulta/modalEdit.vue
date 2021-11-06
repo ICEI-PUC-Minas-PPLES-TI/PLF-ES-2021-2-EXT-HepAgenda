@@ -194,18 +194,26 @@
               </v-row>
               <!-- Arquivos -->
               <v-row class="row-arquivos">
-                <v-col cols="12" :xs="12" :sm="6" :md="3">
+                <v-col
+                  cols="12"
+                  :xs="12"
+                  :sm="6"
+                  :md="3"
+                  v-for="(linha, idx) in consulta.arquivos"
+                  :key="idx"
+                >
                   <v-file-input
                     label="Anexar arquivos"
                     multiple
-                    v-model="files"
+                    v-model="files[idx]"
                     filled
                     rounded
                     dense
                     outlined
                     prepend-inner-icon="mdi-paperclip"
                     prepend-icon=""
-
+                    @change="addArquivo"
+                    @click:clear="removeArquivo(idx)"
                   />
                 </v-col>
                 <!-- <v-col cols="12" :xs="12" :sm="6" :md="3">
@@ -250,6 +258,14 @@
                   />
                 </v-col> -->
               </v-row>
+
+                <v-row>
+                  <v-col>
+                    <v-btn color="#E3E3E3" class="d-none d-md-flex" @click="addArquivo">
+                      Adicionar outro arquivo
+                    </v-btn>
+                  </v-col>
+                </v-row>
               <!-- Botão de marcarConsulta -->
               <v-row class="mx-auto">
                 <v-col class="consulta-modal-marcar text-center">
@@ -313,7 +329,7 @@ export default {
 
       consulta: {
         id: "",
-        status:"",
+        status: "",
         dt_inicio: "",
         detalhes: "",
         descricao: "",
@@ -338,20 +354,23 @@ export default {
           nome: "",
         },
 
-        arquivos: [{
-          id: "",
-          nome: ""
-        }]
+        arquivos: [
+          {
+            id: "",
+            nome: "",
+          },
+        ],
       },
 
       medicoAtual: "Não definido",
       menuDataConsulta: false,
       modalConfirm: false,
-      files: []
+      files: [],
     };
   },
   mounted() {
     //this.listaMedicos();
+    this.addArquivo();
   },
   watch: {
     consultaId: function (consultaId) {
@@ -374,33 +393,32 @@ export default {
 
     update() {
       if (this.$refs.formConsulta.validate()) {
-      let consulta = JSON.parse(JSON.stringify(this.consulta));
+        let consulta = JSON.parse(JSON.stringify(this.consulta));
 
-      let formData = new FormData();
+        let formData = new FormData();
 
-      if(this.files){
-        console.log(this.files);
-        for(let i = 0 ; i < this.files.length; i++){
-          formData.append("arquivos", this.files[i])
+        if (this.files) {
+          console.log(this.files);
+          for (let i = 0; i < this.files.length; i++) {
+            formData.append("arquivos", this.files[i]);
+          }
         }
-      }
-      for ( var key in consulta ) {
-        if(typeof consulta[key] != 'object'){
-          formData.append(key, consulta[key]);
+        for (var key in consulta) {
+          if (typeof consulta[key] != "object") {
+            formData.append(key, consulta[key]);
+          }
         }
-      }
 
-      this.$axios
-        .$put("/consulta/" + this.consultaId, formData)
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+        this.$axios
+          .$put("/consulta/" + this.consultaId, formData)
+          .then((response) => {
+            console.log(response);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       }
     },
-
 
     formataData(data) {
       let dt = new Date(data)
@@ -415,6 +433,19 @@ export default {
       this.toastMensagem = mensagem;
       this.toast = true;
     },
+
+    addArquivo() {
+      this.consulta.arquivos.push({
+        id: "",
+        nome: "",
+      });
+    },
+
+    removeArquivo(idx){
+      console.log(idx);
+    }
+
+
   },
 };
 </script>
@@ -468,7 +499,7 @@ export default {
   font-size: 0.85em;
 }
 
-#input-usage .row-arquivos .v-label{
+#input-usage .row-arquivos .v-label {
   color: black;
   font-size: 0.85em;
 }

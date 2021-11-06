@@ -178,9 +178,9 @@ export default {
   methods: {
     marcaConsulta() {
       if (this.$refs.formConsulta.validate()) {
-        
+
         let consulta = JSON.parse(JSON.stringify(this.consulta));
-        consulta.dt_inicio = new Date(this.consulta.dt_inicio);
+        consulta.dt_inicio = this.consulta.dt_inicio.replaceAll('-', '/');
 
         this.$axios
           .$post("/consulta", consulta)
@@ -195,7 +195,6 @@ export default {
     },
     verificaPrimeraConsulta(pacienteId) {
       //query verificar se é a primeira consulta
-      console.log(pacienteId);
       if (pacienteId) {
         let paciente = JSON.parse(JSON.stringify({ paciente_id: pacienteId }));
         this.$axios
@@ -233,6 +232,7 @@ export default {
         dt_inicio: null,
       }
       this.$refs.formConsulta.reset();
+      this.$emit('input', false)
     },
     procuraPaciente(val){
       if(val && val.length > 3) {

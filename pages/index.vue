@@ -288,6 +288,16 @@ export default {
 
     return data
   },
+  watch:{
+      modalCreateAtivo: function(val){
+        if(val){
+          const offset = new Date().getTimezoneOffset()
+          this.data_atual = new Date(new Date().getTime() - (offset*60*1000)).toISOString().split('T')[0]
+          if(this.$refs['consultaList'])
+            this.$refs['consultaList'].scrollTop = 130
+        }
+      }
+  },
   mounted(){
     const offset = new Date().getTimezoneOffset()
     this.data_atual = new Date(new Date().getTime() - (offset*60*1000)).toISOString().split('T')[0]
@@ -304,7 +314,7 @@ export default {
                     r[a.dt_inicio] = [...r[a.dt_inicio] || [], a];
                     return r;
                   }, {});
-          
+
           for(let i=1;i<=7;i++) { // Completa com os dias que não vieram na api
             const dtInicioCopia = new Date(this.filtroDataInicio)
             dtInicioCopia.setDate(new Date(this.filtroDataInicio).getDate() + i)
@@ -466,17 +476,17 @@ export default {
     }
     /* Track */
     &::-webkit-scrollbar-track {
-      box-shadow: inset 0 0 5px #EFEFEF; 
+      box-shadow: inset 0 0 5px #EFEFEF;
       border-radius: 10px;
     }
     /* Handle */
     &::-webkit-scrollbar-thumb {
-      background: #D0D0D0; 
+      background: #D0D0D0;
       border-radius: 1px;
     }
     /* Handle on hover */
     &::-webkit-scrollbar-thumb:hover {
-      background: darken(#D0D0D0, 20%); 
+      background: darken(#D0D0D0, 20%);
     }
   }
   .consulta-container-list-items{
