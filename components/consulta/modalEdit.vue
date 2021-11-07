@@ -12,7 +12,7 @@
       <v-card>
         <v-card-title class="text-h5 consulta-modal-title">
           <h4>
-            <span> Consulta #1 </span>
+            <span> Consulta </span>
           </h4>
 
           <v-btn icon @click="$emit('input', false)">
@@ -22,18 +22,8 @@
         <v-card-text>
           <v-container fluid id="input-usage">
             <v-form ref="formConsulta" v-model="valid" lazy-validation>
-              <!-- paciente -->
               <v-row no-gutters>
                 <v-col :md="8" :sm="12" :xl="8" cols="12">
-                  <v-row class="mx-auto">
-                    <v-col :md="12" :sm="12" :xl="12" cols="12">
-                      <v-input
-                        :messages="consulta.paciente.nome"
-                        label="Paciente"
-                      >
-                      </v-input>
-                    </v-col>
-                  </v-row>
                   <!-- Data da consulta -->
                   <v-row class="mx-auto">
                     <v-col :md="12" :sm="12" :xl="12" cols="12">
@@ -96,6 +86,9 @@
                         outlined
                         hide-details="auto"
                         label="Relatório do atendimento"
+                        v-model="consulta.detalhes"
+                        counter
+                        :rules="[(v) =>(v && v.length <= 60) || 'Máximo de 60 caracteres']"
                         auto-grow
                       ></v-textarea>
                     </v-col>
@@ -125,7 +118,7 @@
                         </div>
                       </v-col>
                     </v-row>
-                    <!-- Np,e -->
+                    <!-- Nome -->
                     <v-row class="mt-n8">
                       <v-col :md="12" :sm="12" :xl="12" cols="12">
                         <v-input
@@ -161,13 +154,18 @@
                         ></v-input>
                       </v-col>
                     </v-row>
-                      <v-row class="mt-n3 text-right mr-2">
-                        <v-col :md="12" :sm="12" :xl="12" cols="12">
-                          <a
-                            href="http://localhost:3000//paciente"
-                          >Dados do paciente</a>
-                        </v-col>
-                      </v-row>
+                    <v-row class="mt-n3 text-right mr-2">
+                      <v-col :md="12" :sm="12" :xl="12" cols="12">
+                        <v-btn text x-small @click="abreToast('Em desenvolvimento')">
+                        <a
+                          aria-disabled="true"
+                          disabled
+                          href="#"
+                          >Dados do paciente</a
+                        >
+                        </v-btn>
+                      </v-col>
+                    </v-row>
                     <!-- Barra horizontal -->
                     <v-row class="mt-n8">
                       <v-col :md="12" :sm="12" :xl="12" cols="12">
@@ -203,7 +201,9 @@
               <v-row class="row-arquivos">
                 <v-col cols="12" :xs="12" :sm="6" :md="3">
                   <v-file-input
+                    show-size
                     multiple
+                    small
                     label="Adicionar arquivo"
                     filled
                     rounded
@@ -288,18 +288,12 @@
                   >
                     Não
                   </v-btn>
-                  <v-btn
-                    color="red darken-1"
-                    text
-                    @click="removeArquivo"
-                  >
+                  <v-btn color="red darken-1" text @click="removeArquivo">
                     Sim
                   </v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
-
-
           </v-container>
         </v-card-text>
       </v-card>
@@ -411,7 +405,7 @@ export default {
           }
         }
 
-        this.queryUpdate(formData)
+        this.queryUpdate(formData);
       }
     },
 
@@ -433,12 +427,12 @@ export default {
       return `${dia} de ${mesExtensos[parseInt(mes) - 1]} de ${ano}`;
     },
 
-    formataDataSimples(data){
-      if(data.includes('T')){
-        data = data.split('T')[0]
+    formataDataSimples(data) {
+      if (data.includes("T")) {
+        data = data.split("T")[0];
       }
-      const [ano, mes, dia] = data.split('-')
-      return `${dia}/${mes}/${ano}`
+      const [ano, mes, dia] = data.split("-");
+      return `${dia}/${mes}/${ano}`;
     },
 
     abreToast(mensagem) {
@@ -447,15 +441,18 @@ export default {
     },
 
     enviaArquivo() {
-      if (this.files) {
+      if (this.files && this.files.length > 0) {
+        if(this.files[0].size > 2000000 ){
+          this.abreToast("Arquivo deve ser menor que 2 MB");
+          return ;
+        }
         let formData = new FormData();
         for (let i = 0; i < this.files.length; i++) {
           formData.append("arquivos", this.files[i]);
         }
         this.queryUpdate(formData);
+        this.files = [];
       }
-      this.addArquivo();
-      this.files = [];
     },
 
     addArquivo() {
@@ -499,10 +496,10 @@ export default {
           console.log(error);
         });
 
-        this.modalConfirmAnexo = false;
+      this.modalConfirmAnexo = false;
     },
 
-    abreModalConfirmAnexo(idx){
+    abreModalConfirmAnexo(idx) {
       this.idxAux = idx;
       this.modalConfirmAnexo = true;
     },
@@ -515,7 +512,8 @@ export default {
           this.abreToast("Consulta atualizada com sucesso!");
         })
         .catch((error) => {
-          console.log(error);
+          let retorno = error.response.data.message.replace(/(.{50})/g, '$1\n');
+          this.abreToast(retorno);
         });
     },
   },
@@ -539,7 +537,7 @@ export default {
   border-left: 1px solid #b7b7b7;
   padding-left: 10px;
   height: 50vw;
-  max-height: 500px;
+  max-height: 450px;
   overflow-y: scroll;
   overflow-x: hidden;
 }
