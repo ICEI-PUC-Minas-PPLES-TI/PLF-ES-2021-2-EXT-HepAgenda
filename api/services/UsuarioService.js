@@ -102,7 +102,7 @@ class UsuarioService {
     return usuario;
   }
 
-  async update(id, nome, email, telefone, login, senha, tipo) {
+  async update(id, nome, telefone, senha, tipo) {
     const usuario = await this.findById(id);
 
     if (!usuario)
@@ -117,9 +117,7 @@ class UsuarioService {
     await usuario
       .update({
         nome: nome,
-        email: email,
         telefone: telefone,
-        login: login,
         senha: senhaCriptografada,
         tipo: tipo
       })
@@ -129,7 +127,7 @@ class UsuarioService {
 
     if (!usuario)
       throw new AppError("Não foi possível atualizar o usuário!", 500, [
-        `Erro interno, usuário de 'email' '${email}' não atualizado!`
+        `Erro interno, usuário de 'email' '${usuario.email}' não atualizado!`
       ]);
 
     return usuario;
@@ -163,7 +161,7 @@ class UsuarioService {
     );
 
     const usuarios = await Usuario.findAndCountAll({
-      ...SortPaginateOptions
+      ...SortPaginateOptions,
     }).catch(function(error) {
       throw new AppError("Erro interno do servidor!", 500, error);
     });

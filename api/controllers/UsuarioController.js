@@ -75,11 +75,11 @@ class UsuarioController {
       throw new AppError(error.name, 422, error.errors);
     }
 
-    const { nome, email, telefone, login, senha, tipo } = request.body;
+    const { nome, telefone, senha, tipo } = request.body;
     const id = request.params.id;
 
     const usuarioService = new UsuarioService();
-    await usuarioService.update(id, nome, email, telefone, login, senha, tipo);
+    await usuarioService.update(id, nome, telefone, senha, tipo);
 
     return response.status(200).json({});
   }

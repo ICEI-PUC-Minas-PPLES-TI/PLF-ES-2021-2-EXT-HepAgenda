@@ -39,9 +39,6 @@ const updateUsuarioValidation = yup.object().shape({
   nome: yup.string(),
   telefone: yup.string().matches(telefoneRegExp, "Telefone inválido!"),
 
-  login: yup.string().min(3, "Login deve ter no mínimo 3 caracteres!"),
-
-  email: yup.string().email(),
   senha: yup
     .string()
     .matches(
