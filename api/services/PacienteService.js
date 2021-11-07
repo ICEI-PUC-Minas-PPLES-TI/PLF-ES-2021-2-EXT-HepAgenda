@@ -1,7 +1,7 @@
 const Paciente = require("../models/Paciente");
 
 class PacienteService {
-  async getById(id, atributos) {
+  async findById(id, atributos) {
     const paciente = await Paciente.findOne({
       where: {
         id: id

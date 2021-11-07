@@ -12,30 +12,12 @@ const yup = require("yup");
 const LogConsultaController = require("./LogConsultaController");
 const ConsultaService = require("../services/ConsultaService");
 const ArquivoService = require("../services/ArquivoService");
+const { createConsultaValidation } = require("../validation/ConsultaValidation");
 
 class ConsultaController {
   async create(request, response) {
-    const statusEnums = ["AGUARDANDOC", "AGUARDANDOA", "REALIZADO"];
 
-    const scheme = yup.object().shape({
-      paciente_id: yup
-        .number("'paciente_id' deve ser numérico!")
-        .required("'paciente_id' obrigatório!"),
-      descricao: yup
-        .string("'descricao' deve ser string!")
-        .max(60, "'descricao' deve ter no máximo 60 caracteres!"),
-      status: yup
-        .mixed()
-        .oneOf(statusEnums, `'status' deve ser algum destes: ${statusEnums}.`)
-        .required("'status' obrigatório!"),
-      detalhes: yup
-        .string("'detalhes' deve ser string!")
-        .max(65000, "'detalhes' deve ter no máximo 65000 caracteres!"),
-      dt_inicio: yup
-        .date("'dt_inicio' deve ser data!")
-        .required("'dt_inicio' obrigatório!"),
-      usuario_id_medico: yup.number("'usuario_id_medico' deve ser numérico!")
-    });
+    const scheme = createConsultaValidation;
 
     try {
       await scheme.validate(request.body, { abortEarly: false });
@@ -53,11 +35,11 @@ class ConsultaController {
     } = request.body;
 
     const pacienteService = new PacienteService();
-    const paciente = await pacienteService.getById(paciente_id);
+    const paciente = await pacienteService.findById(paciente_id);
     if (!paciente) throw new AppError("Paciente não encontrado!", 404, ["'paciente_id' não encontrado!"]);
 
     const usuarioService = new UsuarioService();
-    const usuario_criador = await usuarioService.findById(1);
+    const usuario_criador = await usuarioService.findById(request.userId);
 
     // Se enviar o id do médico, verificar se existe
     let usuario_medico_temp;
@@ -164,7 +146,7 @@ class ConsultaController {
     let usuarioPacienteTemp = null;
     if (paciente_id) {
       const pacienteService = new PacienteService();
-      usuarioPacienteTemp = await pacienteService.getById(paciente_id);
+      usuarioPacienteTemp = await pacienteService.findById(paciente_id);
       if (!usuarioPacienteTemp)
         throw new AppError("'paciente_id' não encontrado!", 404);
     }
@@ -314,7 +296,7 @@ class ConsultaController {
     // Adicionando usuários e paciente no retorno
     const usuarioService = new UsuarioService();
     const pacienteService = new PacienteService();
-    consulta.dataValues.paciente = await pacienteService.getById(
+    consulta.dataValues.paciente = await pacienteService.findById(
       consulta.dataValues.paciente_id
     );
     consulta.dataValues.usuario_criador = await usuarioService.findById(
@@ -413,7 +395,7 @@ class ConsultaController {
                 const usuarioService = new UsuarioService();
                 const pacienteService = new PacienteService();
                 // Adicionando dados do paciente
-                consulta.dataValues.paciente = await pacienteService.getById(
+                consulta.dataValues.paciente = await pacienteService.findById(
                   consulta.dataValues.paciente_id,
                   atributosPaciente
                 );
@@ -467,7 +449,7 @@ class ConsultaController {
     const { paciente_id } = request.body;
 
     const pacienteService = new PacienteService();
-    const paciente = await pacienteService.getById(paciente_id);
+    const paciente = await pacienteService.findById(paciente_id);
     if (!paciente) throw new AppError("'paciente_id' não encontrado!", 404);
 
     const consultaService = new ConsultaService();
