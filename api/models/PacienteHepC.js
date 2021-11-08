@@ -23,6 +23,10 @@ class PacienteHepC extends Model{
                 type: DataTypes.BOOLEAN,
                 allowNull: false
             },
+            portador_inativo: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false
+            },
             fibrose: {
                 type: DataTypes.ENUM(['F0', 'F1', 'F2', 'F3', 'F4', 'F5'])
             },
