@@ -31,7 +31,7 @@
               <!-- Secao 1 - Nome, Nascimento, Sexo, Email, Telefone, Registro HC, Nome da Mãe -->
               <v-row class="mt-0">
                 <v-col :md="7" :sm="12" :xl="4" cols="12">
-                  <v-text-field v-model="formData.nome" outlined hide-details="auto" :rules="[v => !!v || 'Nome é obrigatório']" label="Nome (Obrigatório)" maxlength="120" @blur="salvarEmCache" />
+                  <v-text-field v-model="formData.nome" outlined hide-details="auto" :rules="[v => !!v || 'Nome é obrigatório']" label="Nome" maxlength="120" @blur="salvarEmCache" />
                 </v-col>
                 <v-col :md="2" :sm="12" :xl="2" cols="12">
                   <v-menu
@@ -48,7 +48,7 @@
                         outlined
                         hide-details="auto"
                         :rules="[v => !!v || 'Data de Nascimento obrigatória']"
-                        label="Data de Nascimento (Obrigatório)"
+                        label="Data de Nascimento"
                         type="date"
                         max="3000-01-01"
                         class="paciente-modal-input-date"
@@ -68,7 +68,7 @@
                   </v-menu>
                 </v-col>
                 <v-col :md="3" :sm="12" :xl="2" cols="12">
-                  <span>Sexo (Obrigatório)</span>
+                  <span>Sexo</span>
                   <v-radio-group
                     v-model="formData.sexo"
                     row
@@ -88,7 +88,7 @@
                   </v-radio-group>
                 </v-col>
                 <v-col :md="7" :sm="12" :xl="4" cols="12">
-                  <v-text-field v-model="formData.email" type="email" outlined hide-details="auto" label="E-Mail" :rules="[v => v ? /.+@.+\..+/.test(v) || 'E-mail inválido': true]" maxlength="50" @blur="salvarEmCache" />
+                  <v-text-field v-model="formData.email" type="email" outlined hide-details="auto" label="E-Mail (Opcional)" :rules="[v => v ? /.+@.+\..+/.test(v) || 'E-mail inválido': true]" maxlength="50" @blur="salvarEmCache" />
                 </v-col>
                 <v-col :md="2" :sm="12" :xl="2" cols="12">
                   <v-text-field
@@ -96,16 +96,16 @@
                     outlined
                     hide-details="auto"
                     :rules="[v => !!v || 'Telefone obrigatório', v => (v && v.length >= 14) || 'Telefone inválido']"
-                    label="Telefone (Obrigatório)"
+                    label="Telefone"
                     v-mask="['(##) ####-####', '(##) #####-####']"
                     @blur="salvarEmCache"
                   />
                 </v-col>
                 <v-col :md="3" :sm="12" :xl="2" cols="12">
-                  <v-text-field v-model="formData.registro_hc" outlined hide-details="auto" label="Registro HC" maxlength="20" @blur="salvarEmCache" />
+                  <v-text-field v-model="formData.registro_hc" outlined hide-details="auto" :rules="[v => !!v || 'Registro HC é obrigatório']" label="Registro HC" maxlength="20" @blur="salvarEmCache" />
                 </v-col>
                 <v-col :md="7" :sm="12" :xl="4" cols="12">
-                  <v-text-field v-model="formData.nome_mae" outlined label="Nome da Mãe (Obrigatório)" hide-details="auto" :rules="[v => !!v || 'Nome da mãe é obrigatório']" maxlength="120" @blur="salvarEmCache" />
+                  <v-text-field v-model="formData.nome_mae" outlined label="Nome da Mãe" hide-details="auto" :rules="[v => !!v || 'Nome da mãe é obrigatório']" maxlength="120" @blur="salvarEmCache" />
                 </v-col>
               </v-row>
               <br>
@@ -115,14 +115,14 @@
               <!-- Seção Informações clínicas - Peso, Altura, IMC,  Comorbidade e Desfecho -->
               <v-row class="mt-0">
                 <v-col :md="2" :sm="12" cols="12">
-                  <v-text-field v-model="formData.peso" type="number" min="0" max="400" step='0.01' outlined :hide-details="true" label="Peso" @blur="salvarEmCache">
+                  <v-text-field v-model="formData.peso" type="number" min="0" max="400" step='0.01' outlined :hide-details="true" label="Peso (Opcional)" @blur="salvarEmCache">
                     <span slot="append">
                       Kg
                     </span>
                   </v-text-field>
                 </v-col>
                 <v-col :md="2" :sm="12" cols="12">
-                  <v-text-field v-model="formData.altura" type="text" v-mask="['#.##']" outlined :hide-details="true" label="Altura" @blur="salvarEmCache">
+                  <v-text-field v-model="formData.altura" type="text" v-mask="['#.##']" outlined :hide-details="true" label="Altura (Opcional)" @blur="salvarEmCache">
                     <span slot="append">
                       m
                     </span>
@@ -135,7 +135,7 @@
                   <v-select
                     v-model="formData.comorbidade"
                     :items="comorbidadeItems"
-                    label="Comorbidade"
+                    label="Comorbidade (Opcional)"
                     item-text="label"
                     item-value="value"
                     outlined
@@ -147,7 +147,7 @@
                     v-model="formData.desfecho"
                     :items="desfechoItems"
                     :clearable="true"
-                    label="Desfecho"
+                    label="Desfecho (Opcional)"
                     item-text="label"
                     item-value="value"
                     outlined
@@ -166,7 +166,7 @@
                     <v-select
                       v-model="formData.hepatiteb.tratamento_id"
                       :items="tratamentoBItems"
-                      label="Tratamento"
+                      label="Tratamento (Opcional)"
                       item-text="label"
                       item-value="value"
                       outlined
@@ -190,7 +190,7 @@
                           v-model="formData.hepatiteb.inicio_tratamento"
                           outlined
                           :hide-details="true"
-                          label="Data Inicio do Antiretroviral"
+                          label="Data Inicio do Antiretroviral (Opcional)"
                           type="date"
                           max="3000-01-01"
                           class="paciente-modal-input-date"
@@ -266,7 +266,7 @@
                           v-model="formData.hepatiteb.data_alfa"
                           outlined
                           :hide-details="true"
-                          label="Data - Alfafetoproteina"
+                          label="Data - Alfafetoproteina (Opcional)"
                           clearable
                           type="date"
                           max="3000-01-01"
@@ -289,7 +289,19 @@
                   </v-col>
                   <!-- Resultado - Alfafetoproteina -->
                   <v-col :md="3" :sm="12" cols="12">
-                    <v-text-field v-model="formData.hepatiteb.ultimo_resultado_alfa" type="number" outlined :hide-details="true" label="Resultado - Alfafetoproteina" @blur="salvarEmCache" />
+                    <v-text-field v-model="formData.hepatiteb.ultimo_resultado_alfa" type="number" outlined :hide-details="true" label="Resultado - Alfafetoproteina (Opcional)" @blur="salvarEmCache" />
+                  </v-col>
+                  <!-- Fibrose -->
+                  <v-col :md="3" :sm="12" cols="12">
+                    <v-select
+                      v-model="formData.hepatiteb.fibrose"
+                      :items="fibroseItems"
+                      label="Fibrose (Opcional)"
+                      outlined
+                      clearable
+                      :hide-details="true"
+                      @change="salvarEmCache"
+                    />
                   </v-col>
                   <!-- Data - Ultrassom -->
                   <v-col :md="3" :sm="12" cols="12">
@@ -307,7 +319,7 @@
                           v-model="formData.hepatiteb.data_ultra"
                           outlined
                           :hide-details="true"
-                          label="Data - Ultrassom"
+                          label="Data - Ultrassom (Opcional)"
                           clearable
                           type="date"
                           max="3000-01-01"
@@ -330,7 +342,7 @@
                   </v-col>
                   <!-- Resultado - Ultrassom -->
                   <v-col :md="3" :sm="12" cols="12">
-                    <v-text-field v-model="formData.hepatiteb.ultimo_resultado_ultra" type="text" outlined :hide-details="true" label="Resultado - Ultrassom" @blur="salvarEmCache" />
+                    <v-text-field v-model="formData.hepatiteb.ultimo_resultado_ultra" type="text" outlined :hide-details="true" label="Resultado - Ultrassom (Opcional)" @blur="salvarEmCache" />
                   </v-col>
                   <!-- Data - Carga Viral -->
                   <v-col :md="3" :sm="12" cols="12">
@@ -347,7 +359,7 @@
                           v-model="formData.hepatiteb.data_carga"
                           outlined
                           :hide-details="true"
-                          label="Data - Carga Viral"
+                          label="Data - Carga Viral (Opcional)"
                           clearable
                           type="date"
                           max="3000-01-01"
@@ -370,75 +382,7 @@
                   </v-col>
                   <!-- Resultado - Carga Viral -->
                   <v-col :md="3" :sm="12" cols="12">
-                    <v-text-field v-model="formData.hepatiteb.ultimo_resultado_carga" type="number" outlined :hide-details="true" label="Resultado - Carga Viral" @blur="salvarEmCache" />
-                  </v-col>
-                  <!-- Data - Hbeag -->
-                  <v-col :md="3" :sm="12" cols="12">
-                    <v-menu
-                      v-model="menuHbeag"
-                      :close-on-content-click="false"
-                      :nudge-right="40"
-                      transition="scale-transition"
-                      offset-y
-                      min-width="auto"
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                          v-model="formData.hepatiteb.data_hbeag"
-                          outlined
-                          :hide-details="true"
-                          label="Data - HBeAg"
-                          clearable
-                          type="date"
-                          max="3000-01-01"
-                          class="paciente-modal-input-date"
-                          @click:clear="formData.hepatiteb.data_hbeag = null;salvarEmCache()"
-                        >
-                          <span slot="append">
-                            <v-icon v-bind="attrs" v-on="on">
-                              mdi-calendar
-                            </v-icon>
-                          </span>
-                        </v-text-field>
-                      </template>
-                      <v-date-picker
-                        v-model="formData.hepatiteb.data_hbeag"
-                        @input="menuHbeag = false"
-                        @change="salvarEmCache"
-                      ></v-date-picker>
-                    </v-menu>
-                  </v-col>
-                  <!-- Exame hbeag -->
-                  <v-col :md="3" :sm="12" cols="12">
-                    <span>Exame HBeAg</span>
-                    <v-radio-group
-                      row
-                      v-model="formData.hepatiteb.hbeag"
-                      style="margin: 0"
-                      :hide-details="true"
-                      @change="salvarEmCache"
-                    >
-                      <v-radio
-                        label="Negativo"
-                        :value="false"
-                      ></v-radio>
-                      <v-radio
-                        label="Positivo"
-                        :value="true"
-                      ></v-radio>
-                    </v-radio-group>
-                  </v-col>
-                  <!-- Fibrose -->
-                  <v-col :md="3" :sm="12" cols="12">
-                    <v-select
-                      v-model="formData.hepatiteb.fibrose"
-                      :items="fibroseItems"
-                      label="Fibrose"
-                      outlined
-                      clearable
-                      :hide-details="true"
-                      @change="salvarEmCache"
-                    />
+                    <v-text-field v-model="formData.hepatiteb.ultimo_resultado_carga" type="number" outlined :hide-details="true" label="Resultado - Carga Viral (Opcional)" @blur="salvarEmCache" />
                   </v-col>
                 </v-row>
               </div>
@@ -466,7 +410,7 @@
                     <v-select
                       v-model="formData.hepatitec[lidx].tratamento_id"
                       :items="tratamentoCItems"
-                      label="Tratamento"
+                      label="Tratamento (Opcional)"
                       item-text="label"
                       item-value="value"
                       outlined
@@ -480,7 +424,7 @@
                     <v-select
                       v-model="formData.hepatitec[lidx].fibrose"
                       :items="fibroseItems"
-                      label="Fibrose"
+                      label="Fibrose (Opcional)"
                       outlined
                       clearable
                       :hide-details="true"
@@ -542,7 +486,7 @@
                           v-model="formData.hepatitec[lidx].data_alfa"
                           outlined
                           :hide-details="true"
-                          label="Data - Alfafetoproteina"
+                          label="Data - Alfafetoproteina (Opcional)"
                           clearable
                           type="date"
                           max="3000-01-01"
@@ -565,7 +509,7 @@
                   </v-col>
                   <!-- Resultado - Alfafetoproteina -->
                   <v-col :md="3" :sm="12" cols="12">
-                    <v-text-field v-model="formData.hepatitec[lidx].ultimo_resultado_alfa" type="text" outlined :hide-details="true" label="Resultado - Alfafetoproteina" @blur="salvarEmCache" />
+                    <v-text-field v-model="formData.hepatitec[lidx].ultimo_resultado_alfa" type="text" outlined :hide-details="true" label="Resultado - Alfafetoproteina (Opcional)" @blur="salvarEmCache" />
                   </v-col>
                   <!-- Data - Ultrassom -->
                   <v-col :md="3" :sm="12" cols="12">
@@ -582,7 +526,7 @@
                           v-model="formData.hepatitec[lidx].data_ultra"
                           outlined
                           :hide-details="true"
-                          label="Data - Ultrassom"
+                          label="Data - Ultrassom (Opcional)"
                           type="date"
                           max="3000-01-01"
                           class="paciente-modal-input-date"
@@ -605,7 +549,7 @@
                   </v-col>
                   <!-- Resultado - Ultrassom -->
                   <v-col :md="3" :sm="12" cols="12">
-                    <v-text-field v-model="formData.hepatitec[lidx].ultimo_resultado_ultra" type="text" outlined :hide-details="true" label="Resultado - Ultrassom" @blur="salvarEmCache" />
+                    <v-text-field v-model="formData.hepatitec[lidx].ultimo_resultado_ultra" type="text" outlined :hide-details="true" label="Resultado - Ultrassom (Opcional)" @blur="salvarEmCache" />
                   </v-col>
                   <!-- Data - Carga Viral -->
                   <v-col :md="3" :sm="12" cols="12">
@@ -622,7 +566,7 @@
                           v-model="formData.hepatitec[lidx].data_carga"
                           outlined
                           :hide-details="true"
-                          label="Data - Carga Viral"
+                          label="Data - Carga Viral (Opcional)"
                           clearable
                           type="date"
                           max="3000-01-01"
@@ -645,7 +589,27 @@
                   </v-col>
                   <!-- Resultado - Carga Viral -->
                   <v-col :md="3" :sm="12" cols="12">
-                    <v-text-field v-model="formData.hepatitec[lidx].ultimo_resultado_carga" type="number" outlined :hide-details="true" label="Resultado - Carga Viral" @blur="salvarEmCache" />
+                    <v-text-field v-model="formData.hepatitec[lidx].ultimo_resultado_carga" type="number" outlined :hide-details="true" label="Resultado - Carga Viral (Opcional)" @blur="salvarEmCache" />
+                  </v-col>
+                  <!-- Portador Inativo -->
+                  <v-col :md="3" :sm="12" cols="12">
+                    <span>Portador Inativo</span>
+                    <v-radio-group
+                      row
+                      v-model="formData.hepatitec[lidx].portador_inativo"
+                      style="margin: 0"
+                      :hide-details="true"
+                      @change="salvarEmCache"
+                    >
+                      <v-radio
+                        label="Não"
+                        :value="false"
+                      ></v-radio>
+                      <v-radio
+                        label="Sim"
+                        :value="true"
+                      ></v-radio>
+                    </v-radio-group>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -759,7 +723,7 @@
 
 <script>
 import {mask} from 'vue-the-mask'
-const MODALV = '0.0.3' // Versão dos dados no modal, caso seja diferente da versao salva no PC do usuario nao vai carregar dados anteriores
+const MODALV = '0.0.2' // Versão dos dados no modal, caso seja diferente da versao salva no PC do usuario nao vai carregar dados anteriores
 export default {
   props: ['value', 'pacienteId'],
   directives: {mask},
@@ -815,7 +779,6 @@ export default {
       menuAlfa: false,
       menuUltra: false,
       menuCarga: false,
-      menuHbeag: false,
       menuHepatiteC: [],
       modalLimparDados: false,
       modalCancelar: false,
@@ -904,9 +867,7 @@ export default {
           data_ultra: null,
           ultimo_resultado_ultra: null,
           data_carga: null,
-          ultimo_resultado_carga: null,
-          hbeag: null,
-          data_hbeag: null
+          ultimo_resultado_carga: null
         },
         hepatitec: []
       }
@@ -922,6 +883,7 @@ export default {
         cirrotico: false,
         data_alfa: null,
         ultimo_resultado_alfa: null,
+        portador_inativo: false,
         data_ultra: null,
         ultimo_resultado_ultra: null,
         data_carga: null,
@@ -1002,9 +964,7 @@ export default {
             data_ultra: null,
             ultimo_resultado_ultra: null,
             data_carga: null,
-            ultimo_resultado_carga: null,
-            hbeag: null,
-            data_hbeag: null
+            ultimo_resultado_carga: null
           }
         delete info.PacienteHepB
         this.formData = info;
