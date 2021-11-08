@@ -21,7 +21,7 @@ class Paciente extends Model{
             },
             registro_hc: {
                 type: DataTypes.STRING(20),
-                allowNull: false,
+                allowNull: true,
                 isUnique: (value, next) => {
                     Paciente.findAll({
                       where: { registro_hc: value },
