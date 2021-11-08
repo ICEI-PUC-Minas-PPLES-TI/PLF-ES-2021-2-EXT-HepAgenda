@@ -1,5 +1,5 @@
  ## Projeto de Extensão PUC Minas - Softwares para Saúde  :hospital:
-<p><a href="https://github.com/ICEI-PUC-Minas-PPLES-TI/PLF-ES-2021-2-EXT-HepAgenda/blob/main/README.md"><img src="https://raw.githubusercontent.com/ICEI-PUC-Minas-PPLES-TI/PLF-ES-2021-2-EXT-HepAgenda/main/docs/Logo/logotipo_hepagenda.png?token=AOBP67L2VHK5JYAVM2JMPYTBJU6QS" align="center" height="30%" width="30%" ></a>
+
 <p>Hep Agenda -  Software de gestão dos atendimentos prestados no ambulatório de Hepatites da UFMG<p>
 <p>Instituto de Informática e Ciências Exatas
 <br>Pontifícia Universidade Católica de Minas Gerais (PUC MINAS)
@@ -12,7 +12,6 @@
 * Emerson Pereira Siqueira
 * Guilherme Gabriel Silva Pereira 
 * Henrique Penna Forte Monteiro
-* Igor Siqueira Massaro
 * Layla Raissa Silva Pereira
 * Lucas Ângelo Oliveira Martins Rocha
 * Maycon Henrique Souza Tavares
@@ -21,7 +20,10 @@
 
 ## Coordenadora da Extensão
 
+  
+* Cléia Márcia Gomes Amaral
 * Ivre Marjorie Ribeiro Machado
+
 
 ## Instruções de utilização
 
