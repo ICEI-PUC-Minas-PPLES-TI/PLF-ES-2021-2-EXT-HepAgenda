@@ -1,22 +1,23 @@
-const Consulta = require("../models/Consulta");
-const Arquivo = require("../models/Arquivo");
-
-const PacienteService = require("../services/PacienteService");
-const UsuarioService = require("../services/UsuarioService");
+const { Op } = require("sequelize");
+const yup = require("yup");
 
 const { SortPaginate } = require("../helpers/SortPaginate");
 const AppError = require("../errors/AppError");
 
-const { Op } = require("sequelize");
-const yup = require("yup");
-const LogConsultaController = require("./LogConsultaController");
+const Consulta = require("../models/Consulta");
+const Arquivo = require("../models/Arquivo");
+
 const ConsultaService = require("../services/ConsultaService");
+
+const {
+  createConsultaValidation, updateConsultaValidation
+} = require("../validation/ConsultaValidation");
+
 const ArquivoService = require("../services/ArquivoService");
-const { createConsultaValidation } = require("../validation/ConsultaValidation");
+const LogConsultaService = require("../services/LogConsultaService");
 
 class ConsultaController {
   async create(request, response) {
-
     const scheme = createConsultaValidation;
 
     try {
@@ -34,89 +35,24 @@ class ConsultaController {
       usuario_id_medico
     } = request.body;
 
-    const pacienteService = new PacienteService();
-    const paciente = await pacienteService.findById(paciente_id);
-    if (!paciente) throw new AppError("Paciente não encontrado!", 404, ["'paciente_id' não encontrado!"]);
+    const consultaService = new ConsultaService();
+    const consulta = await consultaService.create(
+      paciente_id,
+      descricao,
+      status,
+      detalhes,
+      dt_inicio,
+      usuario_id_medico,
+      request.userId
+    );
 
-    const usuarioService = new UsuarioService();
-    const usuario_criador = await usuarioService.findById(request.userId);
-
-    // Se enviar o id do médico, verificar se existe
-    let usuario_medico_temp;
-    if (usuario_id_medico) {
-      usuario_medico_temp = await usuarioService.findById(usuario_id_medico);
-      if (!usuario_medico_temp)
-        throw new AppError("Médico não encontrado!", 404, ["'usuario_id_medico' não encontrado!"]);
-    }
-    const usuario_medico = usuario_medico_temp;
-    /*
-      * Se enviar o id do médico, verificar se é médico
-      ! O médico da consulta pode ser um usuário administrador com essa regra
-      if (usuario_medico && usuario_medico.dataValues.tipo != "M") Para delimitar apenas médico
-    */
-    if (
-      usuario_medico &&
-      usuario_medico.dataValues.tipo != "M" &&
-      usuario_medico.dataValues.tipo != "A"
-    )
-      throw new AppError(
-        "Usuário não é médico nem administrador!",
-        403,
-        ["'usuario_id_medico' não é médico nem administrador!"]
-      );
-
-    const consulta = Consulta.build({
-      paciente_id: paciente_id,
-      descricao: descricao ? descricao : null,
-      status: status,
-      detalhes: detalhes ? detalhes : null,
-      dt_inicio: dt_inicio,
-      dt_desmarcada: null,
-      usuario_id_criador: request.userId,
-      usuario_id_medico: usuario_id_medico ? usuario_id_medico : null
+    return response.status(201).json({
+      id: consulta.id
     });
-
-    consulta
-      .save()
-      .then(function(consultaObj) {
-        // Salvando log de criação
-        const logConsultaController = new LogConsultaController();
-        const log_descricao = `Consulta criada pelo usuário ${usuario_criador.dataValues.login}.`;
-        const userId = request.userId;
-        const consulta_id = consultaObj.dataValues.id;
-        logConsultaController.create(log_descricao, userId, consulta_id);
-
-        return response.status(201).json({
-          id: consulta.id
-        });
-      })
-      .catch(function(erro) {
-        throw new AppError(erro.message, 500);
-      });
   }
 
   async update(request, response) {
-    const statusEnums = [
-      "AGUARDANDOC",
-      "AGUARDANDOA",
-      "REALIZADO",
-      "CANCELADO"
-    ];
-
-    const scheme = yup.object().shape({
-      paciente_id: yup.number("'paciente_id' deve ser numérico!"),
-      descricao: yup
-        .string("'descricao' deve ser string!")
-        .max(60, "'descricao' deve ter no máximo 60 caracteres!"),
-      status: yup
-        .mixed()
-        .oneOf(statusEnums, `'status' deve ser algum destes: ${statusEnums}.`),
-      detalhes: yup
-        .string("'detalhes' deve ser string!")
-        .max(65000, "'detalhes' deve ter no máximo 65000 caracteres!"),
-      dt_inicio: yup.date("'dt_inicio' deve ser data!"),
-      usuario_id_medico: yup.number("'usuario_id_medico' deve ser numérico!")
-    });
+    const scheme = updateConsultaValidation;
 
     try {
       await scheme.validate(request.body, { abortEarly: false });
@@ -134,147 +70,20 @@ class ConsultaController {
       usuario_id_medico
     } = request.body;
 
-    let dt_desmarcadaTemp = null;
-    const tempoAgora = Date.now();
-    if (status && status == "CANCELADO") {
-      dt_desmarcadaTemp = new Date(tempoAgora);
-    } else {
-      dt_desmarcadaTemp = null;
-    }
-    const dt_desmarcada = dt_desmarcadaTemp;
+    const consultaService = new ConsultaService();
+    await consultaService.update(
+      id,
+      paciente_id,
+      descricao,
+      status,
+      detalhes,
+      dt_inicio,
+      usuario_id_medico,
+      request.files,
+      request.userId
+    );
 
-    let usuarioPacienteTemp = null;
-    if (paciente_id) {
-      const pacienteService = new PacienteService();
-      usuarioPacienteTemp = await pacienteService.findById(paciente_id);
-      if (!usuarioPacienteTemp)
-        throw new AppError("'paciente_id' não encontrado!", 404);
-    }
-
-    let usuarioMedicoTemp = null;
-    if (usuario_id_medico) {
-      const usuarioService = new UsuarioService();
-      const usuario_medico = await usuarioService.findById(usuario_id_medico);
-      usuarioMedicoTemp = usuario_medico;
-      // Se enviar o id do médico, verificar se existe
-      if (usuario_id_medico && !usuario_medico)
-        throw new AppError("'usuario_id_medico' não encontrado!", 404);
-
-      /*
-        * Se enviar o id do médico, verificar se é médico
-        ! O médico da consulta pode ser um usuário administrador com essa regra
-        if (usuario_medico.dataValues.tipo != "M") Para delimitar apenas médico
-      */
-      if (
-        usuario_medico.dataValues.tipo != "M" &&
-        usuario_medico.dataValues.tipo != "A"
-      )
-        throw new AppError(
-          "'usuario_id_medico' não é médico nem administrador!",
-          422
-        );
-    }
-    const usuario_medico = usuarioMedicoTemp;
-
-    const consulta = await Consulta.findOne({
-      where: {
-        id: id
-      }
-    });
-    if (consulta == null) {
-      throw new AppError("Consulta não encontrada!", 404);
-    }
-
-    const consultaData = consulta.dataValues;
-
-    if (Array.isArray(request.files) && request.files.length) {
-      const arquivoService = new ArquivoService();
-      await arquivoService.create(consultaData.id, request.files);
-    }
-
-    const usuarioService = new UsuarioService();
-    const usuario_criador = (
-      await usuarioService.findById(consultaData.usuario_id_criador)
-    ).dataValues;
-
-    // Salvando log de criação
-    if (
-      (status && status != consultaData.status) ||
-      (usuario_id_medico &&
-        usuario_id_medico != consultaData.usuario_id_medico) ||
-      (descricao && descricao != consultaData.descricao)
-    ) {
-      let nomeMedicoAtualTemp;
-      if (consultaData.usuario_id_medico) {
-        let usuario_medico_atual = await usuarioService.findById(
-          consultaData.usuario_id_medico
-        );
-        let nomes = usuario_medico_atual.dataValues.nome.split(" ");
-        nomeMedicoAtualTemp =
-          nomes[0] + `${nomes[1] ? " " + nomes[1].substr(0, 1) : ""}`;
-      }
-      const medicoAtual = nomeMedicoAtualTemp;
-
-      let nomeMedicoNovoTemp;
-      if (usuario_medico) {
-        let nomes = usuario_medico.dataValues.nome.split(" ");
-        nomeMedicoNovoTemp =
-          nomes[0] + `${nomes[1] ? " " + nomes[1].substr(0, 1) : ""}`;
-      }
-      const medicoNovo = nomeMedicoNovoTemp;
-
-      const userId = request.userId;
-      const consulta_id = consultaData.id;
-
-      const log_descricao = `${
-        descricao
-          ? "Usuário " + usuario_criador.login + " alterou a descrição."
-          : ""
-      }`;
-      const log_status = `${
-        status && status != consultaData.status
-          ? "Usuário " +
-            usuario_criador.login +
-            " alterou o status de " +
-            consultaData.status +
-            " para " +
-            status +
-            "."
-          : ""
-      }`;
-      const log_medico = `${
-        usuario_id_medico && usuario_id_medico != consultaData.usuario_id_medico
-          ? "Usuário " +
-            usuario_criador.login +
-            " alterou o médico de " +
-            medicoAtual +
-            " para " +
-            medicoNovo +
-            "."
-          : ""
-      }`;
-
-      const logConsultaController = new LogConsultaController();
-      if (log_descricao)
-        logConsultaController.create(log_descricao, userId, consulta_id);
-      if (log_status)
-        logConsultaController.create(log_status, userId, consulta_id);
-      if (log_medico)
-        logConsultaController.create(log_medico, userId, consulta_id);
-    }
-
-    consulta.update({
-      paciente_id: paciente_id ? paciente_id : consultaData.paciente_id,
-      descricao: descricao ? descricao : consultaData.descricao,
-      status: status ? status : consultaData.status,
-      detalhes: detalhes ? detalhes : consultaData.detalhes,
-      dt_inicio: dt_inicio ? dt_inicio : consultaData.dt_inicio,
-      dt_desmarcada: dt_desmarcada,
-      usuario_id_medico: usuario_id_medico
-        ? usuario_id_medico
-        : consultaData.usuario_id_medico
-    });
-    response.status(200).json(consulta);
+    return response.status(200).json({});
   }
 
   async get(request, response) {
