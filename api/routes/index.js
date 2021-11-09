@@ -9,6 +9,7 @@ const TratamentoController  = require('../controllers/TratamentoController.js');
 const UsuarioController  = require('../controllers/UsuarioController.js');
 const ConsultaController = require('../controllers/ConsultaController.js');
 const PacienteController  = require('../controllers/PacienteController.js');
+const DatasBloqueadasController  = require('../controllers/DatasBloqueadasController.js');
 const ArquivoController = require('../controllers/ArquivoController.js');
 
 
@@ -17,6 +18,7 @@ const tratamentoController = new TratamentoController();
 const usuarioController = new UsuarioController();
 const consultaController = new ConsultaController();
 const pacienteController = new PacienteController();
+const datasBloqueadasController = new DatasBloqueadasController();
 const arquivoController = new ArquivoController();
 
 // const multer  = require('multer')
@@ -49,5 +51,15 @@ router.get('/paciente/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isA
 router.get('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.getAll)
 // Arquivo
 router.get('/arquivo/:id', arquivoController.download)
+router.delete('/arquivo/:id', arquivoController.delete)
+
+router.post('/bloqueio/semana', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], datasBloqueadasController.createSemana)
+router.get('/bloqueio/semana', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedicOrViewer], datasBloqueadasController.getAllSemana)
+router.put('/bloqueio/semana/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], datasBloqueadasController.updateSemana)
+router.delete('/bloqueio/semana', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], datasBloqueadasController.deleteSemana)
+router.post('/bloqueio/dia', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], datasBloqueadasController.createDia)
+router.get('/bloqueio/dia', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedicOrViewer], datasBloqueadasController.getAllDia)
+router.put('/bloqueio/dia/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], datasBloqueadasController.updateDia)
+router.delete('/bloqueio/dia', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], datasBloqueadasController.deleteDia)
 
 module.exports = router

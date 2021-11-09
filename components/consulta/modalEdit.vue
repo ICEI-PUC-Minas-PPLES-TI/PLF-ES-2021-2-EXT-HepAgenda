@@ -12,7 +12,7 @@
       <v-card>
         <v-card-title class="text-h5 consulta-modal-title">
           <h4>
-            <span> Consulta #1 </span>
+            <span> Consulta </span>
           </h4>
 
           <v-btn icon @click="$emit('input', false)">
@@ -22,23 +22,13 @@
         <v-card-text>
           <v-container fluid id="input-usage">
             <v-form ref="formConsulta" v-model="valid" lazy-validation>
-              <!-- paciente -->
               <v-row no-gutters>
                 <v-col :md="8" :sm="12" :xl="8" cols="12">
-                  <v-row class="mx-auto">
-                    <v-col :md="12" :sm="12" :xl="12" cols="12">
-                      <v-input
-                        :messages="consulta.paciente.nome"
-                        label="Paciente"
-                      >
-                      </v-input>
-                    </v-col>
-                  </v-row>
                   <!-- Data da consulta -->
                   <v-row class="mx-auto">
                     <v-col :md="12" :sm="12" :xl="12" cols="12">
                       <v-input
-                        :messages="consulta.dt_inicio"
+                        :messages="formataData(consulta.dt_inicio)"
                         label="Data da consulta"
                       ></v-input>
                     </v-col>
@@ -48,6 +38,7 @@
                     <v-col :md="12" :sm="12" :xl="12" cols="12">
                       <label for=""> Descrição do agendamento </label>
                       <v-textarea
+                        class="textareaDescricao"
                         readonly
                         flat
                         solo
@@ -96,6 +87,9 @@
                         outlined
                         hide-details="auto"
                         label="Relatório do atendimento"
+                        v-model="consulta.detalhes"
+                        counter
+                        :rules="[(v) =>(v && v.length <= 60000) || 'Máximo de 60000 caracteres']"
                         auto-grow
                       ></v-textarea>
                     </v-col>
@@ -125,7 +119,7 @@
                         </div>
                       </v-col>
                     </v-row>
-                    <!-- Np,e -->
+                    <!-- Nome -->
                     <v-row class="mt-n8">
                       <v-col :md="12" :sm="12" :xl="12" cols="12">
                         <v-input
@@ -161,6 +155,18 @@
                         ></v-input>
                       </v-col>
                     </v-row>
+                    <v-row class="mt-n3 text-right mr-2">
+                      <v-col :md="12" :sm="12" :xl="12" cols="12">
+                        <v-btn text x-small @click="abreToast('Em desenvolvimento')">
+                        <a
+                          aria-disabled="true"
+                          disabled
+                          href="#"
+                          >Dados do paciente</a
+                        >
+                        </v-btn>
+                      </v-col>
+                    </v-row>
                     <!-- Barra horizontal -->
                     <v-row class="mt-n8">
                       <v-col :md="12" :sm="12" :xl="12" cols="12">
@@ -183,7 +189,7 @@
                         >
                           {{ item.descricao }}
                           <div class="card-historico-data text-right">
-                            {{ item.data }}
+                            {{ formataDataSimples(item.data) }}
                           </div>
                           <v-divider></v-divider>
                         </div>
@@ -196,67 +202,47 @@
               <v-row class="row-arquivos">
                 <v-col cols="12" :xs="12" :sm="6" :md="3">
                   <v-file-input
-                    label="Anexar arquivos"
+                    show-size
                     multiple
-                    v-model="files"
+                    small
+                    label="Adicionar arquivo"
                     filled
                     rounded
                     dense
                     outlined
                     prepend-inner-icon="mdi-paperclip"
                     prepend-icon=""
+                    v-model="files"
+                    @change="enviaArquivo"
+                  />
+                </v-col>
 
-                  />
+                <v-col
+                  cols="12"
+                  :xs="12"
+                  :sm="6"
+                  :md="3"
+                  v-for="(linha, idx) in consulta.arquivos"
+                  :key="idx"
+                >
+                  <v-chip
+                    large
+                    close
+                    @click="baixaArquivo(idx)"
+                    @click:close="abreModalConfirmAnexo(idx)"
+                  >
+                    {{ consulta.arquivos[idx].nome }}
+                  </v-chip>
                 </v-col>
-                <!-- <v-col cols="12" :xs="12" :sm="6" :md="3">
-                  <v-file-input
-                    label="Exame de sangue"
-                    multiple
-                    v-model="consulta.arquivos"
-                    filled
-                    rounded
-                    dense
-                    outlined
-                    prepend-inner-icon="mdi-file-document-outline"
-                    prepend-icon=""
-                    x-small
-                  />
-                </v-col>
-                <v-col cols="12" :xs="12" :sm="6" :md="3">
-                  <v-file-input
-                    label="Exame de sangue2"
-                    multiple
-                    v-model="consulta.arquivos"
-                    filled
-                    rounded
-                    dense
-                    outlined
-                    prepend-inner-icon="mdi-file-document-outline"
-                    prepend-icon=""
-
-                  />
-                </v-col>
-                <v-col cols="12" :xs="12" :sm="6" :md="3">
-                  <v-file-input
-                    label="Exame de sangue.png"
-                    multiple
-                    v-model="consulta.arquivos"
-                    filled
-                    rounded
-                    dense
-                    outlined
-                    prepend-inner-icon="mdi-file-image-outline"
-                    prepend-icon=""
-                  />
-                </v-col> -->
               </v-row>
+
               <!-- Botão de marcarConsulta -->
               <v-row class="mx-auto">
                 <v-col class="consulta-modal-marcar text-center">
                   <v-btn color="primary" large @click="update">
                     Salvar Alterações
                   </v-btn>
-                  <v-dialog v-model="modalConfirm" persistent max-width="290">
+                  <v-dialog v-model="modalConfirm" persistent max-width="350">
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn color="white" large dark v-bind="attrs" v-on="on">
                         Cancelar Consulta
@@ -264,7 +250,7 @@
                     </template>
                     <v-card>
                       <v-card-title class="text-h5">
-                        Deseja cancelar essa consulta?
+                        Deseja realmente cancelar essa consulta?
                       </v-card-title>
                       <v-card-actions>
                         <v-spacer></v-spacer>
@@ -288,14 +274,47 @@
                 </v-col>
               </v-row>
             </v-form>
+
+            <v-dialog v-model="modalConfirmAnexo" persistent max-width="350">
+              <v-card>
+                <v-card-title class="text-h5">
+                  Deseja realmente excluir o anexo?
+                </v-card-title>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="grey darken-1"
+                    text
+                    @click="modalConfirmAnexo = false"
+                  >
+                    Não
+                  </v-btn>
+                  <v-btn color="red darken-1" text @click="removeArquivo">
+                    Sim
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </v-container>
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <v-snackbar v-model="toast" shaped>
+      {{ toastMensagem }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn color="blue" text v-bind="attrs" @click="toast = false">
+          Ok
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
 <script>
+import axios2 from "axios";
+
 export default {
   name: "modalEdit",
   props: ["value", "consultaId"],
@@ -313,7 +332,7 @@ export default {
 
       consulta: {
         id: "",
-        status:"",
+        status: "",
         dt_inicio: "",
         detalhes: "",
         descricao: "",
@@ -338,16 +357,21 @@ export default {
           nome: "",
         },
 
-        arquivos: [{
-          id: "",
-          nome: ""
-        }]
+        arquivos: [
+          {
+            id: "",
+            nome: "",
+          },
+        ],
       },
 
       medicoAtual: "Não definido",
       menuDataConsulta: false,
       modalConfirm: false,
-      files: []
+      modalConfirmAnexo: false,
+      files: [],
+      toast: false,
+      toastMensagem: "",
     };
   },
   mounted() {
@@ -363,8 +387,6 @@ export default {
       this.$axios
         .$get("/consulta/" + consultaId)
         .then((response) => {
-          response.dt_inicio = this.formataData(response.dt_inicio);
-
           this.consulta = response;
         })
         .catch((error) => {
@@ -374,46 +396,126 @@ export default {
 
     update() {
       if (this.$refs.formConsulta.validate()) {
-      let consulta = JSON.parse(JSON.stringify(this.consulta));
+        let consulta = JSON.parse(JSON.stringify(this.consulta));
 
-      let formData = new FormData();
+        let formData = new FormData();
 
-      if(this.files){
-        console.log(this.files);
-        for(let i = 0 ; i < this.files.length; i++){
-          formData.append("arquivos", this.files[i])
+        for (var key in consulta) {
+          if (typeof consulta[key] != "object") {
+            formData.append(key, consulta[key]);
+          }
         }
-      }
-      for ( var key in consulta ) {
-        if(typeof consulta[key] != 'object'){
-          formData.append(key, consulta[key]);
-        }
-      }
 
-      this.$axios
-        .$put("/consulta/" + this.consultaId, formData)
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+        this.queryUpdate(formData);
       }
     },
 
-
     formataData(data) {
-      let dt = new Date(data)
-        .toISOString()
-        .replace(/T/, " ")
-        .replace(/\..+/, "");
-      //dt = dt.replaceAll("-", "/");
-      return dt;
+      const [ano, mes, dia] = data.split("-");
+      const mesExtensos = [
+        "Janeiro",
+        "Fevereiro",
+        "Março",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+      ];
+      return `${dia} de ${mesExtensos[parseInt(mes) - 1]} de ${ano}`;
+    },
+
+    formataDataSimples(data) {
+      if (data.includes("T")) {
+        data = data.split("T")[0];
+      }
+      const [ano, mes, dia] = data.split("-");
+      return `${dia}/${mes}/${ano}`;
     },
 
     abreToast(mensagem) {
       this.toastMensagem = mensagem;
       this.toast = true;
+    },
+
+    enviaArquivo() {
+      if (this.files && this.files.length > 0) {
+        if(this.files[0].size > 2000000 ){
+          this.abreToast("Arquivo deve ser menor que 2 MB");
+          return ;
+        }
+        let formData = new FormData();
+        for (let i = 0; i < this.files.length; i++) {
+          formData.append("arquivos", this.files[i]);
+        }
+        this.queryUpdate(formData);
+        this.files = [];
+      }
+    },
+
+    addArquivo() {
+      this.consulta.arquivos.push({
+        id: "",
+        nome: "",
+      });
+    },
+
+    baixaArquivo(idx) {
+      axios2({
+        url:
+          `${window.location.href}api/arquivo/` +
+          this.consulta.arquivos[idx].id, //your url
+        method: "GET",
+        responseType: "blob",
+      })
+        //.$get("/arquivo/" + this.consulta.arquivos[idx].id )
+        .then((response) => {
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", this.consulta.arquivos[idx].nome); //or any other extension
+          document.body.appendChild(link);
+          link.click();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
+    removeArquivo() {
+      let idx = this.idxAux;
+      this.$axios
+        .$delete("arquivo/" + this.consulta.arquivos[idx].id)
+        .then((response) => {
+          this.consulta.arquivos.splice(idx, 1);
+          this.abreToast("Arquivo removido com sucesso!");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      this.modalConfirmAnexo = false;
+    },
+
+    abreModalConfirmAnexo(idx) {
+      this.idxAux = idx;
+      this.modalConfirmAnexo = true;
+    },
+
+    queryUpdate(formData) {
+      this.$axios
+        .$put("/consulta/" + this.consultaId, formData)
+        .then((response) => {
+          this.edit(this.consulta.id);
+          this.abreToast("Consulta atualizada com sucesso!");
+        })
+        .catch((error) => {
+          let retorno = error.response.data.message.replace(/(.{50})/g, '$1\n');
+          this.abreToast(retorno);
+        });
     },
   },
 };
@@ -436,7 +538,7 @@ export default {
   border-left: 1px solid #b7b7b7;
   padding-left: 10px;
   height: 50vw;
-  max-height: 500px;
+  max-height: 450px;
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -468,7 +570,7 @@ export default {
   font-size: 0.85em;
 }
 
-#input-usage .row-arquivos .v-label{
+#input-usage .row-arquivos .v-label {
   color: black;
   font-size: 0.85em;
 }
@@ -480,5 +582,10 @@ export default {
 
 .card-historico-data {
   color: #b7b7b7;
+}
+
+.textareaDescricao .v-text-field__slot textarea {
+  margin-left: -10px !important;
+
 }
 </style>
