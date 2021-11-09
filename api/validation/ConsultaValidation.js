@@ -1,6 +1,11 @@
 const yup = require("yup");
 const statusCriacaoEnum = ["AGUARDANDOC", "AGUARDANDOA", "REALIZADO"];
-const statusUpdateEnum = ["AGUARDANDOC", "AGUARDANDOA", "REALIZADO", "CANCELADO"];
+const statusUpdateEnum = [
+  "AGUARDANDOC",
+  "AGUARDANDOA",
+  "REALIZADO",
+  "CANCELADO"
+];
 
 const createConsultaValidation = yup.object().shape({
   paciente_id: yup
@@ -32,7 +37,10 @@ const updateConsultaValidation = yup.object().shape({
     .max(60, "'descricao' deve ter no máximo 60 caracteres!"),
   status: yup
     .mixed()
-    .oneOf(statusUpdateEnum, `'status' deve ser algum destes: ${statusUpdateEnum}.`),
+    .oneOf(
+      statusUpdateEnum,
+      `'status' deve ser algum destes: ${statusUpdateEnum}.`
+    ),
   detalhes: yup
     .string("'detalhes' deve ser string!")
     .max(65000, "'detalhes' deve ter no máximo 65000 caracteres!"),

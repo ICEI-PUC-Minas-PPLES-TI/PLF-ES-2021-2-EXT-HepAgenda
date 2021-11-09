@@ -195,7 +195,6 @@ export default {
       }
     },
     criarUsuario() {
-      console.log("Botao Criar apertado");
       this.$axios
         .post("/usuario", this.formData)
         .then(res => {

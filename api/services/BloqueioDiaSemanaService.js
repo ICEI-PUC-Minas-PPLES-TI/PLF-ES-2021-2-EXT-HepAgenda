@@ -15,7 +15,10 @@ class BloqueioDiaSemanaService {
         dia_semana: diaSemana
       }
     });
-    if (bloqueioExiste) throw new AppError("Bloqueio da Semana já existe", 405);
+    if (bloqueioExiste)
+      throw new AppError("Bloqueio da Semana já existe!", 405, [
+        "Já existe um Bloqueio da Semana para este dia!"
+      ]);
 
     const bloqueio = await BloqueioDiaSemana.create({
       dia_semana: diaSemana,
@@ -62,7 +65,9 @@ class BloqueioDiaSemanaService {
   async update(id, ativo) {
     const bloqueioExiste = await BloqueioDiaSemana.findByPk(id);
     if (!bloqueioExiste)
-      throw new AppError("Bloqueio da Semana nao encontrado", 404);
+      throw new AppError("Bloqueio da Semana não encontrado!", 405, [
+        "Não existe um Bloqueio da Semana para este dia!"
+      ]);
 
     await bloqueioExiste.update({
       ativo
@@ -82,7 +87,9 @@ class BloqueioDiaSemanaService {
   async delete(id) {
     const bloqueioExiste = await BloqueioDiaSemana.findByPk(id);
     if (!bloqueioExiste)
-      throw new AppError("Bloqueio da Semana nao encontrado", 404);
+      throw new AppError("Bloqueio da Semana nao encontrado!", 405, [
+        "Não existe um Bloqueio da Semana para este dia!"
+      ]);
 
     await bloqueioExiste.destroy(id);
 

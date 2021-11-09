@@ -30,10 +30,16 @@ class Paciente extends Model {
             })
               .then(usuario => {
                 if (usuario.length != 0)
-                  next(new AppError("Email já cadastrado!"));
+                  next(
+                    new AppError("Registro hc já cadastrado!", 422, [
+                      "'registro_hc' já cadastrado!"
+                    ])
+                  );
                 next();
               })
-              .catch(onError => console.log(onError));
+              .catch(error => {
+                next(new AppError("Erro interno no servidor!", 500, error));
+              });
           }
         },
         sexo: {

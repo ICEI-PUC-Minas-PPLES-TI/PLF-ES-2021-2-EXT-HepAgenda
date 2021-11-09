@@ -27,7 +27,6 @@ export default {
     listaUsuarios() {
       this.$axios.$get('/usuario').then(response => {
         this.usuarios = response.dados;
-        console.log(this.usuarios);
       }).catch(error => {
         console.log(error)
         this.errored = true

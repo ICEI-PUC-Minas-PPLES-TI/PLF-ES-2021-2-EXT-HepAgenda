@@ -12,7 +12,6 @@ const {
 const PacienteService = require("../services/PacienteService");
 
 class ConsultaController {
-
   // URI de exemplo: POST http://localhost:3000/api/consulta/
   // Campos são passados em raw json
   async create(request, response) {
@@ -125,7 +124,10 @@ class ConsultaController {
 
     const pacienteService = new PacienteService();
     const paciente = await pacienteService.findById(paciente_id);
-    if (!paciente) throw new AppError("'paciente_id' não encontrado!", 404);
+    if (!paciente)
+      throw new AppError("Paciente não encontrado!", 404, [
+        "'paciente_id' não encontrado!"
+      ]);
 
     const consultaService = new ConsultaService();
     const primeiraConsulta = (await consultaService.getByPacienteId(

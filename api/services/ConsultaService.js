@@ -278,7 +278,11 @@ class ConsultaService {
         else if (element == "R") status.push("REALIZADO");
         else if (element == "C") status.push("CANCELADO");
         else
-          return response.status(404).json({ erro: "'status' não encontrado" });
+          throw new AppError(
+            "Status não encontrado/inválido!",
+            422,
+            "'status' não encontrado"
+          );
       });
     } else {
       status = statusEnums;

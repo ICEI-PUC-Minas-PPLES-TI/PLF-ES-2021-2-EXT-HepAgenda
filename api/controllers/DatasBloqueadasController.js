@@ -17,8 +17,8 @@ class DatasBloqueadasController {
       await createSemanaValidation.validate(request.body, {
         abortEarly: false
       });
-    } catch (erro) {
-      throw new AppError(erro.message, 422);
+    } catch (error) {
+      throw new AppError(error.name, 422, error.errors);
     }
 
     const bds = new BloqueioDiaSemanaService();
@@ -36,8 +36,8 @@ class DatasBloqueadasController {
       await updateSemanaValidation.validate(request.body, {
         abortEarly: false
       });
-    } catch (erro) {
-      throw new AppError(erro.message, 422);
+    } catch (error) {
+      throw new AppError(error.name, 422, error.errors);
     }
 
     const bds = new BloqueioDiaSemanaService();
@@ -51,8 +51,8 @@ class DatasBloqueadasController {
       await deleteSemanaValidation.validate(request.query, {
         abortEarly: false
       });
-    } catch (erro) {
-      throw new AppError(erro.message, 422);
+    } catch (error) {
+      throw new AppError(error.name, 422, error.errors);
     }
 
     const bds = new BloqueioDiaSemanaService();
@@ -62,8 +62,8 @@ class DatasBloqueadasController {
   async createDia(request, response) {
     try {
       await createDiaValidation.validate(request.body, { abortEarly: false });
-    } catch (erro) {
-      throw new AppError(erro.message, 422);
+    } catch (error) {
+      throw new AppError(error.name, 422, error.errors);
     }
 
     const bds = new BloqueioDataService();
@@ -76,8 +76,8 @@ class DatasBloqueadasController {
   async getAllDia(request, response) {
     try {
       await getAllDiaValidation.validate(request.query, { abortEarly: false });
-    } catch (erro) {
-      throw new AppError(erro.message, 422);
+    } catch (error) {
+      throw new AppError(error.name, 422, error.errors);
     }
 
     const bds = new BloqueioDataService();
@@ -88,8 +88,8 @@ class DatasBloqueadasController {
   async updateDia(request, response) {
     try {
       await updateDiaValidation.validate(request.body, { abortEarly: false });
-    } catch (erro) {
-      throw new AppError(erro.message, 422);
+    } catch (error) {
+      throw new AppError(error.name, 422, error.errors);
     }
 
     const bds = new BloqueioDataService();
@@ -101,8 +101,8 @@ class DatasBloqueadasController {
   async deleteDia(request, response) {
     try {
       await deleteDiaValidation.validate(request.query, { abortEarly: false });
-    } catch (erro) {
-      throw new AppError(erro.message, 422);
+    } catch (error) {
+      throw new AppError(error.name, 422, error.errors);
     }
 
     const bds = new BloqueioDataService();

@@ -50,11 +50,9 @@ export default {
   },
   mounted() {
     //this.listaPacientes();
-    console.log(this.data)
   },
   watch:{
     data(newVal, oldVal){
-      console.log(oldVal, newVal)
       if(newVal.paciente)
         this.paciente = newVal.paciente
     }

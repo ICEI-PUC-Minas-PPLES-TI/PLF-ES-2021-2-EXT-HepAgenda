@@ -11,6 +11,15 @@ class ArquivoService {
       });
     });
   }
+
+  async findById(arquivo_id) {
+    const arquivo = await Arquivo.findOne({
+      where: {
+        id: arquivo_id
+      }
+    });
+    return arquivo;
+  }
 }
 
 module.exports = ArquivoService;

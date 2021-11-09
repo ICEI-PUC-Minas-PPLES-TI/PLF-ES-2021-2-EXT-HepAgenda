@@ -29,7 +29,9 @@ class PacienteController {
         where: { registro_hc: request.body.registro_hc }
       })
     ) {
-      throw new AppError("ValidationError", 422, ["O registro_hc já existe!"]);
+      throw new AppError("O registro HC já existe!", 422, [
+        "O 'registro_hc' já existe!"
+      ]);
     }
 
     // atualiza o peso_atualizao se o peso for atualizado
@@ -79,7 +81,10 @@ class PacienteController {
       }
     });
     if (result) response.status(200).json(result);
-    else response.status(404).send("Paciente com esse id não encontrado");
+    else
+      throw new AppError("Paciente não encontrado!!", 422, [
+        "Não existe paciente com este 'id'!"
+      ]);
   }
 
   async getAll(request, response) {
@@ -120,19 +125,13 @@ class PacienteController {
               paginas: paginas
             });
           })
-          .catch(err =>
-            response.status(500).json({
-              titulo: "Erro interno do servidor",
-              err
-            })
-          );
+          .catch(error => {
+            throw new AppError("Erro interno do servidor!", 500, error);
+          });
       })
-      .catch(err =>
-        response.status(500).json({
-          titulo: "Erro interno do servidor",
-          err
-        })
-      );
+      .catch(error => {
+        throw new AppError("Erro interno do servidor!", 500, error);
+      });
   }
 
   async update(request, response) {
@@ -157,7 +156,9 @@ class PacienteController {
         }
       }))
     ) {
-      throw new AppError("ValidationError", 422, ["O registro_hc já existe"]);
+      throw new AppError("O registro HC já existe!", 422, [
+        "O 'registro_hc' já existe!"
+      ]);
     }
 
     if (request.body.peso) {
@@ -262,9 +263,9 @@ class PacienteController {
         mensagem: "Paciente atualizado com sucesso!"
       });
     } else {
-      response.status(404).json({
-        mensagem: "Paciente não encontrado"
-      });
+      throw new AppError("Paciente não encontrado!!", 422, [
+        "Não existe paciente com este 'id'!"
+      ]);
     }
   }
 }

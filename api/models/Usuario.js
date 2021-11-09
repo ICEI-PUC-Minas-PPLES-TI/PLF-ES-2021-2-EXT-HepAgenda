@@ -24,13 +24,13 @@ class Usuario extends Model {
                   if (usuario.length != 0)
                     next(
                       new AppError("Login já utilizado!", 422, [
-                        `Usuário de 'login' ${login} já utilizado!`
+                        `'login' já utilizado!`
                       ])
                     );
                   next();
                 })
                 .catch(error => {
-                  next(new AppError("Erro interno no servidor", 500, error));
+                  next(new AppError("Erro interno no servidor!", 500, error));
                 });
             }
           }
@@ -58,7 +58,7 @@ class Usuario extends Model {
                   next();
                 })
                 .catch(error => {
-                  next(new AppError("Erro interno no servidor", 500, error));
+                  next(new AppError("Erro interno no servidor!", 500, error));
                 });
             }
           }

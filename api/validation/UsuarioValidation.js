@@ -52,5 +52,5 @@ const updateUsuarioValidation = yup.object().shape({
 module.exports = {
   signinUsuarioValidation,
   createUsuarioValidation,
-  updateUsuarioValidation,
+  updateUsuarioValidation
 };

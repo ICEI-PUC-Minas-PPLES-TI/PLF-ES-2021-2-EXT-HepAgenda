@@ -18,7 +18,10 @@ class BloqueioDataService {
         data
       }
     });
-    if (bloqueioExiste) throw new AppError("Bloqueio no dia já existe", 405);
+    if (bloqueioExiste)
+      throw new AppError("Bloqueio no dia já existe!", 405, [
+        "Neste dia já existe um bloqueio!"
+      ]);
 
     const bloqueio = await BloqueioData.create({
       data,
@@ -72,7 +75,9 @@ class BloqueioDataService {
   async update(id, ativo) {
     const bloqueioExiste = await BloqueioData.findByPk(id);
     if (!bloqueioExiste)
-      throw new AppError("Bloqueio no dia nao encontrado", 404);
+      throw new AppError("Bloqueio no dia não encontrado!", 404, [
+        "Bloqueio não encontrado para este dia!"
+      ]);
 
     await bloqueioExiste.update({
       ativo
@@ -92,7 +97,9 @@ class BloqueioDataService {
   async delete(id) {
     const bloqueioExiste = await BloqueioData.findByPk(id);
     if (!bloqueioExiste)
-      throw new AppError("Bloqueio no dia nao encontrado", 404);
+      throw new AppError("Bloqueio no dia não encontrado!", 404, [
+        "Bloqueio não encontrado para este dia!"
+      ]);
 
     await bloqueioExiste.destroy(id);
 

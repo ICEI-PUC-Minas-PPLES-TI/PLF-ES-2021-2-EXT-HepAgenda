@@ -13,5 +13,5 @@ const createLogConsultaValidation = yup.object().shape({
 });
 
 module.exports = {
-  createLogConsultaValidation,
+  createLogConsultaValidation
 };

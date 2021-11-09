@@ -13,7 +13,6 @@ class UsuarioService {
       },
       attributes: atributos
     }).catch(error => {
-      console.log(error);
       throw new AppError("Erro interno do servidor!", 500, error);
     });
 
@@ -161,7 +160,7 @@ class UsuarioService {
     );
 
     const usuarios = await Usuario.findAndCountAll({
-      ...SortPaginateOptions,
+      ...SortPaginateOptions
     }).catch(function(error) {
       throw new AppError("Erro interno do servidor!", 500, error);
     });
