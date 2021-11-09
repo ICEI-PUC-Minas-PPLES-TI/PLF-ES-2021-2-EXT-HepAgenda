@@ -1,5 +1,9 @@
 const AppError = require("../errors/AppError");
+const Arquivo = require("../models/Arquivo");
 const Consulta = require("../models/Consulta");
+const LogConsulta = require("../models/LogConsulta");
+const Paciente = require("../models/Paciente");
+const Usuario = require("../models/Usuario");
 
 const PacienteService = require("../services/PacienteService");
 const UsuarioService = require("../services/UsuarioService");
@@ -86,15 +90,15 @@ class ConsultaService {
     detalhes,
     dt_inicio,
     usuario_id_medico,
-    arquivos,
+    arquivos
   ) {
     const consulta = await this.findById(id);
 
-    if (!consulta) {
+    if (!consulta)
       throw new AppError("Consulta não encontrada!", 404, [
         `Consulta de 'id' ${id} não encontrada!`
       ]);
-    }
+
     const consultaData = consulta.dataValues;
 
     // * ----------------> Início: Validando/Capturando dados da consulta <----------------
@@ -200,6 +204,46 @@ class ConsultaService {
       .catch(error => {
         throw new AppError("Erro interno do servidor!", 500, error);
       });
+
+    return consulta;
+  }
+
+  async getById(id) {
+    const consulta = await Consulta.findOne({
+      where: {
+        id: id
+      },
+      include: [
+        {
+          model: Usuario,
+          as: "usuario_criador"
+        },
+        {
+          model: Usuario,
+          as: "usuario_medico"
+        },
+        {
+          model: Paciente,
+          as: "paciente"
+        },
+        {
+          model: Arquivo,
+          as: "arquivos",
+          attributes: ["id", "nome"]
+        },
+        {
+          model: LogConsulta,
+          as: "logs"
+        }
+      ]
+    }).catch(error => {
+      throw new AppError("Erro interno do servidor!", 500, error);
+    });
+
+    if (!consulta)
+      throw new AppError("Consulta não encontrada!", 404, [
+        `Consulta de 'id' ${id} não encontrada!`
+      ]);
 
     return consulta;
   }

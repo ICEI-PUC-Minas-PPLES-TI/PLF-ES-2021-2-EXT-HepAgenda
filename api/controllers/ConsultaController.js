@@ -15,6 +15,8 @@ const {
 
 const ArquivoService = require("../services/ArquivoService");
 const LogConsultaService = require("../services/LogConsultaService");
+const UsuarioService = require("../services/UsuarioService");
+const PacienteService = require("../services/PacienteService");
 
 class ConsultaController {
   async create(request, response) {
@@ -87,41 +89,9 @@ class ConsultaController {
   }
 
   async get(request, response) {
-    const consulta = await Consulta.findOne({
-      where: {
-        id: request.params.id
-      },
-      include: [
-        {
-          model: Arquivo,
-          as: "arquivos",
-          attributes: ["id", "nome"]
-        }
-      ]
-    });
-    if (consulta == null) {
-      throw new AppError("Consulta não encontrada!", 404);
-    }
-    // Adicionando usuários e paciente no retorno
-    const usuarioService = new UsuarioService();
-    const pacienteService = new PacienteService();
-    consulta.dataValues.paciente = await pacienteService.findById(
-      consulta.dataValues.paciente_id
-    );
-    consulta.dataValues.usuario_criador = await usuarioService.findById(
-      consulta.dataValues.usuario_id_criador
-    );
-    consulta.dataValues.usuario_medico = await usuarioService.findById(
-      consulta.dataValues.usuario_id_medico
-    );
-
-    // Adicionando logs
-    const logConsultaController = new LogConsultaController();
-    consulta.dataValues.logs = await logConsultaController.getAll(
-      consulta.dataValues.id
-    );
-
-    response.status(200).json(consulta);
+    const consultaService = new ConsultaService();
+    const consulta = await consultaService.getById(request.params.id);
+    return response.status(200).json(consulta);
   }
 
   // Rota exemplo:
