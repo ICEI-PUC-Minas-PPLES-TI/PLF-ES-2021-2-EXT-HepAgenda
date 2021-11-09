@@ -44,15 +44,18 @@ class TratamentoService {
       filtro[Op.and].push({identificacao:{[Op.like]:`%${identificacao}%`}})
     }
     const limite = 2;
+    const offset = 0;
     const tratamentos = await Tratamento.findAndCountAll({
       where: filtro,
       limit:limite,
-      offset:0+((pagina-1)*limite)
+      offset:(pagina-1)*limite
     });
     return {
       dados:tratamentos.rows,
-      registros:tratamentos.count,
-      paginas:Math.ceil(tratamentos.count/limite)
+      quantidade: tratamentos.rows.length,
+      total:tratamentos.count,
+      paginas:Math.ceil(tratamentos.count/limite),
+      offset: offset
     };
   }
 
