@@ -89,7 +89,7 @@
                         label="Relatório do atendimento"
                         v-model="consulta.detalhes"
                         counter
-                        :rules="[(v) =>(v && v.length <= 6000) || 'Máximo de 6000 caracteres']"
+                        :rules="[(v) =>(v && v.length <= 60000) || 'Máximo de 60000 caracteres']"
                         auto-grow
                       ></v-textarea>
                     </v-col>
