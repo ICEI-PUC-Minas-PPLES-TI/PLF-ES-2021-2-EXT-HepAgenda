@@ -38,6 +38,7 @@
                     <v-col :md="12" :sm="12" :xl="12" cols="12">
                       <label for=""> Descrição do agendamento </label>
                       <v-textarea
+                        class="textareaDescricao"
                         readonly
                         flat
                         solo
@@ -88,7 +89,7 @@
                         label="Relatório do atendimento"
                         v-model="consulta.detalhes"
                         counter
-                        :rules="[(v) =>(v && v.length <= 60) || 'Máximo de 60 caracteres']"
+                        :rules="[(v) =>(v && v.length <= 6000) || 'Máximo de 6000 caracteres']"
                         auto-grow
                       ></v-textarea>
                     </v-col>
@@ -581,5 +582,10 @@ export default {
 
 .card-historico-data {
   color: #b7b7b7;
+}
+
+.textareaDescricao .v-text-field__slot textarea {
+  margin-left: -10px !important;
+
 }
 </style>
