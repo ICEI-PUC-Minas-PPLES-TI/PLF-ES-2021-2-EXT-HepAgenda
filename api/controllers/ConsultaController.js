@@ -1,24 +1,20 @@
-const { Op } = require("sequelize");
 const yup = require("yup");
 
-const { SortPaginate } = require("../helpers/SortPaginate");
 const AppError = require("../errors/AppError");
-
-const Consulta = require("../models/Consulta");
-const Arquivo = require("../models/Arquivo");
 
 const ConsultaService = require("../services/ConsultaService");
 
 const {
-  createConsultaValidation, updateConsultaValidation
+  createConsultaValidation,
+  updateConsultaValidation
 } = require("../validation/ConsultaValidation");
 
-const ArquivoService = require("../services/ArquivoService");
-const LogConsultaService = require("../services/LogConsultaService");
-const UsuarioService = require("../services/UsuarioService");
 const PacienteService = require("../services/PacienteService");
 
 class ConsultaController {
+
+  // URI de exemplo: POST http://localhost:3000/api/consulta/
+  // Campos são passados em raw json
   async create(request, response) {
     const scheme = createConsultaValidation;
 
@@ -53,6 +49,8 @@ class ConsultaController {
     });
   }
 
+  // URI de exemplo: UPDATE http://localhost:3000/api/consulta/idNumerico
+  // Campos são passados em form-data
   async update(request, response) {
     const scheme = updateConsultaValidation;
 
@@ -88,128 +86,26 @@ class ConsultaController {
     return response.status(200).json({});
   }
 
+  // URI de exemplo: GET http://localhost:3000/api/consulta/idNumerico
   async get(request, response) {
     const consultaService = new ConsultaService();
     const consulta = await consultaService.getById(request.params.id);
     return response.status(200).json(consulta);
   }
 
-  // Rota exemplo:
-  // /api/consulta?pagina=1&limite=4&atributo=id&ordem=ASC&camposPaciente=id,nome&camposMedico=id,nome&dataInicio=2021-09-18&dataFim=2021-09-20&status=AC,AA,R,C
+  // URI de exemplo: GET http://localhost:3000/api/consulta?pagina=1&limite=5&atributo=id&ordem=ASC&camposCriador=id,nome&camposPaciente=id,nome&camposMedico=id,nome&dataInicio=2021-09-18&dataFim=2021-11-20&status=AC,AA,R,C
+  // Todas as querys são opicionais
   async getAll(request, response) {
-    const statusEnums = [
-      "AGUARDANDOC",
-      "AGUARDANDOA",
-      "REALIZADO",
-      "CANCELADO"
-    ];
-    let status = [];
-    let statusTemp = statusEnums;
-    if (request.query.status) {
-      statusTemp = request.query.status.split(",");
-      statusTemp.forEach(element => {
-        if (element == "AC") status.push("AGUARDANDOC");
-        else if (element == "AA") status.push("AGUARDANDOA");
-        else if (element == "R") status.push("REALIZADO");
-        else if (element == "C") status.push("CANCELADO");
-        else
-          return response.status(404).json({ erro: "'status' não encontrado" });
-      });
-    } else {
-      status = statusEnums;
-    }
-    const statusSolicitados = status ? status : statusEnums;
+    const consultaService = new ConsultaService();
+    const consultas = await consultaService.getAll(request.query);
 
-    let dataInicioTemp, dataFimTemp;
-    if (request.query.dataInicio && request.query.dataFim) {
-      dataInicioTemp = new Date(
-        request.query.dataInicio.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")
-      );
-      dataFimTemp = new Date(
-        request.query.dataFim.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")
-      );
-    }
-    const dataInicio = dataInicioTemp
-      ? dataInicioTemp
-      : new Date("1970-01-01".replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3"));
-    const dataFim = dataFimTemp ? dataFimTemp : new Date(Date.now());
-
-    Consulta.findAndCountAll({
-      where: {
-        dt_inicio: {
-          [Op.between]: [dataInicio, dataFim]
-        },
-        status: statusSolicitados
-      }
-    })
-      .then(dados => {
-        const { paginas, ...SortPaginateOptions } = SortPaginate(
-          request.query,
-          Object.keys(
-            Consulta.rawAttributes
-          ) /* Todos os atributos de consulta */,
-          dados.count
-        );
-        Consulta.findAll({
-          ...SortPaginateOptions,
-          where: {
-            dt_inicio: {
-              [Op.between]: [dataInicio, dataFim]
-            },
-            status: statusSolicitados
-          }
-        })
-          .then(async consultas => {
-            // Adicionando usuários e paciente no retorno
-            await Promise.all(
-              consultas.map(async consulta => {
-                let atributosPacienteTemp = ["id", "nome"];
-                let atributosMedicoTemp = ["id", "nome"];
-                if (request.query.camposPaciente)
-                  atributosPacienteTemp = request.query.camposMedico.split(",");
-                if (request.query.camposMedico)
-                  atributosMedicoTemp = request.query.camposMedico.split(",");
-                const atributosPaciente = atributosPacienteTemp;
-                const atributosMedico = atributosMedicoTemp;
-                const usuarioService = new UsuarioService();
-                const pacienteService = new PacienteService();
-                // Adicionando dados do paciente
-                consulta.dataValues.paciente = await pacienteService.findById(
-                  consulta.dataValues.paciente_id,
-                  atributosPaciente
-                );
-                // Adicionando dados do médico associado a consulta
-                consulta.dataValues.usuario_medico = await usuarioService.findById(
-                  consulta.dataValues.usuario_id_medico,
-                  atributosMedico
-                );
-                // * Desativado: Adicionando dados do criador da consulta
-                // consulta.dataValues.usuario_criador = await usuarioService.findById(
-                //   consulta.dataValues.usuario_id_criador
-                // );
-                // * Desativado: Adicionando todos os logs da consulta
-                // const logConsultaController = new LogConsultaController();
-                // consulta.dataValues.logs = await logConsultaController.getAll(
-                //   consulta.dataValues.id
-                // );
-              })
-            );
-
-            response.status(200).json({
-              dados: consultas,
-              quantidade: consultas.length,
-              total: dados.count,
-              paginas: paginas,
-              offset: SortPaginateOptions.offset
-            });
-          })
-          .catch(erro => {
-            throw new AppError(erro.message, 500);
-          });
-      })
-      .catch(function(erro) {
-        throw new AppError(erro.message, 500);
-      });
+    return response.status(200).json({
+      dados: consultas.dados,
+      quantidade: consultas.quantidade,
+      total: consultas.total,
+      paginas: consultas.paginas,
+      offset: consultas.offset
+    });
   }
 
   async checkPrimeiraConsulta(request, response) {

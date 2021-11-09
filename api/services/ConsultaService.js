@@ -1,4 +1,8 @@
+const { Op } = require("sequelize");
+
 const AppError = require("../errors/AppError");
+const { SortPaginate } = require("../helpers/SortPaginate");
+
 const Arquivo = require("../models/Arquivo");
 const Consulta = require("../models/Consulta");
 const LogConsulta = require("../models/LogConsulta");
@@ -7,6 +11,7 @@ const Usuario = require("../models/Usuario");
 
 const PacienteService = require("../services/PacienteService");
 const UsuarioService = require("../services/UsuarioService");
+
 const ArquivoService = require("./ArquivoService");
 const LogConsultaService = require("./LogConsultaService");
 
@@ -169,7 +174,7 @@ class ConsultaService {
     );
     // * ----------------> Fim: Início capturando quem é o criador da consulta <----------------
 
-    // * ----------------: Início: Salvando log de atualização da consulta <----------------
+    // * ----------------> Início: Salvando log de atualização da consulta <----------------
     // Se houver modificação no status ou médico ou descrição, atualiza o log
     if (
       (status && status != consultaData.status) ||
@@ -187,7 +192,7 @@ class ConsultaService {
         usuario_criador
       );
     }
-    // * ----------------: Fim: Salvando log de atualização da consulta <----------------
+    // * ----------------> Fim: Salvando log de atualização da consulta <----------------
 
     await consulta
       .update({
@@ -246,6 +251,120 @@ class ConsultaService {
       ]);
 
     return consulta;
+  }
+
+  async getAll(query) {
+    // * ----------------> Início: Capturando e tratando filtros/ordenadores da pesquisa <----------------
+    /*
+     * statusSolicitados = busca por status
+     * dataInicio & dataFim = busca por dt_inicio da consulta em um período
+     * atributosCriador = exibir apenas os atributos id ou email ou ambos do usuário criador da consulta
+     * atributosMedico = exibir apenas os atributos id ou email ou ambos do usuário médico da consulta
+     * atributosPaciente = exibir apenas os atributos id ou email ou ambos do paciente da consulta
+     */
+    const statusEnums = [
+      "AGUARDANDOC",
+      "AGUARDANDOA",
+      "REALIZADO",
+      "CANCELADO"
+    ];
+    let status = [];
+    let statusTemp = statusEnums;
+    if (query.status) {
+      statusTemp = query.status.split(",");
+      statusTemp.forEach(element => {
+        if (element == "AC") status.push("AGUARDANDOC");
+        else if (element == "AA") status.push("AGUARDANDOA");
+        else if (element == "R") status.push("REALIZADO");
+        else if (element == "C") status.push("CANCELADO");
+        else
+          return response.status(404).json({ erro: "'status' não encontrado" });
+      });
+    } else {
+      status = statusEnums;
+    }
+    const statusSolicitados = status ? status : statusEnums;
+
+    let dataInicioTemp, dataFimTemp;
+    if (query.dataInicio && query.dataFim) {
+      dataInicioTemp = new Date(
+        query.dataInicio.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")
+      );
+      dataFimTemp = new Date(
+        query.dataFim.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3")
+      );
+    }
+    const dataInicio = dataInicioTemp
+      ? dataInicioTemp
+      : new Date("1970-01-01".replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3"));
+    const dataFim = dataFimTemp ? dataFimTemp : new Date(Date.now());
+
+    const qtd = await Consulta.count();
+    const { paginas, ...SortPaginateOptions } = SortPaginate(
+      query,
+      Object.keys(Consulta.rawAttributes) /* Todos os atributos de consulta */,
+      qtd
+    );
+    let atributosCriadorTemp = ["id", "nome"];
+    if (query.camposCriador)
+      atributosCriadorTemp = query.camposCriador.split(",");
+    const atributosCriador = atributosCriadorTemp;
+
+    let atributosMedicoTemp = ["id", "nome"];
+    if (query.camposMedico) atributosMedicoTemp = query.camposMedico.split(",");
+    const atributosMedico = atributosMedicoTemp;
+
+    let atributosPacienteTemp = ["id", "nome"];
+    if (query.camposPaciente)
+      atributosPacienteTemp = query.camposPaciente.split(",");
+    const atributosPaciente = atributosPacienteTemp;
+    // * ----------------> Fim: Capturando e tratando filtros/ordenadores da pesquisa <----------------
+
+    const consultas = await Consulta.findAndCountAll({
+      ...SortPaginateOptions,
+      where: {
+        dt_inicio: {
+          [Op.between]: [dataInicio, dataFim]
+        },
+        status: statusSolicitados
+      },
+      include: [
+        {
+          model: Usuario,
+          as: "usuario_criador",
+          attributes: atributosCriador
+        },
+        {
+          model: Usuario,
+          as: "usuario_medico",
+          attributes: atributosMedico
+        },
+        {
+          model: Paciente,
+          as: "paciente",
+          attributes: atributosPaciente
+        }
+        // {
+        //   model: Arquivo,
+        //   as: "arquivos",
+        //   attributes: ["id", "nome"]
+        // },
+        // {
+        //   model: LogConsulta,
+        //   as: "logs"
+        // }
+      ]
+    }).catch(error => {
+      throw new AppError("Erro interno do servidor!", 500, error);
+    });
+
+    return {
+      dados: consultas.rows,
+      quantidade: consultas.rows.length,
+      total: qtd,
+      paginas: paginas,
+      offset: SortPaginateOptions.offset
+    };
   }
 
   async getByPacienteId(idPaciente) {

@@ -99,7 +99,7 @@ class UsuarioController {
     return response.status(200).json(usuario);
   }
 
-  // URI de exemplo: http://localhost:3000/api/usuario?pagina=1&limite=5&atributo=nome&ordem=DESC
+  // URI de exemplo: GET http://localhost:3000/api/usuario?pagina=1&limite=5&atributo=nome&ordem=DESC
   // Todas as querys são opicionais
   async getAll(request, response) {
     const usuarioService = new UsuarioService();
