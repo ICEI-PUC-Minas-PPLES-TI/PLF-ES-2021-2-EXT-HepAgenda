@@ -48,7 +48,7 @@ const pacienteCreateScheme = yup.object({
     peso: yup.number().min(0).nullable(),
     altura: yup.number().min(0).nullable(),
     desfecho: yup.number().nullable(),
-    comorbidade: yup.mixed().oneOf(['HEPB', 'HEPC', 'HEPBC', 'OUTRO']).nullable()
+    comorbidade: yup.mixed().oneOf(['HEPB', 'HEPC', 'HEPBC', 'OUTRO', null]).default(null).nullable()
 }).concat(yup.object().shape({
     hepatiteb: hepatiteBCreateScheme.default(null).nullable(),
     hepatitec: yup.array().of( hepatiteCCreateScheme )
@@ -87,7 +87,7 @@ const hepatiteBUpdateScheme = yup.object().shape({
 const pacienteUpdateScheme = yup.object({
     nome: yup.string().max(120),
     data_nascimento: yup.date(),
-    registro_hc: yup.string().max(20),
+    registro_hc: yup.string().nullable().max(20),
     sexo: yup.mixed().oneOf(['M', 'F']),
     telefone: yup.string().max(15).matches(telefoneRegExp),
     nome_mae: yup.string().max(120),
@@ -95,8 +95,8 @@ const pacienteUpdateScheme = yup.object({
     peso: yup.number().min(0).nullable(),
     altura: yup.number().min(0).nullable(),
     desfecho: yup.number().nullable(),
-    comorbidade: yup.mixed().oneOf(['HEPB', 'HEPC', 'HEPBC', 'OUTRO']).nullable()
-    ativo: yup.bool().nullable
+    comorbidade: yup.mixed().oneOf(['HEPB', 'HEPC', 'HEPBC', 'OUTRO', null]).default(null).nullable(),
+    ativo: yup.bool().nullable()
 }).concat(yup.object().shape({
     hepatiteb: hepatiteBUpdateScheme.default(null).nullable(),
     hepatitec: yup.array().of( hepatiteCUpdateScheme )
