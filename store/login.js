@@ -1,6 +1,10 @@
 // import router from './router'
 export const state = () => ({
-  token: null
+  token: null,
+  me: {
+    nome: null,
+    tipo: null
+  }
 })
 
 export const mutations = {
@@ -9,13 +13,20 @@ export const mutations = {
   },
   LOGOUT(state) {
     state.token = null
+  },
+  ME(state, user) {
+    state.me = user
   }
 }
 
 export const actions = {
-  userLogin({ commit }, { loginData, router }) {
+  userLogin({ commit }, { loginData, router, axios }) {
     commit('LOGIN', loginData)
+    axios.get('/me').then(res => {
+      commit('ME', res.data)
+    })
     router.push('/')
+    
   },
   async userLogout({ commit }, { router }) {
     if (router) await router.push('/login')
@@ -29,5 +40,8 @@ export const actions = {
 export const getters = {
   token(state) {
     return state.token
+  },
+  me(state) {
+    return state.me
   }
 }
