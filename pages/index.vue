@@ -290,13 +290,22 @@ export default {
   },
   watch:{
       modalCreateAtivo: function(val){
-        if(val){
-          const offset = new Date().getTimezoneOffset()
-          this.data_atual = new Date(new Date().getTime() - (offset*60*1000)).toISOString().split('T')[0]
-          if(this.$refs['consultaList'])
-            this.$refs['consultaList'].scrollTop = 130
+        if(val == false){
+          let d = new Date()
+          d = d.toISOString().split('T')[0]
+          this.carregaConsultas(d);
         }
+      },
+
+      modalEditAtivo: function(val){
+        if(val == false){
+          let d = new Date()
+          d = d.toISOString().split('T')[0]
+          this.carregaConsultas(d);
+        }
+
       }
+
   },
   mounted(){
     const offset = new Date().getTimezoneOffset()

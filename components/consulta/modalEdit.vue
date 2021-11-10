@@ -88,7 +88,11 @@
                         label="Relatório do atendimento"
                         v-model="consulta.detalhes"
                         counter
-                        :rules="[(v) => (v || '' ).length <= 60000 || 'Máximo de 60000 caracteres']"
+                        :rules="[
+                          (v) =>
+                            (v || '').length <= 60000 ||
+                            'Máximo de 60000 caracteres',
+                        ]"
                         auto-grow
                       ></v-textarea>
                     </v-col>
@@ -131,7 +135,11 @@
                     <v-row class="mt-n3">
                       <v-col :md="12" :sm="12" :xl="12" cols="12">
                         <v-input
-                          :messages="formataDataSimples(consulta.paciente.data_nascimento)"
+                          :messages="
+                            formataDataSimples(
+                              consulta.paciente.data_nascimento
+                            )
+                          "
                           label="Data de Nascimento"
                         ></v-input>
                       </v-col>
@@ -156,13 +164,14 @@
                     </v-row>
                     <v-row class="mt-n3 text-right mr-2">
                       <v-col :md="12" :sm="12" :xl="12" cols="12">
-                        <v-btn text x-small @click="abreToast('Em desenvolvimento')">
-                        <a
-                          aria-disabled="true"
-                          disabled
-                          href="#"
-                          >Dados do paciente</a
+                        <v-btn
+                          text
+                          x-small
+                          @click="abreToast('Em desenvolvimento')"
                         >
+                          <a aria-disabled="true" disabled href="#"
+                            >Dados do paciente</a
+                          >
                         </v-btn>
                       </v-col>
                     </v-row>
@@ -231,7 +240,11 @@
                     @click="baixaArquivo(idx)"
                     @click:close="abreModalConfirmAnexo(idx)"
                   >
-                    {{ consulta.arquivos[idx].nome.length > 16 ? consulta.arquivos[idx].nome.substring(0, 16) + '...' : consulta.arquivos[idx].nome }}
+                    {{
+                      consulta.arquivos[idx].nome.length > 16
+                        ? consulta.arquivos[idx].nome.substring(0, 16) + "..."
+                        : consulta.arquivos[idx].nome
+                    }}
                   </v-chip>
                 </v-col>
               </v-row>
@@ -264,7 +277,7 @@
                         <v-btn
                           color="red darken-1"
                           text
-                          @click="modalConfirm = false"
+                          @click="cancelaConsulta"
                         >
                           Sim
                         </v-btn>
@@ -505,6 +518,23 @@ export default {
       this.modalConfirmAnexo = true;
     },
 
+    cancelaConsulta(){
+      if (this.$refs.formConsulta.validate()) {
+        this.consulta.status = "CANCELADO";
+        let consulta = JSON.parse(JSON.stringify(this.consulta));
+
+        let formData = new FormData();
+
+        for (var key in consulta) {
+          if (typeof consulta[key] != "object") {
+            formData.append(key, consulta[key]);
+          }
+        }
+          this.queryUpdate(formData);
+      }
+      this.modalConfirm = false;
+    },
+
     queryUpdate(formData) {
       this.$axios
         .$put("/consulta/" + this.consultaId, formData)
@@ -586,31 +616,30 @@ export default {
 
 .textareaDescricao .v-text-field__slot textarea {
   margin-left: -10px !important;
-
 }
 
-.arquivo-input{
+.arquivo-input {
   max-width: 200px !important;
   height: 50px !important;
 }
 
-.arquivo-input .v-input__slot{
+.arquivo-input .v-input__slot {
   height: 52px !important;
 }
 
-.arquivo-input .v-input__slot:hover{
-    cursor: pointer !important;
+.arquivo-input .v-input__slot:hover {
+  cursor: pointer !important;
 }
 
-.arquivo-input .v-label{
+.arquivo-input .v-label {
   margin-top: 6px !important;
 }
 
-.arquivo-input .v-input__prepend-inner{
+.arquivo-input .v-input__prepend-inner {
   align-self: center;
 }
 
-.row-arquivos{
+.row-arquivos {
   margin-left: 5px;
 }
 
