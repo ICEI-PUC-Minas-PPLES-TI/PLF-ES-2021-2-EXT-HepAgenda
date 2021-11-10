@@ -46,6 +46,7 @@ router.put('/consulta/:id', multerUploadConsulta, [autenticacaoJwt.verificarToke
 router.get('/primeiraconsulta', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], consultaController.checkPrimeiraConsulta) // Verifica se é a primeira consulta de um paciente
 // Paciente
 router.post('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic] , pacienteController.create)
+router.post('/paciente/pesquisa', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedicOrViewer] , pacienteController.deepSearch)
 router.put('/paciente/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.update)
 router.get('/paciente/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.get)
 router.get('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.getAll)
