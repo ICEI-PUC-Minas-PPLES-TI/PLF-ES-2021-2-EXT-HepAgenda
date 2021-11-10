@@ -102,10 +102,10 @@ class PacienteController{
             Paciente.findAll({
                 ...SortPaginateOptions,
                 include: {
-                    association: Paciente.associations.Consulta,
-                    limit: 1,
-                    order: [['dt_inicio', 'DESC']]
+                    association: Paciente.associations.uconsulta,
+                    order: [['dt_inicio', 'DESC']],
                 },
+                group: ['paciente.id'],
                 where: request.query.ativos ? { ativo: true } : null
             })
             .then((pacientes) => {

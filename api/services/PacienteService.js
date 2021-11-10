@@ -109,12 +109,17 @@ class PacienteService {
     let res;
     const limit = 30
     await Paciente.findAndCountAll({
+      include: {
+        association: Paciente.associations.uconsulta,
+        order: [['dt_inicio', 'DESC']],
+      },
+      group: ['paciente.id'],
       where: whre,
       limit: limit,
       offset: 0 + ((pagina - 1) * limit)
     })
     .then((dados) => {
-      res= {'dados': dados.rows, 'registros': dados.count, 'paginas': Math.ceil(dados.count/limit) }
+      res= {'dados': dados.rows, 'registros': dados.count.length, 'paginas': Math.ceil(dados.count.length/limit) }
       
     }).catch( err => {
       throw new AppError(`Erro interno do servidor`, 500)
