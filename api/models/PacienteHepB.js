@@ -53,6 +53,12 @@ class PacienteHepB extends Model{
             data_carga: {
                 type: DataTypes.DATE,
             },
+            hbeag: {
+                type: DataTypes.BOOLEAN // Reagente (true) ou não reagente (false)
+            },
+            data_hbeag: {
+                type: DataTypes.DATE,
+            },
         }, {
             tableName: "paciente_hepb",
             timestamps: false,
