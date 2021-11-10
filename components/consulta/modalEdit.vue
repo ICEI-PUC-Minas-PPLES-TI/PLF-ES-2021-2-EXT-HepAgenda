@@ -46,7 +46,6 @@
                         hide-details="auto"
                         auto-grow
                         v-model="consulta.descricao"
-                        label="Descrição do agendamento"
                       >
                       </v-textarea>
                     </v-col>
@@ -89,7 +88,7 @@
                         label="Relatório do atendimento"
                         v-model="consulta.detalhes"
                         counter
-                        :rules="[(v) =>(v && v.length <= 60000) || 'Máximo de 60000 caracteres']"
+                        :rules="[(v) => (v || '' ).length <= 60000 || 'Máximo de 60000 caracteres']"
                         auto-grow
                       ></v-textarea>
                     </v-col>
@@ -132,7 +131,7 @@
                     <v-row class="mt-n3">
                       <v-col :md="12" :sm="12" :xl="12" cols="12">
                         <v-input
-                          :messages="consulta.paciente.data_nascimento"
+                          :messages="formataDataSimples(consulta.paciente.data_nascimento)"
                           label="Data de Nascimento"
                         ></v-input>
                       </v-col>
@@ -202,6 +201,7 @@
               <v-row class="row-arquivos">
                 <v-col cols="12" :xs="12" :sm="6" :md="3">
                   <v-file-input
+                    class="arquivo-input"
                     show-size
                     multiple
                     small
@@ -231,7 +231,7 @@
                     @click="baixaArquivo(idx)"
                     @click:close="abreModalConfirmAnexo(idx)"
                   >
-                    {{ consulta.arquivos[idx].nome }}
+                    {{ consulta.arquivos[idx].nome.length > 16 ? consulta.arquivos[idx].nome.substring(0, 16) + '...' : consulta.arquivos[idx].nome }}
                   </v-chip>
                 </v-col>
               </v-row>
@@ -587,5 +587,34 @@ export default {
 .textareaDescricao .v-text-field__slot textarea {
   margin-left: -10px !important;
 
+}
+
+.arquivo-input{
+  max-width: 200px !important;
+  height: 50px !important;
+}
+
+.arquivo-input .v-input__slot{
+  height: 52px !important;
+}
+
+.arquivo-input .v-input__slot:hover{
+    cursor: pointer !important;
+}
+
+.arquivo-input .v-label{
+  margin-top: 6px !important;
+}
+
+.arquivo-input .v-input__prepend-inner{
+  align-self: center;
+}
+
+.row-arquivos{
+  margin-left: 5px;
+}
+
+.v-chip .v-size--large {
+  max-width: 300px !important;
 }
 </style>
