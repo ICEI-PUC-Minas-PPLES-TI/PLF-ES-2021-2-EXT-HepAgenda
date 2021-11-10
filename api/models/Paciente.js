@@ -16,9 +16,12 @@ class Paciente extends Model{
                 type: DataTypes.DATE,
                 allowNull: false
             },
+            ativo:{
+                type: DataTypes.TINYINT(1)
+            },
             registro_hc: {
                 type: DataTypes.STRING(20),
-                allowNull: false,
+                allowNull: true,
                 isUnique: (value, next) => {
                     Paciente.findAll({
                       where: { registro_hc: value },
@@ -64,7 +67,7 @@ class Paciente extends Model{
             },
             comorbidade: {
                 type: DataTypes.ENUM,
-                values: ['HEPB', 'HEPC', 'OUTRO'],
+                values: ['HEPB', 'HEPC', 'HEPBC', 'OUTRO'],
                 allowNull: true,
             },
             desfecho: {

@@ -47,6 +47,8 @@ module.exports = {
       Paciente.hasMany(PacienteHepC, {foreignKey: "paciente_id"});
       PacienteHepB.hasOne(Tratamento, {foreignKey: "id"})
       PacienteHepC.hasOne(Tratamento, {foreignKey: "id"})
+      Paciente.hasMany(Consulta, {foreignKey: "paciente_id"})
+      Paciente.hasOne(Consulta, {as: 'uconsulta', foreignKey: "paciente_id"})
       BloqueioData.hasOne(Usuario, {foreignKey: "id", as: 'usuario'})
 
       if (process.env.NODE_ENV === "dev") {

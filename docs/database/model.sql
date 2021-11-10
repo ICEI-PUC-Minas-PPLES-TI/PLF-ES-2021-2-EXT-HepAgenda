@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `agenda`.`paciente` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(120) NOT NULL,
   `data_nascimento` DATE NOT NULL,
-  `registro_hc` VARCHAR(20) NOT NULL,
+  `registro_hc` VARCHAR(20) NULL,
   `sexo` ENUM('M', 'F') NOT NULL,
   `telefone` VARCHAR(15) NOT NULL,
   `nome_mae` VARCHAR(120) NOT NULL,
@@ -32,7 +32,8 @@ CREATE TABLE IF NOT EXISTS `agenda`.`paciente` (
   `peso` DOUBLE NULL,
   `peso_atualizacao` TIMESTAMP NULL,
   `altura` DOUBLE NULL,
-  `comorbidade` ENUM('HEPB', 'HEPC', 'OUTRO') NULL,
+  `comorbidade` ENUM('HEPB', 'HEPC', 'HEPBC' 'OUTRO') NULL,
+  `ativo` TINYINT(1) DEFAULT 1
   `desfecho` TINYINT(1) NULL COMMENT '1- ALTA DO SERVIÇO PÓS RVS\n2-ALTA POR OUTROS MOTIVOS 3- ACOMPANHAMENTO  SEMESTRAL OU ANUAL\n3- HCC\n4- ÓBITO\n5- RVS PARA VÍRUS C (CIRRÓTICO CONSULTAS ANUAIS OU SEMESTRAIS)\n6-ABANDONO',
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
@@ -66,6 +67,8 @@ CREATE TABLE IF NOT EXISTS `agenda`.`paciente_hepb` (
   `data_ultra` DATE NULL,
   `ultimo_resultado_carga` DOUBLE NULL,
   `data_carga` DATE NULL,
+  `hbeag` TINYINT(1) NULL,
+  `data_hbeag` DATE NULL,
   PRIMARY KEY (`paciente_id`),
   INDEX `fk_paciente_hepb_tratamento1_idx` (`tratamento_id` ASC) VISIBLE,
   CONSTRAINT `fk_paciente_hepb_paciente`
@@ -88,7 +91,6 @@ CREATE TABLE IF NOT EXISTS `agenda`.`paciente_hepc` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `paciente_id` INT UNSIGNED NOT NULL,
   `cirrotico` TINYINT(1) NOT NULL,
-  `portador_inativo` TINYINT(1) NOT NULL,
   `fibrose` ENUM('F0', 'F1', 'F2', 'F3', 'F4', 'F5') NULL,
   `tratado` TINYINT(1) NULL,
   `tratamento_id` INT NULL,
