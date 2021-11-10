@@ -46,7 +46,6 @@
                         hide-details="auto"
                         auto-grow
                         v-model="consulta.descricao"
-                        label="Descrição do agendamento"
                       >
                       </v-textarea>
                     </v-col>
