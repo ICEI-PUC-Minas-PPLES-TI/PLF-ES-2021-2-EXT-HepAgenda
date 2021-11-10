@@ -5,7 +5,9 @@ const Paciente = require('../models/Paciente');
 const { SortPaginate } = require('../helpers/SortPaginate')
 const PacienteHepB = require('../models/PacienteHepB');
 const PacienteHepC = require('../models/PacienteHepC');
+const PacienteService = require("../services/PacienteService");
 const { pacienteCreateScheme, pacienteUpdateScheme, hepatiteRequiredScheme } = require('../validation/PacienteValidation');
+const Consulta = require('../models/Consulta');
 
 class PacienteController{
     async create(request, response){
@@ -46,13 +48,13 @@ class PacienteController{
         const paciente = await Paciente.create({
             ...request.body
         });
-        if (request.body.comorbidade == 'HEPB'){
+        if (request.body.hepatiteb){
             await PacienteHepB.create({
                 paciente_id: paciente.id,
                 ...request.body.hepatiteb
             });
         }
-        else if (request.body.comorbidade == 'HEPC'){
+        if (request.body.hepatitec){
             await Promise.all(
                 request.body.hepatitec.map((hepc)=>{
                     return PacienteHepC.create({
@@ -98,17 +100,26 @@ class PacienteController{
             const { paginas, ...SortPaginateOptions } = SortPaginate( request.query, atributos, dados.count );
 
             Paciente.findAll({
-                ...SortPaginateOptions
+                ...SortPaginateOptions,
+                include: {
+                    association: Paciente.associations.uconsulta,
+                    order: [['dt_inicio', 'DESC']],
+                },
+                group: ['paciente.id'],
+                where: request.query.ativos ? { ativo: true } : null
             })
             .then((pacientes) => {
                 response.status(200).json({ 'dados': pacientes, 'registros': dados.count, 'paginas': paginas });
             })
-            .catch( () => response.status(500).json({
+            .catch( (err) => response.status(500).json({
                 titulo: 'Erro interno do servidor',
                 err
             }) );
         })
-        .catch( () => response.status(500).send('Erro interno do servidor') );
+        .catch( (err) => response.status(500).json({
+            titulo: 'Erro interno do servidor',
+            err
+        }) );
     }
 
     async update(request, response) {
@@ -150,6 +161,7 @@ class PacienteController{
         const { id } = request.params;
         const { hepatiteb, hepatitec, ...requestBody } = request.body;
 
+
         const paciente = await Paciente.findOne({
             where:{ id }
         });
@@ -184,7 +196,7 @@ class PacienteController{
                     })
                 }
             }
-            else if (hepatitec){
+            if (hepatitec){
                 // percorre todo vetor de hepatitec, criando ou atualizando os dados
                 const registrosHepC = await PacienteHepC.findAll({
                     where: {
@@ -249,6 +261,36 @@ class PacienteController{
             })
         }
 
+    }
+
+    async deepSearch(request, response) {
+      const validationSchema = yup.object().shape({
+        campos: yup.array()
+          .of(
+            yup.object().shape({
+              campo: yup.string().required(),
+              comparador: yup.mixed().oneOf(['MAIOR', 'MENOR','IGUAL','COMECA','TERMINA','CONTEM','EXISTE','NAOEXISTE']).required(),
+              valor: yup.string().nullable(),
+            })
+          )
+          .required('Campos obrigatorios'),
+        operador: yup.mixed().oneOf(['AND', 'OR']).required(),
+      })
+
+       // Validando com o esquema criado:
+       try {
+          await validationSchema.validate(request.body, { abortEarly: false }); // AbortEarly para fazer todas as validações
+        } catch (err) {
+          return response.status(422).json({
+              'name:': err.name, // => 'ValidationError'
+              'message': err.message,
+              'errors': err.errors
+          })
+        }
+
+      const pacienteService = new PacienteService();
+      const paciente = await pacienteService.deepSearch(request.body.campos, request.body.operador, request.query.pagina);
+      return response.status(200).json(paciente)
     }
 
 }
