@@ -231,7 +231,7 @@
                     @click="baixaArquivo(idx)"
                     @click:close="abreModalConfirmAnexo(idx)"
                   >
-                    {{ consulta.arquivos[idx].nome }}
+                    {{ consulta.arquivos[idx].nome.length > 16 ? consulta.arquivos[idx].nome.substring(0, 16) + '...' : consulta.arquivos[idx].nome }}
                   </v-chip>
                 </v-col>
               </v-row>
@@ -589,8 +589,32 @@ export default {
 
 }
 
+.arquivo-input{
+  max-width: 200px !important;
+  height: 50px !important;
+}
+
+.arquivo-input .v-input__slot{
+  height: 52px !important;
+}
+
 .arquivo-input .v-input__slot:hover{
     cursor: pointer !important;
 }
 
+.arquivo-input .v-label{
+  margin-top: 6px !important;
+}
+
+.arquivo-input .v-input__prepend-inner{
+  align-self: center;
+}
+
+.row-arquivos{
+  margin-left: 5px;
+}
+
+.v-chip .v-size--large {
+  max-width: 300px !important;
+}
 </style>
