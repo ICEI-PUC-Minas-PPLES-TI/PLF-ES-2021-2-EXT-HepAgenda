@@ -10,7 +10,7 @@ class UsuarioController {
     const { email, senha } = req.body;
 
     Usuario.findOne({
-      attributes: ['id', 'senha'],
+      attributes: ['id', 'senha','nome','tipo'],
       where: {
         email: email
       }
@@ -25,7 +25,7 @@ class UsuarioController {
           return res.status(401).send("Senha incorreta!");
         }
 
-        const token = jwt.sign({ id: usuario.id }, process.env.SECRET_KEY, {
+        const token = jwt.sign({ id: usuario.id, nome: usuario.nome, tipo: usuario.tipo }, process.env.SECRET_KEY, {
           expiresIn: 604800 * 12 // expira 3 meses
         });
 
@@ -34,6 +34,13 @@ class UsuarioController {
       .catch(err => {
         res.status(500).send("Erro -> " + err);
       });
+  }
+
+  async me(req, res) {
+    res.status(200).send({
+      nome: req.user.nome,
+      tipo: req.user.tipo,
+    })
   }
 
   async create(request, response) {

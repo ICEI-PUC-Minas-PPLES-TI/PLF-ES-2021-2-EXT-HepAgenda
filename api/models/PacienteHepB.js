@@ -15,11 +15,11 @@ class PacienteHepB extends Model{
                 }
             },
             cirrotico: {
-                type: DataTypes.TINYINT(1),
+                type: DataTypes.BOOLEAN,
                 allowNull: false
             },
             portador_inativo: {
-                type: DataTypes.TINYINT(1),
+                type: DataTypes.BOOLEAN,
                 allowNull: false
             },
             fibrose: {
@@ -51,6 +51,12 @@ class PacienteHepB extends Model{
                 type: DataTypes.DOUBLE,
             },
             data_carga: {
+                type: DataTypes.DATE,
+            },
+            hbeag: {
+                type: DataTypes.BOOLEAN // Reagente (true) ou não reagente (false)
+            },
+            data_hbeag: {
                 type: DataTypes.DATE,
             },
         }, {
