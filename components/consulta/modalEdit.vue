@@ -82,19 +82,19 @@
                                     <!-- Data Nascimento -->
                                     <v-row class="mt-n3">
                                         <v-col :md="12" :sm="12" :xl="12" cols="12">
-                                            <v-input :messages="paciente.dataNascimento" label="Data de Nascimento"></v-input>
+                                            <v-input :messages="paciente.data_nascimento" label="Data de Nascimento"></v-input>
                                         </v-col>
                                     </v-row>
                                     <!-- Mae -->
                                     <v-row class="mt-n3">
                                         <v-col :md="12" :sm="12" :xl="12" cols="12">
-                                            <v-input :messages="paciente.mae" label="Nome da Mãe"></v-input>
+                                            <v-input :messages="paciente.nome_mae" label="Nome da Mãe"></v-input>
                                         </v-col>
                                     </v-row>
                                     <!-- Registro HC -->
                                     <v-row class="mt-n3">
                                         <v-col :md="12" :sm="12" :xl="12" cols="12">
-                                            <v-input :messages="paciente.registroHc" label="Registro HC"></v-input>
+                                            <v-input :messages="paciente.registro_hc" label="Registro HC"></v-input>
                                         </v-col>
                                     </v-row>
                                     <!-- Barra horizontal -->

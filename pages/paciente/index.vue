@@ -1,6 +1,6 @@
 <template>
   <v-container fluid style="overflow: auto; padding: 5vh">
-    <modalPaciente v-model="modalAtivo" v-bind:pacienteId="pacienteId" />
+    <modalPaciente v-model="modalAtivo" v-bind:pacienteId="pacienteId" @listaPacientes="listaPacientes" @input="mudaStatusModal" />
 
     <v-card class="mx-auto pa-5 mt-3" width="100%">
       <div class="div-titulo-btn">
@@ -155,6 +155,12 @@
             <template v-slot:item.data_nascimento="{ item }">
               {{ formataData(item.data_nascimento) }}
             </template>
+            <template v-slot:item.ativo="{ item }">
+              {{ item.ativo ? 'ATIVO': 'DESATIVADO' }}
+            </template>
+            <template v-slot:item.uconsulta="{ item }">
+              {{ item.uconsulta ? formataData(item.uconsulta.dt_inicio) : '---' }}
+            </template>
             <template v-slot:item.actions="{ item }">
               <v-icon color="primary" class="mr-2" @click="abreModal(item.id)">
                 mdi-square-edit-outline
@@ -210,6 +216,16 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+
+      <v-snackbar v-model="toast" shaped>
+        {{ toastMensagem }}
+
+        <template v-slot:action="{ attrs }">
+          <v-btn color="blue" text v-bind="attrs" @click="toast = false">
+            Ok
+          </v-btn>
+        </template>
+      </v-snackbar>
     </v-card>
   </v-container>
 </template>
@@ -228,7 +244,8 @@ export default {
         { text: "PACIENTE", value: "nome" },
         { text: "MÃE", value: "nome_mae" },
         { text: "NASCIMENTO", value: "data_nascimento" },
-        { text: "ÚLTIMA CONSULTA", value: "ultima_consulta" },
+        { text: "STATUS", value: "ativo" },
+        { text: "ÚLTIMA CONSULTA", value: "uconsulta" },
         { text: "AÇÕES", value: "actions", sortable: false },
       ],
       pacientes: [
@@ -238,6 +255,7 @@ export default {
           data_nascimento: "",
           ultima_consulta: "",
           nome_mae: "",
+          status: "",
         },
       ],
       tabelaCarregando: false,
@@ -253,8 +271,9 @@ export default {
       filtroValor: null,
       filtroOperador: 'AND',
       filtroMenuAtivo: false,
+      toast: false,
+      toastMensagem: "",
       pesquisa: "",
-
       pacienteId: 0,
       modalAtivo: false,
       modalConfirm: false,
@@ -267,6 +286,7 @@ export default {
   methods: {
     listaPacientes() {
       this.tabelaCarregando = true
+      this.pacienteId = null
       if(this.tipoFiltro == 0) {
         this.$axios
           .$get(`/paciente?pagina=${this.tabelaPaginaAtual}`)
@@ -306,7 +326,21 @@ export default {
       this.modalAtivo = !this.modalAtivo;
     },
     deletePaciente() {
-      console.log(this.pacienteId);
+      this.$axios
+        .put("/paciente/" + this.pacienteId, {
+          id: this.pacienteId,
+          ativo: false,
+        })
+        .then((res) => {
+          this.abreToast(res.data.mensagem);
+          this.listaPacientes();
+        })
+        .catch((err) => {
+          //this.abreToast(err.response.data);
+          console.log(err);
+        });
+
+      this.modalConfirm = false;
       this.pacienteId = 0;
     },
     abreModalConfirm(id) {
@@ -333,6 +367,14 @@ export default {
       this.filtroStep = 1
       this.filtroMenuAtivo = false
       this.listaPacientes()
+    },
+    abreToast(mensagem) {
+      this.toast = true;
+      this.toastMensagem = mensagem;
+    },
+    mudaStatusModal(val){
+      if(!val)
+        this.pacienteId = null
     }
   },
 };
