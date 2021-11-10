@@ -108,7 +108,7 @@
                     hide-details="auto"
                     outlined
                     label="Descrição (Opcional)"
-                    :rules="[(v) =>(v && v.length <= 60) || 'Maximo de 60 caracteres']"
+                    :rules="[(v) => (v || '' ).length <= 60 || 'Maximo de 60 caracteres']"
                     auto-grow
                   ></v-textarea>
                 </v-col>

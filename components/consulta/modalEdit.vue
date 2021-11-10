@@ -89,7 +89,7 @@
                         label="Relatório do atendimento"
                         v-model="consulta.detalhes"
                         counter
-                        :rules="[(v) =>(v && v.length <= 60000) || 'Máximo de 60000 caracteres']"
+                        :rules="[(v) => (v || '' ).length <= 60000 || 'Máximo de 60000 caracteres']"
                         auto-grow
                       ></v-textarea>
                     </v-col>
@@ -132,7 +132,7 @@
                     <v-row class="mt-n3">
                       <v-col :md="12" :sm="12" :xl="12" cols="12">
                         <v-input
-                          :messages="consulta.paciente.data_nascimento"
+                          :messages="formataDataSimples(consulta.paciente.data_nascimento)"
                           label="Data de Nascimento"
                         ></v-input>
                       </v-col>
@@ -202,6 +202,7 @@
               <v-row class="row-arquivos">
                 <v-col cols="12" :xs="12" :sm="6" :md="3">
                   <v-file-input
+                    class="arquivo-input"
                     show-size
                     multiple
                     small
@@ -588,4 +589,9 @@ export default {
   margin-left: -10px !important;
 
 }
+
+.arquivo-input .v-input__slot:hover{
+    cursor: pointer !important;
+}
+
 </style>
