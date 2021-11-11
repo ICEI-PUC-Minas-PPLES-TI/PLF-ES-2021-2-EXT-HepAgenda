@@ -41,10 +41,10 @@ router.delete('/usuario/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.i
 router.put('/usuario/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], usuarioController.update)
 // Consulta
 router.post('/consulta', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], consultaController.create)
-router.get('/consulta/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedicOrViewer], consultaController.get)
-router.get('/consulta', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedicOrViewer], consultaController.getAll)
+router.get('/consulta/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], consultaController.get)
+router.get('/consulta', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], consultaController.getAll)
 router.put('/consulta/:id', multerUploadConsulta, [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], consultaController.update)
-router.get('/primeiraconsulta', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], consultaController.checkPrimeiraConsulta) // Verifica se é a primeira consulta de um paciente
+router.post('/primeiraconsulta', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], consultaController.checkPrimeiraConsulta) // Verifica se é a primeira consulta de um paciente
 // Paciente
 router.post('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic] , pacienteController.create)
 router.post('/paciente/pesquisa', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedicOrViewer] , pacienteController.deepSearch)
@@ -53,6 +53,7 @@ router.get('/paciente/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isA
 router.get('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.getAll)
 // Arquivo
 router.get('/arquivo/:id', arquivoController.download)
+router.delete('/arquivo/:id', arquivoController.delete)
 
 router.post('/bloqueio/semana', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], datasBloqueadasController.createSemana)
 router.get('/bloqueio/semana', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedicOrViewer], datasBloqueadasController.getAllSemana)

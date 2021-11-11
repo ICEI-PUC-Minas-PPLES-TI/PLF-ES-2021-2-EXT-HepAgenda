@@ -96,19 +96,34 @@ class PacienteController{
 
         const atributos = ['id', 'data_nascimento', 'nome', 'email', 'telefone', 'registro_hc', 'nome_mae', 'peso', 'peso_atualizacao', 'altura'];
 
-        Paciente.findAndCountAll()
+        let search = request.query.pesquisar
+        const where = [];
+
+        if(search)
+            where.push({
+                [Op.or]: [
+                    {nome: { [Op.like]: '%'+search+'%' }},
+                    {nome_mae: { [Op.like]: '%'+search+'%' }},
+                    {registro_hc: { [Op.like]: '%'+search+'%' }},
+                ], 
+            })
+        
+        if (request.query.ativos )
+            where.push( {ativo: true} )
+
+        Paciente.findAndCountAll({
+            where
+        })
         .then((dados) => {
-
             const { paginas, ...SortPaginateOptions } = SortPaginate( request.query, atributos, dados.count );
-
             Paciente.findAll({
                 ...SortPaginateOptions,
+                where,
                 include: {
                     association: Paciente.associations.uconsulta,
                     order: [['dt_inicio', 'DESC']],
                 },
                 group: ['paciente.id'],
-                where: request.query.ativos ? { ativo: true } : null
             })
             .then((pacientes) => {
                 response.status(200).json({ 'dados': pacientes, 'registros': dados.count, 'paginas': paginas });
