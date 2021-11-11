@@ -119,11 +119,11 @@ class PacienteController{
             Paciente.findAll({
                 ...SortPaginateOptions,
                 where,
-                /*include: {
+                include: {
                     association: Paciente.associations.uconsulta,
                     order: [['dt_inicio', 'DESC']],
                 },
-                group: ['paciente.id'],*/ 
+                group: ['paciente.id'],
             })
             .then((pacientes) => {
                 response.status(200).json({ 'dados': pacientes, 'registros': dados.count, 'paginas': paginas });
