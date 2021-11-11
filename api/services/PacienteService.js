@@ -113,7 +113,7 @@ class PacienteService {
         association: Paciente.associations.uconsulta,
         order: [['dt_inicio', 'DESC']],
       },
-      group: ['Paciente.id'],
+      group: ['paciente.id'],
       where: whre,
       limit: limit,
       offset: 0 + ((pagina - 1) * limit)
@@ -122,7 +122,6 @@ class PacienteService {
       res= {'dados': dados.rows, 'registros': dados.count.length, 'paginas': Math.ceil(dados.count.length/limit) }
       
     }).catch( err => {
-      console.log(err)
       throw new AppError(`Erro interno do servidor`, 500)
     });
     return res;
