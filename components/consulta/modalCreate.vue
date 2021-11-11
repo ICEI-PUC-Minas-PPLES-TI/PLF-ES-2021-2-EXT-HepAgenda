@@ -211,7 +211,7 @@ export default {
     },
     listaPacientes(limit = 20, search = null) {
       this.$axios
-        .$get(`/paciente?limite=${limit}&pesquisar=${search ? search: ''}`)
+        .$get(`/paciente?limite=${limit}&pesquisar=${search ? search: ''}&ativos=1`)
         .then((response) => {
           this.pacientes = response.dados;
         })
