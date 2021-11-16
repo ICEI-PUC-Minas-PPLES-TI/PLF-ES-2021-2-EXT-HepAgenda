@@ -28,7 +28,13 @@ class UsuarioController {
     });
   }
 
-  // URI exemplo: POST http://localhost:3000/api/usuario
+  async me(req, res) {
+    return res.status(200).send({
+      nome: req.user.nome,
+      tipo: req.user.tipo,
+    })
+  }
+
   async create(request, response) {
     const scheme = createUsuarioValidation;
 

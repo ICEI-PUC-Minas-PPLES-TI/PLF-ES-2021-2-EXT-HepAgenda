@@ -19,6 +19,7 @@ const verificarToken = (req, res, next) => {
         err
       ]);
     }
+    req.user = decoded;
     req.userId = decoded.id;
     next();
   });

@@ -13,8 +13,14 @@ class ArquivoController {
       ]);
 
     const arquivoDir = path.resolve(process.cwd(), arquivo.dataValues.link);
-
     return response.download(arquivoDir);
+  }
+
+  async delete(request, response) {
+    const arquivoService = new ArquivoService();
+    await arquivoService.deleteById(request.params.id);
+
+    return response.status(204).json();
   }
 }
 
