@@ -52,7 +52,7 @@
                     </v-list-item-icon>
                     <v-list-item-title>Gerenciar Usuários</v-list-item-title>
                   </v-list-item>
-                  <v-list-item v-if="['A','M'].includes($store.getters['login/me'].tipo)" to="/datas" disabled>
+                  <v-list-item v-if="['A','M'].includes($store.getters['login/me'].tipo)" to="/bloqueiodata">
                     <v-list-item-icon>
                       <v-icon>mdi-calendar-range</v-icon>
                     </v-list-item-icon>

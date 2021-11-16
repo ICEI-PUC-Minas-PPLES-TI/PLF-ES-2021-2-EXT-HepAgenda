@@ -49,7 +49,7 @@ module.exports = {
       PacienteHepC.hasOne(Tratamento, {foreignKey: "id"})
       Paciente.hasMany(Consulta, {foreignKey: "paciente_id"})
       Paciente.hasOne(Consulta, {as: 'uconsulta', foreignKey: "paciente_id"})
-      BloqueioData.hasOne(Usuario, {foreignKey: "id", as: 'usuario'})
+      BloqueioData.belongsTo(Usuario, {foreignKey: "usuario_id_criador", as: 'usuario'})
 
       if (process.env.NODE_ENV === "dev") {
         console.log(
