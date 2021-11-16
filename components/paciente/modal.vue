@@ -842,7 +842,7 @@ export default {
       .get('/tratamento')
       .then(res => {
         if(res.data) {
-          res.data.forEach(function(tratamento){
+          res.data.dados.forEach(function(tratamento){
             if(tratamento.direcionado == 'HEPB')
               t.tratamentoBItems.push({
                 value: tratamento.id,
