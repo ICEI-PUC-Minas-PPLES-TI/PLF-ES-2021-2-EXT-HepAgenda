@@ -17,8 +17,7 @@ class BloqueioDiaSemanaService {
       }
     });
     if(bloqueioExiste)
-      throw new AppError("Bloqueio da Semana já existe", 405)
-
+      return this.update(bloqueioExiste.id, ativo)
 
     const bloqueio = await BloqueioDiaSemana.create({
       dia_semana: diaSemana,
