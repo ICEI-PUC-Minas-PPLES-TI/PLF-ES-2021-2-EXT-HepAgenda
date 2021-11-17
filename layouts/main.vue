@@ -22,12 +22,42 @@
             </router-link>
           </v-col>
           <v-col :md="4">
+            
             <v-input
-              prepend-icon="mdi-magnify"
               class="main-input"
               hide-details="true"
             >
-              <input type="text">
+              <v-autocomplete
+                style="padding: 0;"
+                ref="elFiltro"
+                solo
+                flat
+                background-color="transparent"
+                append-icon=""
+                prepend-icon="mdi-magnify"
+                hide-details="true"
+                placeholder="Data da consulta, nome do paciente, mãe ou registro HC"
+                :items="pesquisaItems"
+                item-text="label"
+                item-value="id"
+                :search-input.sync="pesquisaTxt"
+                :filter="customFiltro"
+                clearable
+                @change="clicaFiltro"
+              >
+                <template v-slot:item="data">
+                  <div v-if="data.item.tipo == 'P'" style="white-space: nowrap;border-bottom: 1px solid #eee;width:100%" class="d-block">
+                    <b class="d-block">{{ data.item.nome }}</b>
+                    <small class="d-block">Reg. HC: {{ data.item.registro_hc }}</small>
+                    <small class="d-block">Mãe: {{ data.item.nome_mae }}</small>
+                  </div>
+                  <div v-else>
+                    <b class="d-block">{{ formataData(data.item.dt_inicio) }}</b>
+                    <small class="d-block">Descrição: {{ data.item.descricao }}</small>
+                    <small class="d-block">Paciente: {{ data.item.paciente.nome }}</small>
+                  </div>
+                </template>
+              </v-autocomplete>
             </v-input>
           </v-col>
           <v-col :md="4">
@@ -105,11 +135,86 @@
 
 <script>
 export default {
+  data(){
+    return {
+      pesquisaTxt: '',
+      pesquisaItems: []
+    }
+  },
+  watch: {
+    pesquisaTxt(val){
+      if(val && val.length >= 3) {
+        // Testar se a pesquisa é uma data Formato (dd/mm/yyyy)
+        if(/^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/.test(val)) {
+          // É data - Pesquisar consultas
+          this.$axios
+            .$get(`/consulta?dataInicio=${this.formataData2(val)}&dataFim=${this.formataData2(val)}`)
+            .then((response) => {
+              let t = this
+              let res = response.dados.map(function(elem) {
+                elem.tipo = 'C'
+                elem.label = `${t.formataData(elem.dt_inicio)}`
+                return elem;
+              })
+              this.pesquisaItems = res;
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        } else {
+          // Nao é data - Pesquisar por paciente
+          this.$axios
+            .$get(`/paciente?limite=10&pesquisar=${val}&ativos=1`)
+            .then((response) => {
+              let res = response.dados.map(function(elem) {
+                elem.tipo = 'P'
+                elem.label = elem.nome
+                return elem;
+              })
+              this.pesquisaItems = res;
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      }
+    }
+  },
   methods: {
     logout(){
       this.$store.dispatch('login/userLogout', {
         router: this.$router
       })
+    },
+    customFiltro(item, queryText){
+      if(item.tipo == 'P') {
+        const textOne = item.nome.toLowerCase()
+        const textTwo = item.nome_mae.toLowerCase()
+        const textThree = item.registro_hc.toLowerCase()
+        const searchText = queryText.toLowerCase()
+        return textOne.indexOf(searchText) > -1 || textTwo.indexOf(searchText) > -1 || textThree.indexOf(searchText) > -1
+      } else {
+        const textOne = item.dt_inicio
+        const textTwo = this.formataData(item.dt_inicio)
+        return textOne.indexOf(queryText) > -1 || textTwo.indexOf(queryText) > -1
+      }
+    },
+    clicaFiltro(val){
+      if(val) {
+        const item = this.pesquisaItems.filter(elem => elem.id == val)[0]
+        if(item.tipo == 'P')
+          this.$router.push('/paciente?pid=' + val)
+        else if(item.tipo == 'C')
+          this.$router.push('/?cid=' + val)
+      }
+    },
+    formataData(data) {
+      const [ano, mes, dia] = data.split("-");
+      return `${dia}/${mes}/${ano}`;
+    },
+    formataData2(data) {
+      const [dia, mes, ano] = data.split("/");
+      return `${ano}-${mes}-${dia}`;
     }
   }
 }
@@ -135,11 +240,6 @@ export default {
     background: #F2F2F0;
     border-radius: 10px;
     padding: 5px 10px;
-  }
-  .main-input input{
-    display: block;
-    width: 100%;
-    height: 30px;
   }
   .main-menu{
     list-style: none;

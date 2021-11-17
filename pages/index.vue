@@ -303,7 +303,12 @@ export default {
           d = d.toISOString().split('T')[0]
           this.carregaConsultas(d);
         }
-
+      },
+      $route(to, from) {
+        if(to.query.cid) {
+          this.consultaId = to.query.cid
+          this.modalEditAtivo = true
+        }
       }
 
   },
@@ -312,6 +317,11 @@ export default {
     this.data_atual = new Date(new Date().getTime() - (offset*60*1000)).toISOString().split('T')[0]
     if(this.$refs['consultaList'])
       this.$refs['consultaList'].scrollTop = 130
+
+    if(this.$route.query.cid) {
+      this.consultaId = this.$route.query.cid
+      this.modalEditAtivo = true
+    }
   },
   computed: {
     consultaLista(){
