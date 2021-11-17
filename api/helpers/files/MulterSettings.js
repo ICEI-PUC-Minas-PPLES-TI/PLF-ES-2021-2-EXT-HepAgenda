@@ -21,10 +21,13 @@ const upload = multer({
   fileFilter: function(req, file, callback) {
     var ext = path.extname(file.originalname).toLowerCase();
     if (!extensoesPermitidas.includes(ext)) {
-      return callback(
-        new Error(
-          `Somente estas extensões de arquivos são permitidas: ${extensoesPermitidas}`
-        )
+      throw new AppError(
+        `Somente estas extensões de arquivos são permitidas: ${extensoesPermitidas}`,
+        422,
+        [
+          "Erro ao enviar arquivo, extensão de arquivo não permitida!",
+          extensoesPermitidas
+        ]
       );
     }
     callback(null, true);

@@ -22,10 +22,16 @@ class Usuario extends Model {
               })
                 .then(usuario => {
                   if (usuario.length != 0)
-                    next(new AppError("Login já utilizado!"));
+                    next(
+                      new AppError("Login já utilizado!", 422, [
+                        `'login' já utilizado!`
+                      ])
+                    );
                   next();
                 })
-                .catch(onError => console.log(onError));
+                .catch(error => {
+                  next(new AppError("Erro interno no servidor!", 500, error));
+                });
             }
           }
         },
@@ -44,10 +50,16 @@ class Usuario extends Model {
               })
                 .then(usuario => {
                   if (usuario.length != 0)
-                    next(new AppError("Email já cadastrado!"));
+                    next(
+                      new AppError("Usuário não encontrado!", 404, [
+                        `Usuário de 'email' ${email} não encontrado!`
+                      ])
+                    );
                   next();
                 })
-                .catch(onError => console.log(onError));
+                .catch(error => {
+                  next(new AppError("Erro interno no servidor!", 500, error));
+                });
             }
           }
         },
@@ -83,9 +95,9 @@ class Usuario extends Model {
         sequelize,
         defaultScope: {
           attributes: {
-            exclude: ['senha'],
+            exclude: ["senha"]
           }
-        },
+        }
       }
     );
   }

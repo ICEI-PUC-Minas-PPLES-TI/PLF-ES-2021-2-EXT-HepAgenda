@@ -1,9 +1,6 @@
-const Tratamento = require("../models/Tratamento");
-const yup = require("yup");
 const TratamentoService = require("../services/TratamentoService");
 const {
-  createTratamentoValidation,
-  updateTratamentoValidation
+  createTratamentoValidation
 } = require("../validation/TratamentoValidation");
 const AppError = require("../errors/AppError");
 
@@ -13,7 +10,7 @@ class TratamentoController {
     try {
       await createTratamentoValidation.validate(request.body, {abortEarly: false});
     } catch (erro) {
-      throw new AppError("Erro de validacao" + erro.message, 422)
+      throw new AppError(erro.name, 422, erro.errors);
     };
 
     const { identificacao, direcionado } = request.body;

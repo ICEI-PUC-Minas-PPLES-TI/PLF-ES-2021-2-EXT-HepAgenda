@@ -3,7 +3,7 @@ const Paciente = require("../models/Paciente");
 const { Op, Sequelize } = require('sequelize')
 
 class PacienteService {
-  async getById(id, atributos) {
+  async findById(id, atributos) {
     const paciente = await Paciente.findOne({
       where: {
         id: id

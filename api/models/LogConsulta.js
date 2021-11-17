@@ -1,4 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
+const Consulta = require("./Consulta");
+const Usuario = require("./Usuario");
 
 class LogConsulta extends Model {
   static init(sequelize) {
@@ -20,11 +22,19 @@ class LogConsulta extends Model {
         },
         usuario_id: {
           type: DataTypes.INTEGER(11).UNSIGNED,
-          allowNull: false
+          allowNull: false,
+          references: {
+            model: Usuario,
+            key: "id"
+          }
         },
         consulta_id: {
           type: DataTypes.INTEGER(11).UNSIGNED,
-          allowNull: false
+          allowNull: false,
+          references: {
+            model: Consulta,
+            key: "id"
+          }
         }
       },
       {
