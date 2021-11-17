@@ -24,10 +24,7 @@ const createUsuarioValidation = yup.object().shape({
   senha: yup
     .string()
     .required("'senha' obrigatória!")
-    .matches(
-      senhaRegEx,
-      "'senha' deve ter no mínimo 8 caracteres, 1 maiúsculo, 1 minúsculo e 1 número!"
-    ),
+    .min(8, "'senha' deve ter no mínimo 8 caracteres!"),
 
   tipo: yup
     .mixed()
@@ -41,10 +38,7 @@ const updateUsuarioValidation = yup.object().shape({
 
   senha: yup
     .string()
-    .matches(
-      senhaRegEx,
-      "Senha deve ter no mínimo 8 caracteres, 1 maiúsculo, 1 minúsculo e 1 número!"
-    ),
+    .min(8, "'senha' deve ter no mínimo 8 caracteres!"),
 
   tipo: yup.mixed().oneOf(tipos, `Tipo deve ser algum destes: ${tipos}.`)
 });

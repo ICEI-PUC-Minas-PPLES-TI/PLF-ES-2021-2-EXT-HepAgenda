@@ -46,7 +46,7 @@ class UsuarioService {
   }
 
   async signin(email, senha) {
-    const usuario = await this.findByEmail(email, ["id", "senha"]);
+    const usuario = await this.findByEmail(email, ["id", "nome", "tipo", "senha"]);
 
     if (!usuario)
       throw new AppError("Usuário não encontrado!", 404, [
@@ -63,7 +63,7 @@ class UsuarioService {
     // 1 dia em segundos: 86400
     const diasDuracao = 90;
     const duracaoSegundos = 86400 * diasDuracao;
-    const token = jwt.sign({ id: usuario.id }, process.env.SECRET_KEY, {
+    const token = jwt.sign({ id: usuario.id, nome: usuario.nome, tipo: usuario.tipo }, process.env.SECRET_KEY, {
       expiresIn: duracaoSegundos
     });
 
@@ -76,7 +76,7 @@ class UsuarioService {
         `Usuário de 'email' ${email} já utilizado!`
       ]);
 
-    if (await this.findByLogin(login))
+    if (login && (await this.findByLogin(login)))
       throw new AppError("Login já utilizado!", 422, [
         `Usuário de 'login' ${login} já utilizado!`
       ]);
