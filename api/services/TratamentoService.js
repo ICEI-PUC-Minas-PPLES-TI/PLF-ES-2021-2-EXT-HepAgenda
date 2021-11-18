@@ -30,6 +30,24 @@ class TratamentoService {
     return tratamento;
   }
 
+  async update(id, identificacao, direcionado, ativo){
+    const tratamento = await Tratamento.findOne({
+      where: {
+        id: id
+      }
+    });
+    if (tratamento == null) {
+      throw new AppError("Tratamento não encontrado!", 404);
+    }
+    await tratamento.update({
+      identificacao, direcionado, ativo
+    });
+
+    return {
+      updated: true
+    };
+  }
+
   async getAll(identificacao = null, direcionado = null, ativo = null, pagina = 1) {
     let filtro = {
       [Op.and]:[]
