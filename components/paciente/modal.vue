@@ -831,7 +831,7 @@ export default {
     pacienteId: function(pacienteId, oldPacienteid){
       if(pacienteId){
         this.getDados(pacienteId);
-      } else if(oldPacienteid > 0 && pacienteId == 0)
+      } else if(pacienteId == 0)
         this.limparDados()
     }
   },
