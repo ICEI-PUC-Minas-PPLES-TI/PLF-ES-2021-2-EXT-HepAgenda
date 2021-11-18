@@ -28,11 +28,8 @@
                     v-model="tratamento.identificacao"
                     hide-details="auto"
                     label="Identificação"
-                    :rules="[
-                          (v) =>
-                            (v || '').length <= 30 ||
-                            'Máximo de 30 caracteres',
-                        ]"
+                    :rules="[v => !!v || 'Identificação é obrigatório']" 
+                    maxlength="30"
                     outlined
                   />
                 </v-col>
@@ -98,7 +95,8 @@ export default {
 
       direcionamentos:[
         {label: "Hepatite B", value: "HEPB"}, 
-        {label: "Hepatite C", value: "HEPC"}
+        {label: "Hepatite C", value: "HEPC"},
+        {label: "Outro", value: "OUTRO"}
       ],
 
       toast: false,
@@ -119,22 +117,30 @@ export default {
   methods: {
     gravar() {
       if (this.$refs.formTratamento.validate()) {
-
         let tratamento = JSON.parse(JSON.stringify(this.tratamento));
-        //consulta.dt_inicio = this.consulta.dt_inicio.replaceAll('-', '/');
 
-        this.$axios
-          .$post("/tratamento", tratamento)
-          .then((response) => {
-            this.limpaDados();
-            this.abreToast("Tratamento adicionado com sucesso!");
-          })
-          .catch((error) => {
-            this.abreToast(error.message);
-          });
-
-        this.$emit('input', false)
-          
+        if( tratamento.id == 0 ){
+          this.$axios
+              .$post("/tratamento", tratamento)
+              .then((response) => {
+                this.limpaDados();
+                this.abreToast("Tratamento adicionado com sucesso!");
+              })
+              .catch((error) => {
+                this.abreToast(error.message);
+              });
+        }else{
+            this.$axios
+              .$put("/tratamento/" + tratamento.id, tratamento)
+              .then((response) => {
+                this.edit(tratamento.id);
+                this.abreToast("Tratamento atualizado com sucesso!");
+              })
+              .catch((error) => {
+                this.abreToast(error.message);
+              });
+        }
+        this.$emit('input', false)                
       }
     },
 

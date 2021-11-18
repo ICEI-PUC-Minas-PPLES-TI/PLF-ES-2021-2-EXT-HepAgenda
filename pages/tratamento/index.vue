@@ -35,7 +35,7 @@
             }"
           >
             <template v-slot:item.direcionado= "{ item }">
-              {{item.direcionado == "HEPB" ? "Hepatite B": "Hepatite C"}}
+              {{item.direcionado == "HEPB" ? "Hepatite B": item.direcionado == "HEPC" ? "Hepatite C" : "Outro"}}
             </template>
             <template v-slot:item.ativo="{ item }">
               <v-switch 
@@ -43,14 +43,14 @@
                 color="primary"
                 inset
                 v-model="item.ativo"
-                @change="alteraStatus(item)"
+                @change="ativaTratamento(item.id)"
               ></v-switch>
               <v-switch 
                 v-if=" item.ativo==1 "
                 color="primary"
                 inset
                 v-model="item.ativo"
-                @change="alteraStatus(item)"
+                @change="desativaTratamento(item.id)"
               ></v-switch>
             </template>
             <template v-slot:item.actions="{ item }">
@@ -143,8 +143,10 @@ export default {
     }
   },
   watch:{
-    modalAtivo: function (modalAtivo){
-      modalAtivo ? false : this.listaTratamentos();
+    modalAtivo: function (value){
+      if(value == false){
+       this.listaTratamentos();
+      }
     },
 
   },
@@ -180,21 +182,27 @@ export default {
       }
     },
 
-    alteraStatus(t) {
+
+
+    desativaTratamento(id){
+      this.$axios.$delete('/tratamento/' + id).then(response => {
+        this.abreToast('Tratamento desativado com sucesso!');
+        this.listaTratamentos();
+      }).catch(error => {
+              console.log("Erro:");
+        console.error(error)
+      })
+    },
+
+    ativaTratamento(id){
       let tratamento = { ativo: 1 };
-
-      if(t.ativo == 1){
-        tratamento = { ativo: 0 };
-      }
-
-      this.$axios.$put('/tratamento/' + t.id,tratamento).then(response => {
+      this.$axios.$put('/tratamento/' + id,tratamento).then(response => {
+        this.abreToast('Tratamento ativado com sucesso!');
         this.listaTratamentos()
-        this.abreToast('Tratamento Ativo!');
         }).catch(error => {
           console.log("Erro:");
         console.error(error)
       })
-
     },
 
     abreToast(mensagem) {
