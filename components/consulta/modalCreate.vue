@@ -89,13 +89,15 @@
               <!-- select de médico -->
               <v-row class="mt-n3">
                 <v-col :md="12" :sm="12" :xl="12" cols="12">
-                  <v-select
+                  <v-autocomplete
                     v-model="consulta.usuario_id_medico"
-                    :clearable="true"
+                    :items="medicos"
                     hide-details="auto"
-                    label="Médico (Opcional)"
-                    item-text="label"
-                    item-value="value"
+                    :clearable="true"
+                    label="Medicos"
+                    item-text="nome"
+                    item-value="id"
+                    :rules="[(v) => !!v || 'Medico obrigatório']"
                     outlined
                   />
                 </v-col>
@@ -154,7 +156,7 @@ export default {
         paciente_id: "",
         status: "AGUARDANDOC",
         descricao: "",
-        //usuario_id_medico:'',
+        usuario_id_medico:'',
         dt_inicio: null,
       },
 
@@ -167,6 +169,7 @@ export default {
   watch: {
     value: function (val) {
       this.listaPacientes();
+      this.listaMedicos();
     },
     "consulta.paciente_id": function (val) {
       this.verificaPrimeraConsulta(val);
@@ -174,8 +177,10 @@ export default {
   },
   mounted() {
     this.listaPacientes();
+    this.listaMedicos();
   },
   methods: {
+
     marcaConsulta() {
       if (this.$refs.formConsulta.validate()) {
 
@@ -219,6 +224,18 @@ export default {
           console.log(error);
         });
     },
+
+    listaMedicos(){
+      this.$axios
+        .$get(`/usuario?medico=true&ativos=1`)
+        .then((response) => {
+          this.medicos = response.dados;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
     abreToast(mensagem) {
       this.toastMensagem = mensagem;
       this.toast = true;
@@ -228,7 +245,7 @@ export default {
         paciente_id: "",
         status: "AGUARDANDOC",
         descricao: "",
-        //usuario_id_medico:'',
+        usuario_id_medico:'',
         dt_inicio: null,
       }
       this.$refs.formConsulta.reset();
@@ -250,6 +267,8 @@ export default {
       return textOne.indexOf(searchText) > -1 || textTwo.indexOf(searchText) > -1 || textThree.indexOf(searchText) > -1
     }
   },
+
+
 };
 </script>
 

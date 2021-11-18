@@ -69,14 +69,17 @@
                   <!-- Medico -->
                   <v-row class="mx-auto">
                     <v-col :md="12" :sm="12" :xl="12" cols="12">
-                      <v-select
-                        v-model="medicoAtual"
-                        hide-details="auto"
-                        :items="medicos"
-                        menu-props="auto"
-                        label="Médico"
-                        outlined
-                      />
+                    <v-autocomplete
+                      v-model="consulta.usuario_id_medico"
+                      :items="medicos"
+                      hide-details="auto"
+                      :clearable="true"
+                      label="Medicos"
+                      item-text="nome"
+                      item-value="id"
+                      :rules="[(v) => !!v || 'Medico obrigatório']"
+                      outlined
+                    />
                     </v-col>
                   </v-row>
                   <!-- Relatório do atendimento -->
@@ -341,7 +344,8 @@ export default {
         { status: "CANCELADO", nome: "Cancelado" },
       ],
 
-      medicos: ["Não definido"],
+      medicos: [{ nome: "", id: 0 }],
+
 
       consulta: {
         id: "",
@@ -365,10 +369,7 @@ export default {
           },
         ],
 
-        usuario_medico: {
-          id: "",
-          nome: "",
-        },
+        usuario_id_medico: '',
 
         arquivos: [
           {
@@ -377,6 +378,7 @@ export default {
           },
         ],
       },
+
 
       medicoAtual: "Não definido",
       menuDataConsulta: false,
@@ -396,7 +398,28 @@ export default {
     },
   },
   methods: {
-    edit(consultaId) {
+
+    listaMedicos(){
+      return new Promise(resolve => {
+        setTimeout(() => {
+          this.$axios
+            .$get(`/usuario?medico=true&ativo=1`)
+            .then((response) => {
+              console.log(response);
+              this.medicos = response.dados;
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+            resolve();
+          }, 50);
+      });
+    },
+
+    async edit(consultaId) {
+
+      await this.listaMedicos();
+
       this.$axios
         .$get("/consulta/" + consultaId)
         .then((response) => {
@@ -548,6 +571,7 @@ export default {
         });
     },
   },
+
 };
 </script>
 
