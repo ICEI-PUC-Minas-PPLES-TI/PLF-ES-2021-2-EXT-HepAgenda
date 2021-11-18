@@ -45,7 +45,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `agenda`.`tratamento` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `identificacao` VARCHAR(30) NOT NULL,
-  `direcionado` ENUM('HEPB', 'HEPC', 'OUTRO') NOT NULL,
+  `direcionado` ENUM('HEPB', 'HEPC') NOT NULL,
   `ativo` TINYINT NOT NULL DEFAULT 1,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;

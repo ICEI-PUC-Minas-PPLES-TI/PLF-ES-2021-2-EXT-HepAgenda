@@ -96,7 +96,6 @@ export default {
       direcionamentos:[
         {label: "Hepatite B", value: "HEPB"}, 
         {label: "Hepatite C", value: "HEPC"},
-        {label: "Outro", value: "OUTRO"}
       ],
 
       toast: false,

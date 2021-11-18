@@ -22,6 +22,7 @@
       <v-card-text class="text-h5">
         <template>
           <v-data-table
+            class="tratamento-table"
             v-if="tratamentos && tratamentos.length > 0"
             :headers="headers"
             :items="tratamentos"
@@ -35,7 +36,7 @@
             }"
           >
             <template v-slot:item.direcionado= "{ item }">
-              {{item.direcionado == "HEPB" ? "Hepatite B": item.direcionado == "HEPC" ? "Hepatite C" : "Outro"}}
+              {{item.direcionado == "HEPB" ? "Hepatite B":  "Hepatite C"}}
             </template>
             <template v-slot:item.ativo="{ item }">
               <v-switch 
@@ -68,9 +69,9 @@
           </v-data-table>
           <span class="d-block text-center" v-else>Nenhum Registro Encontrado</span>
           <br>
-          <!-- <span class="text-muted text-right d-block">
+          <span class="text-muted text-right d-block">
             Total de Items: {{ totalItems }}
-          </span> -->
+          </span>
           <br>
           <v-pagination
             v-model="tabelaPaginaAtual"
@@ -95,7 +96,7 @@
 
 <script src="./index.js"></script>
 
-<style>
+<style lang="scss">
 .div-titulo-btn {
   display: flex;
   flex-direction: row;
@@ -103,6 +104,13 @@
   flex-wrap: wrap;
   justify-content: space-between !important;
 }
+
+.tratamento-table{
+  .v-data-footer{
+    display: none;
+  }
+}
+
 </style>
 
 <script>
@@ -162,7 +170,7 @@ export default {
 
           this.tratamentos = response.dados;      
           this.tabelaPaginas = response.paginas
-          this.totalItems = this.tratamentos.length
+          this.totalItems = response.total
 
       }).catch(error => {
         console.log(error)

@@ -61,7 +61,7 @@ class TratamentoService {
     if(identificacao){
       filtro[Op.and].push({identificacao:{[Op.like]:`%${identificacao}%`}})
     }
-    const limite = 2;
+    const limite = 20;
     const offset = 0;
     const tratamentos = await Tratamento.findAndCountAll({
       where: filtro,
