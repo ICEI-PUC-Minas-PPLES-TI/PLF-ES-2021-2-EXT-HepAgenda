@@ -142,7 +142,7 @@
             v-if="pacientes && pacientes.length > 0"
             :headers="headers"
             :items="pacientes"
-            :items-per-page="30"
+            :items-per-page="-1"
             :loading="tabelaCarregando"
             :disable-sort="true"
             :footer-props="{
