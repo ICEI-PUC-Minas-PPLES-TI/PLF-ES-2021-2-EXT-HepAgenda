@@ -458,6 +458,14 @@ export default {
       if (this.files && this.files.length > 0) {
         if(this.files[0].size > 2000000 ){
           this.abreToast("Arquivo deve ser menor que 2 MB");
+          this.edit(this.consulta.id)
+          this.files = [];
+          return ;
+        }
+        if(this.files[0].name.length > 45){
+          this.abreToast("Erro, nome do arquivo deve ser menor que 45 caracteres");
+          this.edit(this.consulta.id)
+          this.files = [];
           return ;
         }
         let formData = new FormData();
