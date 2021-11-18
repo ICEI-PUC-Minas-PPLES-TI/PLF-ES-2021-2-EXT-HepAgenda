@@ -69,7 +69,7 @@
           </v-data-table>
           <span class="d-block text-center" v-else>Nenhum Registro Encontrado</span>
           <br>
-          <span class="text-muted text-right d-block">
+          <span class="text-muted text-right d-block" id="tratamento-totalItems">
             Total de Items: {{ totalItems }}
           </span>
           <br>
@@ -109,6 +109,10 @@
   .v-data-footer{
     display: none;
   }
+}
+
+#tratamento-totalItems {
+    font-size: 0.6em;
 }
 
 </style>
