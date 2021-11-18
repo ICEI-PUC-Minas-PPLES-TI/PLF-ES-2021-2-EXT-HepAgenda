@@ -129,12 +129,15 @@
           v-if="tipoFiltro == 0"
           v-model="pesquisa"
           prepend-inner-icon="mdi-magnify"
-          append-icon="mdi-filter-plus-outline"
+          append-icon="mdi-magnify"
+          append-outer-icon="mdi-filter-plus-outline"
           label="Nome do Paciente, mãe ou registro HC"
           filled
           rounded
           dense
-          @click:append="tipoFiltro = 1"
+          @click:append-outer="tipoFiltro = 1"
+          @click:append="listaPacientes"
+          @keypress.enter="listaPacientes"
         ></v-text-field>
         <br>
         <template>
@@ -289,7 +292,7 @@ export default {
       this.pacienteId = null
       if(this.tipoFiltro == 0) {
         this.$axios
-          .$get(`/paciente?pagina=${this.tabelaPaginaAtual}`)
+          .$get(`/paciente?pagina=${this.tabelaPaginaAtual}&pesquisar=${this.pesquisa}`)
           .then((response) => {
             this.pacientes = response.dados;
             this.tabelaPaginas = response.paginas
