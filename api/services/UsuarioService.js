@@ -149,7 +149,7 @@ class UsuarioService {
     });
   }
 
-  async getAll(query) {
+  async getAll(query, where) {
     const atributos = Object.keys(Usuario.rawAttributes);
 
     const qtdUsuarios = await Usuario.count();
@@ -160,7 +160,7 @@ class UsuarioService {
     );
 
     const usuarios = await Usuario.findAndCountAll({
-      ...SortPaginateOptions
+      ...SortPaginateOptions, where
     }).catch(function(error) {
       throw new AppError("Erro interno do servidor!", 500, error);
     });

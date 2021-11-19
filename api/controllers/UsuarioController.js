@@ -115,7 +115,7 @@ class UsuarioController {
       total,
       paginas,
       offset
-    } = await usuarioService.getAll(request.query);
+    } = await usuarioService.getAll(request.query, request.query.medico ? { tipo: 'M' } : undefined);
 
     return response.status(200).json({
       dados,
