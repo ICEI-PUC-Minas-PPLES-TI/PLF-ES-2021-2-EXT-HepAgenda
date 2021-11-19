@@ -26,7 +26,8 @@ const multerUploadConsulta = upload.array("arquivos");
 // Tratamento
 router.post('/tratamento', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], tratamentoController.create)
 router.get('/tratamento/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], tratamentoController.get)
-router.get('/tratamento', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], tratamentoController.getAll)
+router.put('/tratamento/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], tratamentoController.update)
+router.get('/tratamento',[autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], tratamentoController.getAll)
 router.delete('/tratamento/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], tratamentoController.delete)
 
 // Usuario

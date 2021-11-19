@@ -88,7 +88,7 @@
                     </v-list-item-icon>
                     <v-list-item-title>Gerenciar Datas Bloqueadas</v-list-item-title>
                   </v-list-item>
-                  <v-list-item v-if="['A','M'].includes($store.getters['login/me'].tipo)" to="/tratamento" disabled>
+                  <v-list-item v-if="['A','M'].includes($store.getters['login/me'].tipo)" to="/tratamento">
                     <v-list-item-icon>
                       <v-icon>mdi-bottle-tonic-plus-outline</v-icon>
                     </v-list-item-icon>

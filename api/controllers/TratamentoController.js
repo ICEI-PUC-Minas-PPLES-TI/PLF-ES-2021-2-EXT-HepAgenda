@@ -1,6 +1,6 @@
 const TratamentoService = require("../services/TratamentoService");
 const {
-  createTratamentoValidation
+  createTratamentoValidation, updateTratamentoValidation
 } = require("../validation/TratamentoValidation");
 const AppError = require("../errors/AppError");
 
@@ -21,6 +21,17 @@ class TratamentoController {
     return response.status(201).json({
       id: tratamento.id
     });
+  }
+
+  async update(request, response) {
+    try {
+      await updateTratamentoValidation.validate(request.body, { abortEarly: false });
+    } catch (erro) {
+      throw new AppError(erro.name, 422, erro.message);
+    }
+
+    const service = new TratamentoService();
+    return response.status(200).json(await service.update(request.params.id, request.body.identificacao, request.body.direcionado, request.body.ativo));
   }
 
   async delete(request,response){
