@@ -15,7 +15,7 @@
           >
             Adicionar tratamento
           </v-btn>
-          <modal v-model="modalAtivo" v-bind:tratamentoId="tratamentoId" />
+          <modal v-model="modalAtivo" v-bind:tratamentoId="tratamentoId" @listaTratamentos="listaTratamentos" />
         </v-card-actions>
       </div>
       <!-- Filtro Simples -->
@@ -153,14 +153,6 @@ export default {
       tabelaPaginas: 1,
       tabelaCarregando: false
     }
-  },
-  watch:{
-    modalAtivo: function (value){
-      if(value == false){
-       this.listaTratamentos();
-      }
-    },
-
   },
   mounted() {
    this.listaTratamentos();

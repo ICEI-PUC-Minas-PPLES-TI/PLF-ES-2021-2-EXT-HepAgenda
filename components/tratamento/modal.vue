@@ -124,6 +124,9 @@ export default {
               .then((response) => {
                 this.limpaDados();
                 this.abreToast("Tratamento adicionado com sucesso!");
+                this.$emit('input', false) 
+                this.$emit('listaTratamentos')                      
+
               })
               .catch((error) => {
                 this.abreToast(error.message);
@@ -134,12 +137,14 @@ export default {
               .then((response) => {
                 this.edit(tratamento.id);
                 this.abreToast("Tratamento atualizado com sucesso!");
+                this.$emit('input', false) 
+                this.$emit('listaTratamentos')                      
               })
               .catch((error) => {
                 this.abreToast(error.message);
               });
         }
-        this.$emit('input', false)                
+          
       }
     },
 
