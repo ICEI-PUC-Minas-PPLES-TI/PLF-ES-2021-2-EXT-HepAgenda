@@ -67,7 +67,6 @@ class PacienteController {
   }
 
   async getAll(request, response) {
-
     const atributos = ['id', 'data_nascimento', 'nome', 'email', 'telefone', 'registro_hc', 'nome_mae', 'peso', 'peso_atualizacao', 'altura'];
 
     let search = request.query.pesquisar
@@ -81,7 +80,7 @@ class PacienteController {
           { registro_hc: { [Op.like]: '%' + search + '%' } },
         ],
       })
-
+      
     if (request.query.ativos)
       where.push({ ativo: true })
 
@@ -124,53 +123,6 @@ class PacienteController {
       throw new AppError("Paciente não encontrado!!", 422, [
         "Não existe paciente com este 'id'!"
       ]);
-  }
-
-  async getAll(request, response) {
-    const atributos = [
-      "id",
-      "data_nascimento",
-      "nome",
-      "email",
-      "telefone",
-      "registro_hc",
-      "nome_mae",
-      "peso",
-      "peso_atualizacao",
-      "altura"
-    ];
-
-    Paciente.findAndCountAll()
-      .then(dados => {
-        const { paginas, ...SortPaginateOptions } = SortPaginate(
-          request.query,
-          atributos,
-          dados.count
-        );
-
-        Paciente.findAll({
-          ...SortPaginateOptions,
-          include: {
-            association: Paciente.associations.Consulta,
-            limit: 1,
-            order: [["dt_inicio", "DESC"]]
-          },
-          where: request.query.ativos ? { ativo: true } : null
-        })
-          .then(pacientes => {
-            response.status(200).json({
-              dados: pacientes,
-              registros: dados.count,
-              paginas: paginas
-            });
-          })
-          .catch(error => {
-            throw new AppError("Erro interno do servidor!", 500, error);
-          });
-      })
-      .catch(error => {
-        throw new AppError("Erro interno do servidor!", 500, error);
-      });
   }
 
   async update(request, response) {

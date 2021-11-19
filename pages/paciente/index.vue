@@ -281,7 +281,18 @@ export default {
   },
   mounted() {
     this.listaPacientes();
-    console.log(filtroPaciente)
+    if(this.$route.query.pid) {
+      this.pacienteId = this.$route.query.pid
+      this.modalAtivo = true
+    }
+  },
+  watch: {
+    $route(to, from) {
+      if(to.query.pid) {
+        this.pacienteId = to.query.pid
+        this.modalAtivo = true
+      }
+    }
   },
   methods: {
     listaPacientes() {
