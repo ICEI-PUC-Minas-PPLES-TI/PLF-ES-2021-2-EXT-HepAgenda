@@ -1,6 +1,6 @@
 const TratamentoService = require("../services/TratamentoService");
 const {
-  createTratamentoValidation
+  createTratamentoValidation, updateTratamentoValidation
 } = require("../validation/TratamentoValidation");
 const AppError = require("../errors/AppError");
 
