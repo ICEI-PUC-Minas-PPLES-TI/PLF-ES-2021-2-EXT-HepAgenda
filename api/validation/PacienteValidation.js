@@ -103,8 +103,11 @@ const pacienteUpdateScheme = yup.object({
 }))
 
 module.exports = {
-    pacienteCreateScheme,
-    pacienteUpdateScheme,
-
-    hepatiteRequiredScheme
+  hepatiteRequiredScheme,
+  hepatiteCCreateScheme,
+  hepatiteBCreateScheme,
+  pacienteCreateScheme,
+  hepatiteCUpdateScheme,
+  hepatiteBUpdateScheme,
+  pacienteUpdateScheme
 }

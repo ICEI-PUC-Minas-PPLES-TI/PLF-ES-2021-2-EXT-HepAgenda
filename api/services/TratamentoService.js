@@ -1,6 +1,6 @@
 const AppError = require("../errors/AppError");
 const Tratamento = require("../models/Tratamento");
-const { Sequelize, Op } = require("sequelize");
+const { Op } = require("sequelize");
 
 class TratamentoService {
 
