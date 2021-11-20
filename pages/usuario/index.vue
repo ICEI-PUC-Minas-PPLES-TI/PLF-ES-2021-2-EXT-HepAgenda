@@ -12,9 +12,20 @@
                 </v-btn>
             </v-card-actions>
         </div>
-        <v-card-text class="text-h5 ">
+        <v-card-text>
             <template>
-                <v-data-table :headers="headers" :items="usuarios" :items-per-page="5" class="elevation-1">
+                <v-data-table
+                    :headers="headers"
+                    :items="usuarios"
+                    :items-per-page="-1"
+                    :loading="tabelaCarregando"
+                    :disable-sort="true"
+                    :footer-props="{
+                        'disable-items-per-page': true,
+                        'disable-pagination': true
+                    }"
+                    class="elevation-1 usuario-table"
+                >
                     <template v-slot:item.tipo="{ item }">
                         {{ formataTipo(item.tipo) }}
                     </template>
@@ -32,6 +43,16 @@
                         </v-btn>
                     </template>
                 </v-data-table>
+                <br>
+                <span class="text-muted text-right d-block">
+                    Total de Items: {{ totalItems }}
+                </span>
+                <br>
+                <v-pagination
+                    v-model="tabelaPaginaAtual"
+                    :length="tabelaPaginas"
+                    @input="listaUsuarios"
+                />
             </template>
         </v-card-text>
     </v-card>
@@ -40,12 +61,17 @@
 
 <script src="./index.js"> </script>
 
-<style>
+<style lang="scss">
 .div-titulo-btn {
     display: flex;
     flex-direction: row;
     align-items: center;
     flex-wrap: wrap;
     justify-content: space-between !important;
+}
+.usuario-table{
+    .v-data-footer{
+        display: none;
+    }
 }
 </style>
