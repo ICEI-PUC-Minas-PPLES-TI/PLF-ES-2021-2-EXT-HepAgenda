@@ -99,7 +99,7 @@
                     <!-- Lista de Consultas -->
                     <v-row>
                       <v-col v-for="(l, ldx) in li" :key="ldx" :md="4" cols="12">
-                        <v-card class="consulta-container-list-card" @click="verConsulta(l.id)">
+                        <v-card class="consulta-container-list-card" @click="abreModal(l.id)">
                           <v-row>
                             <!-- Icone -->
                             <v-col :sm="4" :lg="3" :cols="12">
@@ -214,7 +214,7 @@
       </v-col>
     </v-row>
     <modalCreateConsulta v-model="modalCreateAtivo" />
-    <modalEditConsulta v-model="modalEditAtivo" :data="formEditData" />
+    <modalEditConsulta v-model="modalEditAtivo" v-bind:consultaId="consultaId" />
   </v-container>
 </template>
 
@@ -238,11 +238,11 @@ export default {
       consultas: [],
       filtroDataInicio: null,
       filtroDataFim: null,
-      formEditData: null,
       primeiroCarregamento: true, // Verificar se está recarregando a página, caso não haja consultas na semana vai aparecer a tela de "Nenhum agendamento marcado. "
       bloqueioSemana: [],
       bloqueioDia: [],
       mesCalendario: null,
+      consultaId:''
     }
   },
   async asyncData({ params, app }) {
@@ -288,11 +288,40 @@ export default {
 
     return data
   },
+  watch:{
+      modalCreateAtivo: function(val){
+        if(val == false){
+          let d = new Date()
+          d = d.toISOString().split('T')[0]
+          this.carregaConsultas(d);
+        }
+      },
+
+      modalEditAtivo: function(val){
+        if(val == false){
+          let d = new Date()
+          d = d.toISOString().split('T')[0]
+          this.carregaConsultas(d);
+        }
+      },
+      $route(to, from) {
+        if(to.query.cid) {
+          this.consultaId = to.query.cid
+          this.modalEditAtivo = true
+        }
+      }
+
+  },
   mounted(){
     const offset = new Date().getTimezoneOffset()
     this.data_atual = new Date(new Date().getTime() - (offset*60*1000)).toISOString().split('T')[0]
     if(this.$refs['consultaList'])
       this.$refs['consultaList'].scrollTop = 130
+
+    if(this.$route.query.cid) {
+      this.consultaId = this.$route.query.cid
+      this.modalEditAtivo = true
+    }
   },
   computed: {
     consultaLista(){
@@ -304,7 +333,7 @@ export default {
                     r[a.dt_inicio] = [...r[a.dt_inicio] || [], a];
                     return r;
                   }, {});
-          
+
           for(let i=1;i<=7;i++) { // Completa com os dias que não vieram na api
             const dtInicioCopia = new Date(this.filtroDataInicio)
             dtInicioCopia.setDate(new Date(this.filtroDataInicio).getDate() + i)
@@ -354,13 +383,9 @@ export default {
         case 6: return "Sábado"
       }
     },
-    verConsulta(consultaId){
-      this.$axios
-        .get(`/consulta/${consultaId}`)
-        .then(res => {
-          this.formEditData = res.data
-          this.modalEditAtivo = true
-        })
+    abreModal(id){
+      this.consultaId = id;
+      this.modalEditAtivo = !this.modalEditAtivo;
     },
     scrollLista: debounce(function(ev){
       const t = this
@@ -470,17 +495,17 @@ export default {
     }
     /* Track */
     &::-webkit-scrollbar-track {
-      box-shadow: inset 0 0 5px #EFEFEF; 
+      box-shadow: inset 0 0 5px #EFEFEF;
       border-radius: 10px;
     }
     /* Handle */
     &::-webkit-scrollbar-thumb {
-      background: #D0D0D0; 
+      background: #D0D0D0;
       border-radius: 1px;
     }
     /* Handle on hover */
     &::-webkit-scrollbar-thumb:hover {
-      background: darken(#D0D0D0, 20%); 
+      background: darken(#D0D0D0, 20%);
     }
   }
   .consulta-container-list-items{

@@ -21,7 +21,8 @@ db.connect();
 app.use(function(erro, request, response, next) {
   if (erro instanceof AppError) {
     return response.status(erro.statusCode).json({
-      message: erro.message
+      message: erro.message,
+      error: erro.error
     });
   }
 
