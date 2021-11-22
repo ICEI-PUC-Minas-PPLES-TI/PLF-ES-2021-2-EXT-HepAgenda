@@ -264,7 +264,6 @@ export default {
         data.dia_semanaBloqueio = result
       }).catch(err => {
         console.log('err', err.response)
-        this.$Message.alert(err.response.data.message,'Erro', {type: 'error', msgBody: {style: {width: '30%'}}})
       })
 
     return data
