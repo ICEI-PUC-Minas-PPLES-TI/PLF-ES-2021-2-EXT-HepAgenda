@@ -25,37 +25,37 @@ const multerUploadConsulta = upload.array("arquivos");
 
 // Tratamento
 router.post('/tratamento', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], tratamentoController.create)
-router.get('/tratamento/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], tratamentoController.get)
+router.get('/tratamento/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedicOrViewer], tratamentoController.get)
 router.put('/tratamento/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], tratamentoController.update)
-router.get('/tratamento',[autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], tratamentoController.getAll)
+router.get('/tratamento',[autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedicOrViewer], tratamentoController.getAll)
 router.delete('/tratamento/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], tratamentoController.delete)
 
 // Usuario
 router.post('/signin', usuarioController.signin)
 router.get('/me', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedicOrViewer], usuarioController.me)
 router.post('/usuario', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], usuarioController.create)
-router.get('/usuario/:id', [autenticacaoJwt.verificarToken], usuarioController.get)
-router.get('/usuario', [autenticacaoJwt.verificarToken], usuarioController.getAll)
+router.get('/usuario/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], usuarioController.get)
+router.get('/usuario', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], usuarioController.getAll)
 router.delete("/usuario/:id", [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], usuarioController.delete);
 router.put("/usuario/:id", [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], usuarioController.update);
 
 // Consulta
-router.post('/consulta', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], consultaController.create)
+router.post('/consulta', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], consultaController.create)
 router.get('/consulta/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedicOrViewer], consultaController.get)
 router.get('/consulta', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedicOrViewer], consultaController.getAll)
 router.put('/consulta/:id', multerUploadConsulta, [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], consultaController.update)
-router.post('/primeiraconsulta', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], consultaController.checkPrimeiraConsulta) // Verifica se é a primeira consulta de um paciente
+router.post('/primeiraconsulta', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], consultaController.checkPrimeiraConsulta) // Verifica se é a primeira consulta de um paciente
 
 // Paciente
-router.post('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.create)
+router.post('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], pacienteController.create)
 router.post('/paciente/pesquisa', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedicOrViewer], pacienteController.deepSearch)
 router.put('/paciente/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.update)
-router.get('/paciente/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.get)
-router.get('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], pacienteController.getAll)
+router.get('/paciente/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedicOrViewer], pacienteController.get)
+router.get('/paciente', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedicOrViewer], pacienteController.getAll)
 
 // Arquivo
-router.get('/arquivo/:id', arquivoController.download)
-router.delete('/arquivo/:id', arquivoController.delete)
+router.get('/arquivo/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedicOrViewer], arquivoController.download)
+router.delete('/arquivo/:id', [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdminOrMedic], arquivoController.delete)
 
 // BloqueioDataDia
 router.post("/bloqueio/semana", [autenticacaoJwt.verificarToken, autenticacaoJwt.isAdmin], datasBloqueadasController.createSemana);
