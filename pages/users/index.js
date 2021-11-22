@@ -1,10 +1,6 @@
 
  export default {
   layout: 'main',
-  components: {
- //   modalEditUsuario
-  },
-
   data() {
     return {
       show1: false,
@@ -12,9 +8,7 @@
       dialog: false,
       formData: {
         nome: null,
-        //email: null,
         senha: null,
-        //confirmar_senha: null,
         tipo: " "
       },
       rules: {
@@ -89,9 +83,7 @@
     limparDados() {
       this.formData = {
         nome: null,
-        //email: null,
         senha: null,
-        //confirmar_senha: null,
         tipo: " "
       }
     },
