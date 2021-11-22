@@ -202,8 +202,8 @@ export default {
           alert("Usuario Cadastrado");
         })
         .catch(err => {
-          alert(JSON.stringify(err.response.data));
           console.log(err.response.data);
+          this.$Message.alert(err.response.data.message,'Erro', {type: 'error', msgBody: {style: {width: '30%'}}})
         });
     }
   }

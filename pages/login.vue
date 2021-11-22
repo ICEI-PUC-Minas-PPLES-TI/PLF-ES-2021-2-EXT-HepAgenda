@@ -136,7 +136,6 @@
                 :rules="[rules.required]"
                 :type="show1 ? 'text' : 'password'"
                 label="SENHA"
-                :error-messages="loginErrors"
                 @click:append="show1 = !show1"
                 @keypress.enter="realizarLogin"
                 outlined
@@ -202,13 +201,11 @@ export default {
       },
       rules: {
         required: value => !!value || "Obrigatório!"
-      },
-      loginErrors: []
+      }
     };
   },
   methods: {
     realizarLogin() {
-      this.loginErrors = []
       this.$axios
         .post("/signin", this.formData)
         .then(res => {
@@ -220,7 +217,7 @@ export default {
         })
         .catch(err => {
           console.log(err)
-          this.loginErrors = [err.response.data]
+          this.$Message.alert(err.response.data.message,'Erro', {type: 'error', msgBody: {style: {width: '30%'}}})
         });
     }
   }

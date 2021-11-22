@@ -55,7 +55,7 @@ class UsuarioService {
 
     const senhaValida = bcrypt.compareSync(senha, usuario.senha);
     if (!senhaValida) {
-      throw new AppError("Senha incorreta!", 403, [
+      throw new AppError("Senha incorreta!", 401, [
         `'senha' incorreta para o usuário com 'email' ${email}!`
       ]);
     }
