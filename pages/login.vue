@@ -151,7 +151,45 @@
               </v-btn>
               <!--  <v-checkbox v-model="checkValue" label="LEMBRAR SENHA"></v-checkbox> -->
             </div>
-            <b class="login-forget d-none">Esqueci a Senha</b>
+           <!-- <b class="login-forget d-none">Esqueci a Senha</b> -->
+        
+          <!--teste-->
+          <br>
+          <v-row justify="center">
+
+
+        <span class= "EsqueciSenha"
+      @click.stop="dialog = true"
+    >
+      Esqueci a Senha
+    </span >
+    <v-dialog
+      v-model="dialog"
+      max-width="490"
+    >
+      <v-card>
+        <v-card-text class="text-h6">
+          <br>
+          Para alterar a sua senha entre em contato com o administrador!
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn
+            color="red"
+            text
+            @click="dialog = false"
+          >
+            Fechar
+          </v-btn>
+
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-row>
+          <!--fim teste-->
+
           </v-row>
         </div>
       </v-col>
@@ -195,6 +233,7 @@ export default {
   data() {
     return {
       show1: false,
+      dialog: false,
       formData: {
         email: null,
         senha: null
@@ -231,6 +270,21 @@ export default {
   font-family: "Paytone One", sans-serif;
 }
 
+.EsqueciSenha{
+  font-family: 'Roboto', sans-serif;
+    color:black;
+    text-align: center;
+    display: block;
+    text-transform: uppercase;
+
+}
+.EsqueciSenha:hover {
+  background-color: rgb(196, 192, 192);
+  color:rgb(0, 139, 217);
+   text-decoration: underline;
+   cursor:pointer;
+
+}
 .meio {
   display: block;
 }
