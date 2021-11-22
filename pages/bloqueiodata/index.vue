@@ -262,10 +262,9 @@ export default {
         })
         result = result.filter(n => n)
         data.dia_semanaBloqueio = result
-
-        //data.consultas = res.data.dados
       }).catch(err => {
         console.log('err', err.response)
+        this.$Message.alert(err.response.data.message,'Erro', {type: 'error', msgBody: {style: {width: '30%'}}})
       })
 
     return data
@@ -283,8 +282,8 @@ export default {
             dia_semana: i,
             ativo: this.dia_semanaBloqueio.indexOf(i) >= 0
           })
-          .catch(() => {
-            alert('Erro ao atualizar bloqueio')
+          .catch(err => {
+            this.$Message.alert(err.response.data.message,'Erro', {type: 'error', msgBody: {style: {width: '30%'}}})
           })
       }
     },
@@ -310,7 +309,7 @@ export default {
           this.atualizaListaDias()
         }).catch(err => {
           console.log(err.response)
-          alert('Houve um erro ao cadastrar a data bloqueada. Erro: ' + err.response.data.message)
+          this.$Message.alert(err.response.data.message,'Erro', {type: 'error', msgBody: {style: {width: '30%'}}})
         })
     },
     mudaDiaSelecionado(){
@@ -330,7 +329,7 @@ export default {
           this.modalConfirm = false
         }).catch(err => {
           console.log(err.response)
-          alert('Houve um erro ao remover o bloqueio')
+          this.$Message.alert(err.response.data.message,'Erro', {type: 'error', msgBody: {style: {width: '30%'}}})
         })
     },
     atualizaListaDias(){

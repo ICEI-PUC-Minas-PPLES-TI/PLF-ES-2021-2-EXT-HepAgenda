@@ -311,6 +311,7 @@ export default {
           })
           .catch((error) => {
             console.log(error);
+            this.$Message.alert(error.response.data.message,'Erro', {type: 'error', msgBody: {style: {width: '30%'}}})
           }).finally(() => {
             this.tabelaCarregando = false
           });
@@ -329,6 +330,7 @@ export default {
           })
           .catch((error) => {
             console.log(error);
+            this.$Message.alert(error.response.data.message,'Erro', {type: 'error', msgBody: {style: {width: '30%'}}})
           }).finally(() => {
             this.tabelaCarregando = false
           });;
@@ -350,8 +352,8 @@ export default {
           this.listaPacientes();
         })
         .catch((err) => {
-          //this.abreToast(err.response.data);
           console.log(err);
+          this.$Message.alert(err.response.data.message,'Erro', {type: 'error', msgBody: {style: {width: '30%'}}})
         });
 
       this.modalConfirm = false;

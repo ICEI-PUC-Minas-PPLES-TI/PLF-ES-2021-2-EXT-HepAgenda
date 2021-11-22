@@ -163,13 +163,12 @@ export default {
       this.tabelaCarregando = true;
 
       this.$axios.$get(`/tratamento?pagina=${this.tabelaPaginaAtual}`).then(response => {
-
-          this.tratamentos = response.dados;      
-          this.tabelaPaginas = response.paginas
-          this.totalItems = response.total
-
+        this.tratamentos = response.dados;      
+        this.tabelaPaginas = response.paginas
+        this.totalItems = response.total
       }).catch(error => {
         console.log(error)
+        this.$Message.alert(error.response.data.message,'Erro', {type: 'error', msgBody: {style: {width: '30%'}}})
       }).finally(() =>{
         this.tabelaCarregando = false
       })
@@ -193,8 +192,8 @@ export default {
         this.abreToast('Tratamento desativado com sucesso!');
         this.listaTratamentos();
       }).catch(error => {
-              console.log("Erro:");
         console.error(error)
+        this.$Message.alert(error.response.data.message,'Erro', {type: 'error', msgBody: {style: {width: '30%'}}})
       })
     },
 
@@ -203,9 +202,9 @@ export default {
       this.$axios.$put('/tratamento/' + id,tratamento).then(response => {
         this.abreToast('Tratamento ativado com sucesso!');
         this.listaTratamentos()
-        }).catch(error => {
-          console.log("Erro:");
+      }).catch(error => {
         console.error(error)
+        this.$Message.alert(error.response.data.message,'Erro', {type: 'error', msgBody: {style: {width: '30%'}}})
       })
     },
 

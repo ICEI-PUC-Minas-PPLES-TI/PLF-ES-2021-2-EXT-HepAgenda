@@ -429,6 +429,7 @@ export default {
           },500)
         }).catch(err => {
           console.log('err', err.response)
+          this.$Message.alert(err.response.data.message,'Erro', {type: 'error', msgBody: {style: {width: '30%'}}})
         })
     },
     mudaMesCalendario(mes, ano){
@@ -439,6 +440,7 @@ export default {
           this.bloqueioDia = res.data
         }).catch(err => {
           console.log('err', err.response)
+          this.$Message.alert(err.response.data.message,'Erro', {type: 'error', msgBody: {style: {width: '30%'}}})
         })
     },
     datasPermitidas(val){
