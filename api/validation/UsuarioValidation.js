@@ -1,13 +1,12 @@
 const yup = require("yup");
-const { senhaRegEx, telefoneRegExp } = require("../helpers/Regex");
+const { telefoneRegExp } = require("../helpers/Regex");
 
 const tipos = ["A", "M", "V"];
 
 const signinUsuarioValidation = yup.object().shape({
-  email: yup
+  login: yup
     .string()
-    .email()
-    .required("'email' obrigatório!"),
+    .required("'login' obrigatório!"),
   senha: yup.string().required("'senha' obrigatória!")
 });
 

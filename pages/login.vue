@@ -121,7 +121,7 @@
               <v-text-field
                 class="caixaDeTexto"
                 hide-details="auto"
-                v-model="formData.email"
+                v-model="formData.login"
                 label="LOGIN"
                 outlined
                 :rules="[rules.required]"
@@ -196,7 +196,7 @@ export default {
     return {
       show1: false,
       formData: {
-        email: null,
+        login: null,
         senha: null
       },
       rules: {
