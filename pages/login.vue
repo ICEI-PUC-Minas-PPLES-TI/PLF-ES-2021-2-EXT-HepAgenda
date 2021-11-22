@@ -153,10 +153,7 @@
               <!--  <v-checkbox v-model="checkValue" label="LEMBRAR SENHA"></v-checkbox> -->
             </div>
            <!-- <b class="login-forget d-none">Esqueci a Senha</b> -->
-         <!--  <span class="login-forget">Esqueci a Senha</span>-->
-
-
-
+        
           <!--teste-->
           <br>
           <v-row justify="center">
@@ -167,20 +164,11 @@
     >
       Esqueci a Senha
     </span >
-    <!--<v-btn text
-      @click.stop="dialog = true"
-    >
-      Esqueci a Senha
-    </v-btn> -->
     <v-dialog
       v-model="dialog"
       max-width="490"
     >
       <v-card>
-       <!-- <v-card-title class="text-h5">
-          Para alterar a sua senha entre em contato com o administrador
-        </v-card-title> -->
-
         <v-card-text class="text-h6">
           <br>
           Para alterar a sua senha entre em contato com o administrador!
@@ -202,7 +190,7 @@
     </v-dialog>
   </v-row>
           <!--fim teste-->
-          
+
           </v-row>
         </div>
       </v-col>
