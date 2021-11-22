@@ -41,7 +41,10 @@
           tipo: '',
         }
       ],
-      teste: '',
+      tabelaPaginaAtual: 1,
+      tabelaPaginas: 1,
+      totalItems: 1,
+      tabelaCarregando: false,
     }
   },
   mounted(){
@@ -51,7 +54,7 @@
  methods: {
 
     editItem(item){
-      console.log(item)
+      this.limparDados()
       //pegar cada item do formData
       this.formData.nome=item.nome
       this.formData.tipo=item.tipo
@@ -61,13 +64,17 @@
     },
 
     listaUsuarios() {
-      this.$axios.$get('/usuario').then(response => {
+      this.tabelaCarregando = true
+      this.$axios.$get(`/usuario?pagina=${this.tabelaPaginaAtual}`).then(response => {
         this.usuarios = response.dados;
-        console.log(this.usuarios);
+        this.tabelaPaginas = response.paginas
+        this.totalItems = response.total
       }).catch(error => {
         console.log(error)
         this.errored = true
-      })
+      }).finally(() => {
+        this.tabelaCarregando = false
+      });
     },
 
     formataTipo(tipo){
@@ -89,18 +96,19 @@
     },
 
     atualizarUsuario() {
-      console.log("Botao Salvar apertado");
-      this.$axios
-        .put('/usuario/' + this.formData.id, this.formData)
-        .then(res => {
-          this.limparDados();
-          this.dialog = false;
-          alert("Usuario Atualizado!");
-        })
-        .catch(err => {
-          alert(JSON.stringify(err.response.data));
-          console.log(err.response.data);
-        });
+      if (this.$refs.formUsuario.validate()){
+        this.$axios
+          .put('/usuario/' + this.formData.id, this.formData)
+          .then(res => {
+            this.limparDados();
+            this.dialog = false;
+            alert("Usuario Atualizado!");
+          })
+          .catch(err => {
+            alert(JSON.stringify(err.response.data));
+            console.log(err.response.data);
+          });
+      }
     }
 
   }

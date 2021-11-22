@@ -138,6 +138,7 @@
                 label="SENHA"
                 :error-messages="loginErrors"
                 @click:append="show1 = !show1"
+                @keypress.enter="realizarLogin"
                 outlined
               ></v-text-field>
               <br>
@@ -213,7 +214,8 @@ export default {
         .then(res => {
           this.$store.dispatch('login/userLogin', {
             loginData: res.data.acessoToken,
-            router: this.$router
+            router: this.$router,
+            axios: this.$axios
           })
         })
         .catch(err => {

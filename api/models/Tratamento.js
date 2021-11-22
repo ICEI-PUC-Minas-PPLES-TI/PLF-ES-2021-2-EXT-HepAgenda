@@ -5,17 +5,17 @@ class Tratamento extends Model {
     super.init(
       {
         id: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.INTEGER(10),
           required: true,
           primaryKey: true,
           autoIncrement: true
         },
         identificacao: {
-          type: DataTypes.STRING,
+          type: DataTypes.STRING(255),
           allowNull: false
         },
         direcionado: {
-          type: DataTypes.ENUM("HEPB", "HEPC"),
+          type: DataTypes.ENUM("HEPB", "HEPC", "OUTRO"),
           allowNull: false
         },
         ativo: {

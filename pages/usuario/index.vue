@@ -7,41 +7,52 @@
           <span class="text-h6">Gerenciamento de Usuário</span>
         </v-card-title>
         <v-card-actions>
-          <v-btn disabled color="primary" background="primary">
+          <v-btn :to="'/usuario/criar'" color="primary" background="primary">
             Criar usuário
           </v-btn>
         </v-card-actions>
       </div>
-      <v-card-text class="text-h5 ">
+      <v-card-text>
         <template>
-          <div>
-            <v-data-table
-              :headers="headers"
-              :items="usuarios"
-              :items-per-page="5"
-              class="elevation-1"
-            >
-              <template v-slot:item.tipo="{ item }">
-                {{ formataTipo(item.tipo) }}
-              </template>
-              <template v-slot:item.actions="{ item }">
-                <!--icone de editar    disabled-->
-                <v-icon color="primary" class="mr-2" @click="editItem(item)">
-                  mdi-square-edit-outline
-                </v-icon>
-
-                <!--icone da lixeira-->
-                <v-icon disabled color="primary" @click="deleteItem(item)">
-                  mdi-trash-can-outline
-                </v-icon>
-              </template>
-              <template v-slot:no-data>
-                <v-btn color="primary" @click="initialize">
-                  Reset
-                </v-btn>
-              </template>
-            </v-data-table>
-          </div>
+          <v-data-table
+            :headers="headers"
+            :items="usuarios"
+            :items-per-page="-1"
+            :loading="tabelaCarregando"
+            :disable-sort="true"
+            :footer-props="{
+                'disable-items-per-page': true,
+                'disable-pagination': true
+            }"
+            class="elevation-1 usuario-table"
+          >
+            <template v-slot:item.tipo="{ item }">
+              {{ formataTipo(item.tipo) }}
+            </template>
+            <template v-slot:item.actions="{ item }">
+              <v-icon color="primary" class="mr-2" @click="editItem(item)">
+                mdi-square-edit-outline
+              </v-icon>
+              <v-icon disabled color="primary" @click="deleteItem(item)">
+                mdi-trash-can-outline
+              </v-icon>
+            </template>
+            <template v-slot:no-data>
+              <v-btn color="primary" @click="initialize">
+                Reset
+              </v-btn>
+            </template>
+          </v-data-table>
+          <br>
+          <span class="text-muted text-right d-block">
+            Total de Items: {{ totalItems }}
+          </span>
+          <br>
+          <v-pagination
+            v-model="tabelaPaginaAtual"
+            :length="tabelaPaginas"
+            @input="listaUsuarios"
+          />
         </template>
       </v-card-text>
     </v-card>
@@ -89,55 +100,58 @@
         </v-card-title>
         <v-card-text>
           <v-container>
-            <v-row>
-              <v-col cols="12" sm="12" md="12">
-                <v-text-field
-                  v-model="formData.nome"
-                  hide-details="auto"
-                  label="NOME"
-                  required
-                  outlined
-                ></v-text-field>
-              </v-col>
-              <!--SENHA-->
-              <v-col cols="12">
-                <v-text-field
-                  v-model="formData.senha"
-                  hide-details="auto"
-                   
-                  :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                  :rules="[rules.required, rules.min]"
-                  :type="show1 ? 'text' : 'password'"
-                  @click:append="show1 = !show1"
+            <v-form ref="formUsuario" lazy-validation>
+              <v-row>
+                <v-col cols="12" sm="12" md="12">
+                  <v-text-field
+                    v-model="formData.nome"
+                    hide-details="auto"
+                    label="NOME"
+                    required
+                    outlined
+                    maxlength="120"
+                  ></v-text-field>
+                </v-col>
+                <!--SENHA-->
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="formData.senha"
+                    hide-details="auto"
+                    
+                    :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                    :rules="[rules.required, rules.min]"
+                    :type="show1 ? 'text' : 'password'"
+                    @click:append="show1 = !show1"
 
-                  label="SENHA"
-                  required
-                  outlined
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" sm="12">
-                <v-select
-                  :items="[
-                    {
-                      value: 'A',
-                      text: 'Administrador'
-                    },
-                    {
-                      value: 'M',
-                      text: 'Médico'
-                    },
-                    {
-                      value: 'V',
-                      text: 'Visualizador'
-                    }
-                  ]"
-                  label="TIPO"
-                  v-model="formData.tipo"
-                  required
-                  outlined
-                ></v-select>
-              </v-col>
-            </v-row>
+                    label="SENHA"
+                    required
+                    outlined
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" sm="12">
+                  <v-select
+                    :items="[
+                      {
+                        value: 'A',
+                        text: 'Administrador'
+                      },
+                      {
+                        value: 'M',
+                        text: 'Médico'
+                      },
+                      {
+                        value: 'V',
+                        text: 'Visualizador'
+                      }
+                    ]"
+                    label="TIPO"
+                    v-model="formData.tipo"
+                    required
+                    outlined
+                  ></v-select>
+                </v-col>
+              </v-row>
+            </v-form>
           </v-container>
           <!-- <small>*indicates required field</small> -->
         </v-card-text>
@@ -157,15 +171,21 @@
 
 <script src="./index.js"></script>
 
-<style>
+<style lang="scss">
 .img {
   text-align: center;
 }
+
 .div-titulo-btn {
   display: flex;
   flex-direction: row;
   align-items: center;
   flex-wrap: wrap;
   justify-content: space-between !important;
+}
+.usuario-table{
+    .v-data-footer{
+        display: none;
+    }
 }
 </style>

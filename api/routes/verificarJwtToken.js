@@ -1,23 +1,26 @@
 const jwt = require("jsonwebtoken");
+const AppError = require("../errors/AppError.js");
 const Usuario = require("../models/Usuario.js");
 
 const verificarToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
 
   if (!token) {
-    return res.status(403).send({
-      autenticado: false,
-      message: "Token de autenticação não fornecido."
-    });
+    throw new AppError(
+      "Falha ao autenticar no sistema, autenticação não fornecida.!!",
+      403,
+      ["Token de autenticação não fornecido.!!"]
+    );
   }
 
   jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
     if (err) {
-      return res.status(403).send({
-        autenticado: false,
-        message: "Falha ao autenticar o token. Erro -> " + err
-      });
+      throw new AppError("Falha ao autenticar no sistema!!", 403, [
+        "Falha ao autenticar o token!!",
+        err
+      ]);
     }
+    req.user = decoded;
     req.userId = decoded.id;
     next();
   });
@@ -30,8 +33,9 @@ const isAdmin = (req, res, next) => {
       return;
     }
 
-    res.status(403).send("Necessita de ser um usuário administrador!");
-    return;
+    throw new AppError("Necessita de ser um usuário administrador!", 403, [
+      "Token fornecido não é de um usuário administrador!"
+    ]);
   });
 };
 
@@ -42,8 +46,11 @@ const isAdminOrMedic = (req, res, next) => {
       return;
     }
 
-    res.status(403).send("Necessita de ser um usuário administrador ou médico!");
-    return;
+    throw new AppError(
+      "Necessita de ser um usuário administrador ou médico!",
+      403,
+      ["Token fornecido não é de um usuário administrador ou médico!"]
+    );
   });
 };
 
@@ -54,8 +61,13 @@ const isAdminOrMedicOrViewer = (req, res, next) => {
       return;
     }
 
-    res.status(403).send("Necessita de ser um usuário administrador ou médico ou visualizador!");
-    return;
+    throw new AppError(
+      "Necessita de ser um usuário administrador ou médico ou visualizador!",
+      403,
+      [
+        "Token fornecido não é de um usuário administrador ou médico ou visualizador!"
+      ]
+    );
   });
 };
 
