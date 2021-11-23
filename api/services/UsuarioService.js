@@ -46,7 +46,7 @@ class UsuarioService {
   }
 
   async signin(email, senha) {
-    const usuario = await this.findByEmail(email, ["id", "nome", "tipo", "senha"]);
+    const usuario = await this.findByEmail(email, ["id", "nome", "tipo", "senha", "data_expira"]);
 
     if (!usuario)
       throw new AppError("Usuário não encontrado!", 404, [
@@ -60,6 +60,16 @@ class UsuarioService {
       ]);
     }
 
+    if(usuario.dataValues.data_expira!=null) {
+      const dataAtual = new Date(Date.now());
+      const dataExpira = new Date(usuario.dataValues.data_expira);
+      if(!(dataAtual.getTime()<dataExpira.getTime())) {
+        throw new AppError("Usuário expirado!", 401, [
+          "Usuário já expirado!"
+        ]);
+      }
+    }
+
     // 1 dia em segundos: 86400
     const diasDuracao = 90;
     const duracaoSegundos = 86400 * diasDuracao;
@@ -70,7 +80,7 @@ class UsuarioService {
     return { token, diasDuracao };
   }
 
-  async create(nome, email, telefone, login, senha, tipo) {
+  async create(nome, email, telefone, login, senha, tipo, data_expira) {
     if (await this.findByEmail(email))
       throw new AppError("Email já utilizado!", 422, [
         `Usuário de 'email' ${email} já utilizado!`
@@ -88,7 +98,8 @@ class UsuarioService {
       telefone,
       login: login ? login : email,
       senha: senhaCriptografada,
-      tipo
+      tipo,
+      data_expira: data_expira ? data_expira : null,
     }).catch(error => {
       throw new AppError("Erro interno do servidor!", 500, error);
     });
@@ -101,8 +112,15 @@ class UsuarioService {
     return usuario;
   }
 
-  async update(id, nome, telefone, senha, tipo) {
-    const usuario = await this.findById(id);
+  async update(id, nome, telefone, senha, tipo, data_expira, data_excluido) {
+    const usuario = await Usuario.findOne({
+      where: {
+        id: id
+      },
+      paranoid: false
+    }).catch(error => {
+      throw new AppError("Erro interno do servidor!", 500, error);
+    });
 
     if (!usuario)
       throw new AppError("Usuário não encontrado!", 404, [
@@ -113,13 +131,27 @@ class UsuarioService {
     if (senha) senhaTemp = bcrypt.hashSync(senha, 8);
     const senhaCriptografada = senhaTemp;
 
+    if (data_excluido != null) {
+      await this.deleteById(id);
+    }
+    if (data_excluido == null) {
+      usuario.setDataValue('data_excluido', null);
+    }
+
+    let dataExpira;
+    if (data_expira && data_expira != null) {
+      dataExpira = new Date(data_expira).toISOString();
+    }
+
     await usuario
       .update({
         nome: nome,
         telefone: telefone,
         senha: senhaCriptografada,
-        tipo: tipo
-      })
+        tipo: tipo,
+        data_expira: dataExpira == null ? null : dataExpira,
+        data_excluido: data_excluido
+      }, { paranoid: false })
       .catch(error => {
         throw new AppError("Erro interno do servidor!", 500, error);
       });
@@ -130,6 +162,24 @@ class UsuarioService {
       ]);
 
     return usuario;
+  }
+
+  async forceDeleteById(id) {
+    const usuario = await this.findById(id);
+
+    if (!usuario)
+      throw new AppError("Usuário não encontrado!", 404, [
+        `Usuário de 'id' ${id} não encontrado!`
+      ]);
+
+    await Usuario.destroy({
+      where: {
+        id: id
+      },
+      force: true
+    }).catch(error => {
+      throw new AppError("Erro interno do servidor!", 500, error);
+    });
   }
 
   async deleteById(id) {
@@ -161,7 +211,7 @@ class UsuarioService {
 
     const usuarios = await Usuario.findAndCountAll({
       ...SortPaginateOptions, where
-    }).catch(function(error) {
+    }).catch(function (error) {
       throw new AppError("Erro interno do servidor!", 500, error);
     });
 

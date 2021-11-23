@@ -1,5 +1,5 @@
 const yup = require("yup");
-const { senhaRegEx, telefoneRegExp } = require("../helpers/Regex");
+const { telefoneRegExp } = require("../helpers/Regex");
 
 const tipos = ["A", "M", "V"];
 
@@ -26,6 +26,9 @@ const createUsuarioValidation = yup.object().shape({
     .required("'senha' obrigatória!")
     .min(8, "'senha' deve ter no mínimo 8 caracteres!"),
 
+  data_expira: yup
+    .date().nullable(),
+
   tipo: yup
     .mixed()
     .oneOf(tipos, `'tipo' deve ser algum destes: ${tipos}.`)
@@ -35,6 +38,12 @@ const createUsuarioValidation = yup.object().shape({
 const updateUsuarioValidation = yup.object().shape({
   nome: yup.string(),
   telefone: yup.string().matches(telefoneRegExp, "Telefone inválido!"),
+
+  data_excluido: yup
+    .date().nullable(),
+
+  data_expira: yup
+    .date().nullable(),
 
   senha: yup
     .string()
