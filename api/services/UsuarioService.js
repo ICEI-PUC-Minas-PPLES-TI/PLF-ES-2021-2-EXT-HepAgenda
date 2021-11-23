@@ -131,7 +131,7 @@ class UsuarioService {
     if (senha) senhaTemp = bcrypt.hashSync(senha, 8);
     const senhaCriptografada = senhaTemp;
 
-    if(data_excluido==false || data_excluido==0)
+    if(data_excluido == false)
       data_excluido = null;
 
     if (data_excluido != null) {
