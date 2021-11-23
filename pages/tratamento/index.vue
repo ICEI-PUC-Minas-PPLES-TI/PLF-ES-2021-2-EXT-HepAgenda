@@ -15,14 +15,14 @@
           >
             Adicionar tratamento
           </v-btn>
-          <modal v-model="modalAtivo" v-bind:tratamentoId="tratamentoId" @listaTratamentos="listaTratamentos" />
+          <modalTratamento v-model="modalAtivo" v-bind:tratamentoId="tratamentoId" @listaTratamentos="listaTratamentos" />
         </v-card-actions>
       </div>
       <!-- Filtro Simples -->
       <v-card-text class="text-h5">
         <template>
           <v-data-table
-            class="tratamento-table"
+            class="elevation-1 tratamento-table"
             v-if="tratamentos && tratamentos.length > 0"
             :headers="headers"
             :items="tratamentos"
@@ -118,20 +118,20 @@
 </style>
 
 <script>
-import modal from '@/components/tratamento/modal.vue'
+import modalTratamento from '@/components/tratamento/modal.vue'
 export default {
   layout: "main",
   components: {
-    modal,
+    modalTratamento,
   },
 
   data() {
     return {
       headers: [
-        { text: 'Identificação', value: 'identificacao' },
-        { text: 'Direcionamento', value: 'direcionado' },
-        { text: 'Ativo', value: 'ativo' },
-        { text: 'Ação', value: 'actions', sortable: false },
+        { text: 'IDENTIFICAÇÃO', value: 'identificacao' },
+        { text: 'DIRECIONAMENTO', value: 'direcionado' },
+        { text: 'ATIVO', value: 'ativo' },
+        { text: 'AÇÕES', value: 'actions', sortable: false },
       ],
       tratamentos: [
         {
@@ -146,7 +146,6 @@ export default {
       toast: false,
       toastMensagem: '',
       modalAtivo: false,
-      dialog: false,
 
       totalItems: 0,
       tabelaPaginaAtual: 1,
