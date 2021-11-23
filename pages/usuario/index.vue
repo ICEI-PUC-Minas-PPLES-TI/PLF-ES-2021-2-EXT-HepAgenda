@@ -256,7 +256,7 @@ import modalUsuario from '../../components/usuario/modal.vue';
 
     listaUsuarios() {
       this.tabelaCarregando = true
-      this.$axios.$get(`/usuario?pagina=${this.tabelaPaginaAtual}`).then(response => {
+      this.$axios.$get(`/usuario?pagina=${this.tabelaPaginaAtual}&limite=10`).then(response => {
         this.usuarios = response.dados;
         this.tabelaPaginas = response.paginas
         this.totalItems = response.total
