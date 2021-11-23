@@ -44,7 +44,11 @@ class UsuarioController {
       throw new AppError(error.name, 422, error.errors);
     }
 
-    const { nome, email, telefone, login, senha, tipo } = request.body;
+    const { nome, email, telefone, login, senha, tipo, data_expira } = request.body;
+
+    let dataExpira;
+    if (data_expira)
+      dataExpira = new Date(data_expira).toISOString();
 
     const usuarioService = new UsuarioService();
     const usuario = await usuarioService.create(
@@ -53,7 +57,8 @@ class UsuarioController {
       telefone,
       login,
       senha,
-      tipo
+      tipo,
+      dataExpira
     );
 
     return response.status(201).json({
@@ -66,7 +71,7 @@ class UsuarioController {
     const id = request.params.id;
 
     const usuarioService = new UsuarioService();
-    await usuarioService.deleteById(id);
+    await usuarioService.forceDeleteById(id);
 
     return response.status(204).json({});
   }
@@ -81,11 +86,12 @@ class UsuarioController {
       throw new AppError(error.name, 422, error.errors);
     }
 
-    const { nome, telefone, senha, tipo } = request.body;
+    const { nome, telefone, senha, tipo, data_expira, data_excluido } = request.body;
     const id = request.params.id;
 
     const usuarioService = new UsuarioService();
-    await usuarioService.update(id, nome, telefone, senha, tipo);
+
+    await usuarioService.update(id, nome, telefone, senha, tipo, data_expira, data_excluido);
 
     return response.status(200).json({});
   }
