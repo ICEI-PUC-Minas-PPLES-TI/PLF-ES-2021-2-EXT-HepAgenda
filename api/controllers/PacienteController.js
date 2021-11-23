@@ -80,30 +80,24 @@ class PacienteController {
           { registro_hc: { [Op.like]: '%' + search + '%' } },
         ],
       })
-      
+
     if (request.query.ativos)
       where.push({ ativo: true })
 
+    const qtdPacientes = await Paciente.count();
+    const { paginas, ...SortPaginateOptions } = SortPaginate(request.query, atributos, qtdPacientes);
+
     Paciente.findAndCountAll({
-      where
+      ...SortPaginateOptions,
+      where,
+      include: {
+        association: Paciente.associations.uconsulta,
+        order: [['dt_inicio', 'DESC']],
+      },
+      group: ['paciente.id'],
     })
-      .then((dados) => {
-        const { paginas, ...SortPaginateOptions } = SortPaginate(request.query, atributos, dados.count);
-        Paciente.findAll({
-          ...SortPaginateOptions,
-          where,
-          include: {
-            association: Paciente.associations.uconsulta,
-            order: [['dt_inicio', 'DESC']],
-          },
-          group: ['paciente.id'],
-        })
-          .then((pacientes) => {
-            response.status(200).json({ 'dados': pacientes, 'registros': dados.count, 'paginas': paginas });
-          })
-          .catch((err) => {
-            throw new AppError("Erro interno do servidor!", 500, err);
-          });
+      .then((pacientes) => {
+        response.status(200).json({ 'dados': pacientes.rows, 'registros': qtdPacientes, 'paginas': paginas });
       })
   };
 
