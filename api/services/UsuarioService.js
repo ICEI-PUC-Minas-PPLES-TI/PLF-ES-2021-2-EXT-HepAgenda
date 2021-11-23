@@ -133,8 +133,7 @@ class UsuarioService {
 
     if (data_excluido != null) {
       await this.deleteById(id);
-    }
-    if (data_excluido == null) {
+    } else if (data_excluido == null) {
       usuario.setDataValue('data_excluido', null);
     }
 
