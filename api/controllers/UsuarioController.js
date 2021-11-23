@@ -17,10 +17,10 @@ class UsuarioController {
       throw new AppError(error.name, 422, error.errors);
     }
 
-    const { email, senha } = request.body;
+    const { login, senha } = request.body;
 
     const usuarioService = new UsuarioService();
-    const { token, diasDuracao } = await usuarioService.signin(email, senha);
+    const { token, diasDuracao } = await usuarioService.signin(login, senha);
 
     return response.status(200).send({
       acessoToken: token,

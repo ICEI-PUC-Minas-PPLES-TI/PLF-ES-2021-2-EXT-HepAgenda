@@ -45,18 +45,22 @@ class UsuarioService {
     return usuario;
   }
 
-  async signin(email, senha) {
-    const usuario = await this.findByEmail(email, ["id", "nome", "tipo", "senha", "data_expira"]);
+  async signin(login, senha) {
+    let usuario;
+    usuario = await this.findByEmail(login, ["id", "nome", "tipo", "senha", "data_expira"]);
+    if(!usuario)
+      usuario = await this.findByLogin(login, ["id", "nome", "tipo", "senha", "data_expira"]);
+
 
     if (!usuario)
       throw new AppError("Usuário não encontrado!", 404, [
-        `Usuário de 'email' ${email} não encontrado!`
+        `Usuário de login ${login} não encontrado!`
       ]);
 
     const senhaValida = bcrypt.compareSync(senha, usuario.senha);
     if (!senhaValida) {
       throw new AppError("Senha incorreta!", 401, [
-        `'senha' incorreta para o usuário com 'email' ${email}!`
+        `'senha' incorreta para o usuário com 'email' ${login}!`
       ]);
     }
 
