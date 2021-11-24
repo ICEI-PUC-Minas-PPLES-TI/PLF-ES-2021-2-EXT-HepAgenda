@@ -8,15 +8,17 @@
           <span class="text-h6">Pacientes</span>
         </v-card-title>
         <v-card-actions>
-          <v-btn
-            v-if="['A'].includes($store.getters['login/me'].tipo)"
-            color="primary"
-            background="primary"
-            class="div-titulo-btn"
-            @click="abreModal(0)"
-          >
-            Adicionar Paciente
-          </v-btn>
+          <client-only>
+            <v-btn
+              v-if="['A'].includes($store.getters['login/me'].tipo)"
+              color="primary"
+              background="primary"
+              class="div-titulo-btn"
+              @click="abreModal(0)"
+            >
+              Adicionar Paciente
+            </v-btn>
+          </client-only>
         </v-card-actions>
       </div>
       <v-card-text>
@@ -166,20 +168,22 @@
               {{ item.uconsulta ? formataData(item.uconsulta.dt_inicio) : '---' }}
             </template>
             <template v-slot:item.actions="{ item }">
-              <v-icon v-if="['V'].includes($store.getters['login/me'].tipo)" color="primary" class="mr-2" @click="abreModal(item.id)">
+              <v-icon color="primary" class="mr-2" @click="$router.push('/paciente/'+item.id)">
                 mdi-eye-outline
               </v-icon>
-              <v-icon v-if="['A','M'].includes($store.getters['login/me'].tipo)" color="primary" class="mr-2" @click="abreModal(item.id)">
-                mdi-square-edit-outline
-              </v-icon>
-              <v-icon
-                v-if="['A'].includes($store.getters['login/me'].tipo)"
-                color="primary"
-                class="mr-2"
-                @click="abreModalConfirm(item.id)"
-              >
-                mdi-trash-can-outline
-              </v-icon>
+              <client-only>
+                <v-icon v-if="['A','M'].includes($store.getters['login/me'].tipo)" color="primary" class="mr-2" @click="abreModal(item.id)">
+                  mdi-square-edit-outline
+                </v-icon>
+                <v-icon
+                  v-if="['A'].includes($store.getters['login/me'].tipo)"
+                  color="primary"
+                  class="mr-2"
+                  @click="abreModalConfirm(item.id)"
+                >
+                  mdi-trash-can-outline
+                </v-icon>
+              </client-only>
             </template>
             <template v-slot:no-data>
               <v-btn color="primary" @click="initialize"> Reset </v-btn>

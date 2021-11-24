@@ -878,6 +878,9 @@ export default {
       }
     } else
       this.limparDados()
+
+    if(this.pacienteId)
+      this.getDados(this.pacienteId);
   },
   methods: {
     limparDados(){
@@ -969,7 +972,7 @@ export default {
           this.$axios.put('/paciente/' + info.id, info).then(res=>{
             this.limparDados()
             this.$emit('input', false) // Fecha modal
-            alert('Paciente Alterado')
+            this.$Message.alert('Paciente Salvo',null, {type: 'success', msgBody: {style: {width: '30%'}}})
             this.$emit('listaPacientes')
           }).catch(err => {
             alert(JSON.stringify(err.response.data))
@@ -987,9 +990,6 @@ export default {
       this.$axios.$get('/paciente/' + id).then(response => {
         let info = JSON.parse(JSON.stringify(response))
         
-        info.hepatitec = info.PacienteHepCs
-        delete info.PacienteHepCs
-        info.hepatiteb = info.PacienteHepB
         if(!info.hepatiteb)
           info.hepatiteb = {
             tratamento_id: null,
@@ -1006,7 +1006,6 @@ export default {
             hbeag: null,
             data_hbeag: null
           }
-        delete info.PacienteHepB
         this.formData = info;
         if(!this.formData.hepatitec) {
           this.formData.hepatitec = []

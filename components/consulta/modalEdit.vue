@@ -170,7 +170,7 @@
                         <v-btn
                           text
                           x-small
-                          @click="abreToast('Em desenvolvimento')"
+                          :to="`/paciente/${consulta.paciente.id}`"
                         >
                           <a aria-disabled="true" disabled href="#"
                             >Dados do paciente</a

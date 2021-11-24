@@ -48,7 +48,7 @@
           </div>
         </div>
       </div>
-      <div class="mask" @click="dismiss($event)"></div>
+      <div class="mask" ref="mask" @click="dismiss($event)"></div>
     </div>
   </transition>
 </template>

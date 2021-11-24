@@ -75,32 +75,34 @@
                     <path fill="currentColor" d="M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z" />
                   </svg>
                 </template>
-                <v-list dense>
-                  <v-list-item v-if="['A','M'].includes($store.getters['login/me'].tipo)" to="/usuario">
-                    <v-list-item-icon>
-                      <v-icon>mdi-account-group-outline</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-title>Gerenciar Usuários</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item v-if="['A','M'].includes($store.getters['login/me'].tipo)" to="/bloqueiodata">
-                    <v-list-item-icon>
-                      <v-icon>mdi-calendar-range</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-title>Gerenciar Datas Bloqueadas</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item v-if="['A','M'].includes($store.getters['login/me'].tipo)" to="/tratamento">
-                    <v-list-item-icon>
-                      <v-icon>mdi-bottle-tonic-plus-outline</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-title>Gerenciar Tratamentos</v-list-item-title>
-                  </v-list-item>
-                  <v-list-item to="/relatorio" disabled>
-                    <v-list-item-icon>
-                      <v-icon>mdi-chart-line</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-title>Relatórios</v-list-item-title>
-                  </v-list-item>
-                </v-list>
+                <client-only>
+                  <v-list dense>
+                    <v-list-item v-if="['A','M'].includes($store.getters['login/me'].tipo)" to="/usuario">
+                      <v-list-item-icon>
+                        <v-icon>mdi-account-group-outline</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-title>Gerenciar Usuários</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item v-if="['A','M'].includes($store.getters['login/me'].tipo)" to="/bloqueiodata">
+                      <v-list-item-icon>
+                        <v-icon>mdi-calendar-range</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-title>Gerenciar Datas Bloqueadas</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item v-if="['A','M'].includes($store.getters['login/me'].tipo)" to="/tratamento">
+                      <v-list-item-icon>
+                        <v-icon>mdi-bottle-tonic-plus-outline</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-title>Gerenciar Tratamentos</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item to="/relatorio" disabled>
+                      <v-list-item-icon>
+                        <v-icon>mdi-chart-line</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-title>Relatórios</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </client-only>
               </v-menu>
               </li>
               <!-- Menu Usuário -->
@@ -148,7 +150,7 @@ export default {
         if(/^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/.test(val)) {
           // É data - Pesquisar consultas
           this.$axios
-            .$get(`/consulta?dataInicio=${this.formataData2(val)}&dataFim=${this.formataData2(val)}`)
+            .$get(`/consulta?dataInicio=${this.formataData2(val)}&dataFim=${this.formataData2(val)} 23:59:59`)
             .then((response) => {
               let t = this
               let res = response.dados.map(function(elem) {
@@ -203,7 +205,7 @@ export default {
       if(val) {
         const item = this.pesquisaItems.filter(elem => elem.id == val)[0]
         if(item.tipo == 'P')
-          this.$router.push('/paciente?pid=' + val)
+          this.$router.push('/paciente/' + val)
         else if(item.tipo == 'C')
           this.$router.push('/?cid=' + val)
       }
