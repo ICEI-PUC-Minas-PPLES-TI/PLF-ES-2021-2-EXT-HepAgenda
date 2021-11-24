@@ -13,6 +13,8 @@ const PacienteService = require("../services/PacienteService");
 const UsuarioService = require("../services/UsuarioService");
 
 const ArquivoService = require("./ArquivoService");
+const BloqueioDataService = require("./BloqueioDataService");
+const BloqueioDiaSemanaService = require("./BloqueioDiaSemanaService");
 const LogConsultaService = require("./LogConsultaService");
 
 class ConsultaService {
@@ -57,6 +59,38 @@ class ConsultaService {
         ]);
     }
     // * ----------------> Fim: Validando dados da consulta <----------------
+
+    // * Verificar se a dt_inicio é menor que a data atual
+    let date = new Date(Date.now());
+    let dataAtaul = new Date(date.getTime() - (date.getTimezoneOffset() * 60000 )).toISOString().split("T")[0];
+    if((new Date(dt_inicio)) < new Date(dataAtaul)) {
+      throw new AppError("Data da consulta não pode ser anterior a data ataul!", 401, [
+        `Data da consulta não pode ser anterior a data ataul!`
+      ]);
+    }
+    // * ----------------> Fim: Verificar se a dt_inicio é menor que a data atual <----------------
+
+    // * Verificar se a dt_inicio é uma data bloqueada
+    let dataBloqueada;
+    let bloqueioDataService = new BloqueioDataService();
+    dataBloqueada = await bloqueioDataService.findByData(dt_inicio);
+    if(dataBloqueada) {
+      throw new AppError("Data selecionada para a consulta está bloqueada!", 401, [
+        `Data selecionada para a consulta está bloqueada!`
+      ]);
+    }
+    // * ----------------> Fim: Verificar se a dt_inicio é uma data bloqueada <----------------
+
+    // * Verificar se a dt_inicio esta em um dia bloqueado
+    let diaBloqueado;
+    let bloqueioDiaSemanaService = new BloqueioDiaSemanaService();
+    diaBloqueado = await bloqueioDiaSemanaService.findByDia(new Date(dt_inicio).getDay());
+    if(diaBloqueado) {
+      throw new AppError("Dia da semana desta data para a consulta está bloqueado!", 401, [
+        `Dia da semana desta data para a consulta está bloqueado!`
+      ]);
+    }
+    // * ----------------> Fim: Verificar se a dt_inicio esta em um dia bloqueado <----------------
 
     const consulta = await Consulta.create({
       paciente_id: paciente_id,
