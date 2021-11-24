@@ -9,6 +9,7 @@
         </v-card-title>
         <v-card-actions>
           <v-btn
+            v-if="['A'].includes($store.getters['login/me'].tipo)"
             color="primary"
             background="primary"
             class="div-titulo-btn"
@@ -165,10 +166,14 @@
               {{ item.uconsulta ? formataData(item.uconsulta.dt_inicio) : '---' }}
             </template>
             <template v-slot:item.actions="{ item }">
-              <v-icon color="primary" class="mr-2" @click="abreModal(item.id)">
+              <v-icon v-if="['V'].includes($store.getters['login/me'].tipo)" color="primary" class="mr-2" @click="abreModal(item.id)">
+                mdi-eye-outline
+              </v-icon>
+              <v-icon v-if="['A','M'].includes($store.getters['login/me'].tipo)" color="primary" class="mr-2" @click="abreModal(item.id)">
                 mdi-square-edit-outline
               </v-icon>
               <v-icon
+                v-if="['A'].includes($store.getters['login/me'].tipo)"
                 color="primary"
                 class="mr-2"
                 @click="abreModalConfirm(item.id)"
