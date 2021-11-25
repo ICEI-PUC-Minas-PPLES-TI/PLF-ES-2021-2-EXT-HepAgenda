@@ -8,9 +8,11 @@
           <v-col :sm="12" :md="4" :lg="3">
             <v-row>
               <v-col>
-                <v-btn v-if="['A'].includes($store.getters['login/me'].tipo)" color="primary" large @click="modalCreateAtivo = !modalCreateAtivo" block>
-                  Marcar Consulta
-                </v-btn>
+                <client-only>
+                  <v-btn v-if="['A'].includes($store.getters['login/me'].tipo)" color="primary" large @click="modalCreateAtivo = !modalCreateAtivo" block>
+                    Marcar Consulta
+                  </v-btn>
+                </client-only>
               </v-col>
             </v-row>
             <v-row>
