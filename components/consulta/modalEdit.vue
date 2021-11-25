@@ -12,7 +12,7 @@
       <v-card>
         <v-card-title class="text-h5 consulta-modal-title">
           <h4>
-            <span> Consulta </span>
+            <span>Consulta</span>
           </h4>
 
           <v-btn icon @click="$emit('input', false)">
@@ -22,292 +22,256 @@
         <v-card-text>
           <v-container fluid id="input-usage">
             <v-form ref="formConsulta" v-model="valid" lazy-validation>
-              <v-row no-gutters>
-                <v-col :md="8" :sm="12" :xl="8" cols="12">
-                  <!-- Data da consulta -->
-                  <v-row class="mx-auto">
-                    <v-col :md="12" :sm="12" :xl="12" cols="12">
-                      <v-input
-                        :messages="formataData(consulta.dt_inicio)"
-                        label="Data da consulta"
-                      ></v-input>
-                    </v-col>
-                  </v-row>
-                  <!-- Descrição -->
-                  <v-row class="mx-auto">
-                    <v-col :md="12" :sm="12" :xl="12" cols="12">
-                      <label for=""> Descrição do agendamento </label>
-                      <v-textarea
-                        class="textareaDescricao"
-                        readonly
-                        flat
-                        solo
-                        row-height="10"
-                        hide-details="auto"
-                        auto-grow
-                        v-model="consulta.descricao"
-                      >
-                      </v-textarea>
-                    </v-col>
-                  </v-row>
-                  <!-- Status -->
-                  <v-row class="mx-auto">
-                    <v-col :md="12" :sm="12" :xl="12" cols="12">
-                      <v-select
-                        v-model="consulta.status"
-                        :items="status"
-                        :rules="[(v) => !!v || 'Status é obrigatório']"
-                        item-value="status"
-                        item-text="nome"
-                        hide-details="auto"
-                        menu-props="auto"
-                        label="Status"
-                        outlined
-                      />
-                    </v-col>
-                  </v-row>
-                  <!-- Medico -->
-                  <v-row class="mx-auto">
-                    <v-col :md="12" :sm="12" :xl="12" cols="12">
-                    <v-autocomplete
-                      v-model="consulta.usuario_id_medico"
-                      :items="medicos"
-                      hide-details="auto"
-                      :clearable="true"
-                      label="Medicos"
-                      item-text="nome"
-                      item-value="id"
-                      :rules="[(v) => !!v || 'Medico obrigatório']"
-                      outlined
-                    />
-                    </v-col>
-                  </v-row>
-                  <!-- Relatório do atendimento -->
-                  <v-row class="mx-auto">
-                    <v-col :md="12" :sm="12" :xl="12" cols="12">
-                      <v-textarea
-                        outlined
-                        hide-details="auto"
-                        label="Relatório do atendimento"
-                        v-model="consulta.detalhes"
-                        counter
-                        :rules="[
-                          (v) =>
-                            (v || '').length <= 60000 ||
-                            'Máximo de 60000 caracteres',
-                        ]"
-                        auto-grow
-                      ></v-textarea>
-                    </v-col>
-                  </v-row>
-                </v-col>
+              <client-only>
+                <v-row no-gutters>
+                  <v-col :md="8" :sm="12" :xl="8" cols="12">
+                    <!-- Data da consulta -->
+                    <v-row class="mx-auto">
+                      <v-col :md="12" :sm="12" :xl="12" cols="12">
+                        <v-input
+                          :messages="formataData(consulta.dt_inicio)"
+                          label="Data da consulta"
+                        ></v-input>
+                      </v-col>
+                    </v-row>
+                    <!-- Descrição -->
+                    <v-row class="mx-auto">
+                      <v-col :md="12" :sm="12" :xl="12" cols="12">
+                        <label for>Descrição do agendamento</label>
+                        <v-textarea
+                          class="textareaDescricao"
+                          readonly
+                          flat
+                          solo
+                          row-height="10"
+                          hide-details="auto"
+                          auto-grow
+                          v-model="consulta.descricao"
+                        ></v-textarea>
+                      </v-col>
+                    </v-row>
+                    <!-- Status -->
+                    <v-row class="mx-auto">
+                      <v-col :md="12" :sm="12" :xl="12" cols="12">
+                        <v-select
+                          v-model="consulta.status"
+                          :items="status"
+                          :rules="[(v) => !!v || 'Status é obrigatório']"
+                          item-value="status"
+                          item-text="nome"
+                          hide-details="auto"
+                          menu-props="auto"
+                          label="Status"
+                          outlined
+                          :disabled="['V'].includes($store.getters['login/me'].tipo)"
+                        />
+                      </v-col>
+                    </v-row>
+                    <!-- Medico -->
+                    <v-row class="mx-auto">
+                      <v-col :md="12" :sm="12" :xl="12" cols="12">
+                        <v-autocomplete
+                          v-model="consulta.usuario_id_medico"
+                          :items="medicos"
+                          hide-details="auto"
+                          :clearable="true"
+                          label="Medicos"
+                          item-text="nome"
+                          item-value="id"
+                          :rules="[(v) => !!v || 'Medico obrigatório']"
+                          outlined
+                          :disabled="['V'].includes($store.getters['login/me'].tipo)"
+                        />
+                      </v-col>
+                    </v-row>
+                    <!-- Relatório do atendimento -->
+                    <v-row class="mx-auto">
+                      <v-col :md="12" :sm="12" :xl="12" cols="12">
+                        <v-textarea
+                          outlined
+                          hide-details="auto"
+                          label="Relatório do atendimento"
+                          v-model="consulta.detalhes"
+                          counter
+                          :rules="[
+                            (v) =>
+                              (v || '').length <= 60000 ||
+                              'Máximo de 60000 caracteres',
+                          ]"
+                          auto-grow
+                          :disabled="['V'].includes($store.getters['login/me'].tipo)"
+                        ></v-textarea>
+                      </v-col>
+                    </v-row>
+                  </v-col>
 
-                <!-- Linha vertical -->
-                <v-col :md="4" :sm="12" :xl="4" cols="12" class="mt-1">
-                  <div class="vertical-line">
-                    <!-- Icone -->
-                    <v-row>
-                      <v-col :md="12" :sm="12" :xl="12" cols="12">
-                        <div class="text-center">
-                          <svg
-                            width="70"
-                            height="70"
-                            viewBox="0 0 27 27"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M2.25788 26C2.25309 25.9998 2.24166 25.9994 2.22457 25.9981C2.18963 25.9957 2.13319 25.9902 2.06284 25.9785C1.91739 25.9542 1.73875 25.9076 1.57221 25.8243C1.40959 25.743 1.27739 25.6368 1.18361 25.4961C1.09401 25.3617 1 25.1375 1 24.75C1 23.8818 1.46304 21.8887 3.23836 20.1134C4.98436 18.3673 8.08589 16.75 13.5 16.75C18.9141 16.75 22.0156 18.3673 23.7616 20.1134C25.537 21.8887 26 23.8818 26 24.75C26 25.1375 25.906 25.3617 25.8164 25.4961C25.7226 25.6368 25.5904 25.743 25.4278 25.8243C25.2613 25.9076 25.0826 25.9542 24.9372 25.9785C24.8668 25.9902 24.8104 25.9957 24.7754 25.9981C24.7583 25.9994 24.7469 25.9998 24.7421 26H2.25788ZM17.5659 10.8159C16.4875 11.8942 15.025 12.5 13.5 12.5C11.975 12.5 10.5125 11.8942 9.43414 10.8159C8.3558 9.73753 7.75 8.27499 7.75 6.75C7.75 5.22501 8.3558 3.76247 9.43414 2.68414C10.5125 1.6058 11.975 1 13.5 1C15.025 1 16.4875 1.6058 17.5659 2.68414C18.6442 3.76247 19.25 5.22501 19.25 6.75C19.25 8.27499 18.6442 9.73753 17.5659 10.8159Z"
-                              stroke="black"
-                              stroke-width="1"
-                            />
-                          </svg>
-                        </div>
-                      </v-col>
-                    </v-row>
-                    <!-- Nome -->
-                    <v-row class="mt-n8">
-                      <v-col :md="12" :sm="12" :xl="12" cols="12">
-                        <v-input
-                          :messages="consulta.paciente.nome"
-                          label="Nome"
-                        ></v-input>
-                      </v-col>
-                    </v-row>
-                    <!-- Data Nascimento -->
-                    <v-row class="mt-n3">
-                      <v-col :md="12" :sm="12" :xl="12" cols="12">
-                        <v-input
-                          :messages="
-                            formataDataSimples(
-                              consulta.paciente.data_nascimento
-                            )
-                          "
-                          label="Data de Nascimento"
-                        ></v-input>
-                      </v-col>
-                    </v-row>
-                    <!-- Mae -->
-                    <v-row class="mt-n3">
-                      <v-col :md="12" :sm="12" :xl="12" cols="12">
-                        <v-input
-                          :messages="consulta.paciente.nome_mae"
-                          label="Nome da Mãe"
-                        ></v-input>
-                      </v-col>
-                    </v-row>
-                    <!-- Registro HC -->
-                    <v-row class="mt-n3">
-                      <v-col :md="12" :sm="12" :xl="12" cols="12">
-                        <v-input
-                          :messages="consulta.paciente.registro_hc"
-                          label="Registro HC"
-                        ></v-input>
-                      </v-col>
-                    </v-row>
-                    <v-row class="mt-n3 text-right mr-2">
-                      <v-col :md="12" :sm="12" :xl="12" cols="12">
-                        <v-btn
-                          text
-                          x-small
-                          @click="abreToast('Em desenvolvimento')"
-                        >
-                          <a aria-disabled="true" disabled href="#"
-                            >Dados do paciente</a
-                          >
-                        </v-btn>
-                      </v-col>
-                    </v-row>
-                    <!-- Barra horizontal -->
-                    <v-row class="mt-n8">
-                      <v-col :md="12" :sm="12" :xl="12" cols="12">
-                        <div class="historico-divider"></div>
-                        <v-input
-                          class="mt-n3"
-                          label="Histórico da Consulta"
-                        ></v-input>
-                      </v-col>
-                    </v-row>
-                    <!-- historico -->
-                    <v-row class="mt-n9">
-                      <v-col :md="12" :sm="12" :xl="12" cols="12">
-                        <div
-                          class="card-historico"
-                          v-for="(item, index) in consulta.logs"
-                          v-bind:item="item"
-                          v-bind:index="index"
-                          v-bind:key="item.id"
-                        >
-                          {{ item.descricao }}
-                          <div class="card-historico-data text-right">
-                            {{ formataDataSimples(item.data) }}
+                  <!-- Linha vertical -->
+                  <v-col :md="4" :sm="12" :xl="4" cols="12" class="mt-1">
+                    <div class="vertical-line">
+                      <!-- Icone -->
+                      <v-row>
+                        <v-col :md="12" :sm="12" :xl="12" cols="12">
+                          <div class="text-center">
+                            <svg
+                              width="70"
+                              height="70"
+                              viewBox="0 0 27 27"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M2.25788 26C2.25309 25.9998 2.24166 25.9994 2.22457 25.9981C2.18963 25.9957 2.13319 25.9902 2.06284 25.9785C1.91739 25.9542 1.73875 25.9076 1.57221 25.8243C1.40959 25.743 1.27739 25.6368 1.18361 25.4961C1.09401 25.3617 1 25.1375 1 24.75C1 23.8818 1.46304 21.8887 3.23836 20.1134C4.98436 18.3673 8.08589 16.75 13.5 16.75C18.9141 16.75 22.0156 18.3673 23.7616 20.1134C25.537 21.8887 26 23.8818 26 24.75C26 25.1375 25.906 25.3617 25.8164 25.4961C25.7226 25.6368 25.5904 25.743 25.4278 25.8243C25.2613 25.9076 25.0826 25.9542 24.9372 25.9785C24.8668 25.9902 24.8104 25.9957 24.7754 25.9981C24.7583 25.9994 24.7469 25.9998 24.7421 26H2.25788ZM17.5659 10.8159C16.4875 11.8942 15.025 12.5 13.5 12.5C11.975 12.5 10.5125 11.8942 9.43414 10.8159C8.3558 9.73753 7.75 8.27499 7.75 6.75C7.75 5.22501 8.3558 3.76247 9.43414 2.68414C10.5125 1.6058 11.975 1 13.5 1C15.025 1 16.4875 1.6058 17.5659 2.68414C18.6442 3.76247 19.25 5.22501 19.25 6.75C19.25 8.27499 18.6442 9.73753 17.5659 10.8159Z"
+                                stroke="black"
+                                stroke-width="1"
+                              />
+                            </svg>
                           </div>
-                          <v-divider></v-divider>
-                        </div>
-                      </v-col>
-                    </v-row>
-                  </div>
-                </v-col>
-              </v-row>
-              <!-- Arquivos -->
-              <v-row class="row-arquivos">
-                <v-col cols="12" :xs="12" :sm="6" :md="3">
-                  <v-file-input
-                    class="arquivo-input"
-                    show-size
-                    multiple
-                    small
-                    label="Adicionar arquivo"
-                    filled
-                    rounded
-                    dense
-                    outlined
-                    prepend-inner-icon="mdi-paperclip"
-                    prepend-icon=""
-                    v-model="files"
-                    @change="enviaArquivo"
-                  />
-                </v-col>
-
-                <v-col
-                  cols="12"
-                  :xs="12"
-                  :sm="6"
-                  :md="3"
-                  v-for="(linha, idx) in consulta.arquivos"
-                  :key="idx"
-                >
-                  <v-chip
-                    large
-                    close
-                    @click="baixaArquivo(idx)"
-                    @click:close="abreModalConfirmAnexo(idx)"
+                        </v-col>
+                      </v-row>
+                      <!-- Nome -->
+                      <v-row class="mt-n8">
+                        <v-col :md="12" :sm="12" :xl="12" cols="12">
+                          <v-input :messages="consulta.paciente.nome" label="Nome"></v-input>
+                        </v-col>
+                      </v-row>
+                      <!-- Data Nascimento -->
+                      <v-row class="mt-n3">
+                        <v-col :md="12" :sm="12" :xl="12" cols="12">
+                          <v-input
+                            :messages="
+                              formataDataSimples(
+                                consulta.paciente.data_nascimento
+                              )
+                            "
+                            label="Data de Nascimento"
+                          ></v-input>
+                        </v-col>
+                      </v-row>
+                      <!-- Mae -->
+                      <v-row class="mt-n3">
+                        <v-col :md="12" :sm="12" :xl="12" cols="12">
+                          <v-input :messages="consulta.paciente.nome_mae" label="Nome da Mãe"></v-input>
+                        </v-col>
+                      </v-row>
+                      <!-- Registro HC -->
+                      <v-row class="mt-n3">
+                        <v-col :md="12" :sm="12" :xl="12" cols="12">
+                          <v-input :messages="consulta.paciente.registro_hc" label="Registro HC"></v-input>
+                        </v-col>
+                      </v-row>
+                      <v-row class="mt-n3 text-right mr-2">
+                        <v-col :md="12" :sm="12" :xl="12" cols="12">
+                          <v-btn text x-small @click="abreToast('Em desenvolvimento')">
+                            <a aria-disabled="true" disabled href="#">Dados do paciente</a>
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                      <!-- Barra horizontal -->
+                      <v-row class="mt-n8">
+                        <v-col :md="12" :sm="12" :xl="12" cols="12">
+                          <div class="historico-divider"></div>
+                          <v-input class="mt-n3" label="Histórico da Consulta"></v-input>
+                        </v-col>
+                      </v-row>
+                      <!-- historico -->
+                      <v-row class="mt-n9">
+                        <v-col :md="12" :sm="12" :xl="12" cols="12">
+                          <div
+                            class="card-historico"
+                            v-for="(item, index) in consulta.logs"
+                            v-bind:item="item"
+                            v-bind:index="index"
+                            v-bind:key="item.id"
+                          >
+                            {{ item.descricao }}
+                            <div
+                              class="card-historico-data text-right"
+                            >{{ formataDataSimples(item.data) }}</div>
+                            <v-divider></v-divider>
+                          </div>
+                        </v-col>
+                      </v-row>
+                    </div>
+                  </v-col>
+                </v-row>
+                <!-- Arquivos -->
+                <v-row class="row-arquivos">
+                  <v-col
+                    cols="12"
+                    :xs="12"
+                    :sm="6"
+                    :md="3"
+                    v-if="['A', 'M'].includes($store.getters['login/me'].tipo)"
                   >
-                    {{
-                      consulta.arquivos[idx].nome.length > 16
-                        ? consulta.arquivos[idx].nome.substring(0, 16) + "..."
-                        : consulta.arquivos[idx].nome
-                    }}
-                  </v-chip>
-                </v-col>
-              </v-row>
+                    <v-file-input
+                      class="arquivo-input"
+                      show-size
+                      multiple
+                      small
+                      label="Adicionar arquivo"
+                      filled
+                      rounded
+                      dense
+                      outlined
+                      prepend-inner-icon="mdi-paperclip"
+                      prepend-icon
+                      v-model="files"
+                      @change="enviaArquivo"
+                    />
+                  </v-col>
 
-              <!-- Botão de marcarConsulta -->
-              <v-row class="mx-auto">
-                <v-col class="consulta-modal-marcar text-center">
-                  <v-btn color="primary" large @click="update">
-                    Salvar Alterações
-                  </v-btn>
-                  <v-dialog v-model="modalConfirm" persistent max-width="350">
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn color="white" large dark v-bind="attrs" v-on="on">
-                        Cancelar Consulta
-                      </v-btn>
-                    </template>
-                    <v-card>
-                      <v-card-title class="text-h5">
-                        Deseja realmente cancelar essa consulta?
-                      </v-card-title>
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn
-                          color="grey darken-1"
-                          text
-                          @click="modalConfirm = false"
-                        >
-                          Não
-                        </v-btn>
-                        <v-btn
-                          color="red darken-1"
-                          text
-                          @click="cancelaConsulta"
-                        >
-                          Sim
-                        </v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
-                </v-col>
-              </v-row>
+                  <v-col
+                    cols="12"
+                    :xs="12"
+                    :sm="6"
+                    :md="3"
+                    v-for="(linha, idx) in consulta.arquivos"
+                    :key="idx"
+                  >
+                    <v-chip
+                      large
+                      close
+                      @click="baixaArquivo(idx)"
+                      @click:close="abreModalConfirmAnexo(idx)"
+                    >
+                      {{
+                        consulta.arquivos[idx].nome.length > 16
+                          ? consulta.arquivos[idx].nome.substring(0, 16) + "..."
+                          : consulta.arquivos[idx].nome
+                      }}
+                    </v-chip>
+                  </v-col>
+                </v-row>
+
+                <!-- Botão de marcarConsulta -->
+                <v-row class="mx-auto" v-if="['A', 'M'].includes($store.getters['login/me'].tipo)">
+                  <v-col class="consulta-modal-marcar text-center">
+                    <v-btn color="primary" large @click="update">Salvar Alterações</v-btn>
+                    <v-dialog v-model="modalConfirm" persistent max-width="350">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn color="white" large dark v-bind="attrs" v-on="on">Cancelar Consulta</v-btn>
+                      </template>
+                      <v-card>
+                        <v-card-title class="text-h5">Deseja realmente cancelar essa consulta?</v-card-title>
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn color="grey darken-1" text @click="modalConfirm = false">Não</v-btn>
+                          <v-btn color="red darken-1" text @click="cancelaConsulta">Sim</v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
+                  </v-col>
+                </v-row>
+              </client-only>
             </v-form>
 
             <v-dialog v-model="modalConfirmAnexo" persistent max-width="350">
               <v-card>
-                <v-card-title class="text-h5">
-                  Deseja realmente excluir o anexo?
-                </v-card-title>
+                <v-card-title class="text-h5">Deseja realmente excluir o anexo?</v-card-title>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn
-                    color="grey darken-1"
-                    text
-                    @click="modalConfirmAnexo = false"
-                  >
-                    Não
-                  </v-btn>
-                  <v-btn color="red darken-1" text @click="removeArquivo">
-                    Sim
-                  </v-btn>
+                  <v-btn color="grey darken-1" text @click="modalConfirmAnexo = false">Não</v-btn>
+                  <v-btn color="red darken-1" text @click="removeArquivo">Sim</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -318,11 +282,8 @@
 
     <v-snackbar v-model="toast" shaped>
       {{ toastMensagem }}
-
       <template v-slot:action="{ attrs }">
-        <v-btn color="blue" text v-bind="attrs" @click="toast = false">
-          Ok
-        </v-btn>
+        <v-btn color="blue" text v-bind="attrs" @click="toast = false">Ok</v-btn>
       </template>
     </v-snackbar>
   </div>
@@ -341,7 +302,7 @@ export default {
         { status: "AGUARDANDOA", nome: "Aguardando Consulta" },
         { status: "AGUARDANDOC", nome: "Em Confirmação" },
         { status: "REALIZADO", nome: "Realizado" },
-        { status: "CANCELADO", nome: "Cancelado" },
+        { status: "CANCELADO", nome: "Não Compareceu" },
       ],
 
       medicos: [{ nome: "", id: 0 }],
@@ -399,7 +360,7 @@ export default {
   },
   methods: {
 
-    listaMedicos(){
+    listaMedicos() {
       return new Promise(resolve => {
         setTimeout(() => {
           this.$axios
@@ -411,8 +372,8 @@ export default {
             .catch((error) => {
               console.log(error);
             });
-            resolve();
-          }, 50);
+          resolve();
+        }, 50);
       });
     },
 
@@ -479,17 +440,17 @@ export default {
 
     enviaArquivo() {
       if (this.files && this.files.length > 0) {
-        if(this.files[0].size > 2000000 ){
+        if (this.files[0].size > 2000000) {
           this.abreToast("Arquivo deve ser menor que 2 MB");
           this.edit(this.consulta.id)
           this.files = [];
-          return ;
+          return;
         }
-        if(this.files[0].name.length > 45){
+        if (this.files[0].name.length > 45) {
           this.abreToast("Erro, nome do arquivo deve ser menor que 45 caracteres");
           this.edit(this.consulta.id)
           this.files = [];
-          return ;
+          return;
         }
         let formData = new FormData();
         for (let i = 0; i < this.files.length; i++) {
@@ -549,7 +510,7 @@ export default {
       this.modalConfirmAnexo = true;
     },
 
-    cancelaConsulta(){
+    cancelaConsulta() {
       if (this.$refs.formConsulta.validate()) {
         this.consulta.status = "CANCELADO";
         let consulta = JSON.parse(JSON.stringify(this.consulta));
@@ -561,7 +522,7 @@ export default {
             formData.append(key, consulta[key]);
           }
         }
-          this.queryUpdate(formData);
+        this.queryUpdate(formData);
       }
       this.modalConfirm = false;
     },
