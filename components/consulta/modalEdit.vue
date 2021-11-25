@@ -161,13 +161,13 @@
                       </v-row>
                       <v-row class="mt-n3 text-right mr-2">
                         <v-col :md="12" :sm="12" :xl="12" cols="12">
-                          <v-btn text x-small @click="abreToast('Em desenvolvimento')">
-                            <a aria-disabled="true" disabled href="#">Dados do paciente</a>
-                          </v-btn>
+                          <router-link :to="`/paciente/${consulta.paciente.id}`" target="_blank">
+                            Dados do paciente
+                          </router-link>
                         </v-col>
                       </v-row>
                       <!-- Barra horizontal -->
-                      <v-row class="mt-n8">
+                      <v-row class="mt-0">
                         <v-col :md="12" :sm="12" :xl="12" cols="12">
                           <div class="historico-divider"></div>
                           <v-input class="mt-n3" label="Histórico da Consulta"></v-input>
@@ -570,7 +570,7 @@ export default {
   width: calc(100%);
   border-bottom: 1px solid #b7b7b7;
   line-height: 0.1em;
-  margin: 20px 0 20px;
+  margin: 0px 0 20px;
 }
 
 .consulta-modal-title h4 span {

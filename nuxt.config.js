@@ -37,7 +37,7 @@ export default {
     { src: '~/plugins/vuetify.js', ssr: false },
     { src: '~/plugins/axios.js', ssr: true },
     { src: '~/plugins/localStorage.js', ssr: false },
-    { src: '~/plugins/messageBox.js', ssr: false },
+    { src: '~/plugins/messageBox.js', ssr: false }
   ],
 
   /*

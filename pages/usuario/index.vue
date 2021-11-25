@@ -7,9 +7,10 @@
           <span class="text-h6">Gerenciamento de Usuário</span>
         </v-card-title>
         <v-card-actions>
-          <v-btn :to="'/usuario/criar'" color="primary" background="primary">
+          <v-btn class="mr-2" color="primary" background="primary" @click="modalAtivo = true">
             Criar usuário
           </v-btn>
+          <modal-usuario v-model="modalAtivo" @listaUsuarios="listaUsuarios" @toast="abreToast"/>
         </v-card-actions>
       </div>
       <v-card-text>
@@ -17,7 +18,7 @@
           <v-data-table
             :headers="headers"
             :items="usuarios"
-            :items-per-page="-1"
+            :items-per-page="10"
             :loading="tabelaCarregando"
             :disable-sort="true"
             :footer-props="{
@@ -104,7 +105,7 @@
               <v-row>
                 <v-col cols="12" sm="12" md="12">
                   <v-text-field
-                    v-model="formData.nome"
+                    v-model="formEditUsuario.nome"
                     hide-details="auto"
                     label="NOME"
                     required
@@ -115,7 +116,7 @@
                 <!--SENHA-->
                 <v-col cols="12">
                   <v-text-field
-                    v-model="formData.senha"
+                    v-model="formEditUsuario.senha"
                     hide-details="auto"
                     
                     :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
@@ -145,7 +146,7 @@
                       }
                     ]"
                     label="TIPO"
-                    v-model="formData.tipo"
+                    v-model="formEditUsuario.tipo"
                     required
                     outlined
                   ></v-select>
@@ -166,10 +167,152 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-snackbar v-model="toast" shaped>
+      {{ toastMensagem }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn color="blue" text v-bind="attrs" @click="toast = false">
+          Ok
+        </v-btn>
+      </template>
+    </v-snackbar>
+
   </v-container>
 </template>
 
-<script src="./index.js"></script>
+<script>
+import modalUsuario from '../../components/usuario/modal.vue';
+ export default {
+  layout: 'main',
+  components:{
+    modalUsuario
+  },
+  data() {
+    return {
+      show1: false,
+      show2: false,
+      dialog: false,
+      formEditUsuario: {
+        nome: null,
+        senha: null,
+        tipo: " "
+      },
+      rules: {
+        required: value => !!value || "Obrigatório!",
+        min: v => {
+          if (
+            v &&
+            v.length >= 8 &&
+            /\d/.test(v) &&
+            /[a-z]/g.test(v) &&
+            /[A-Z]/g.test(v)
+          )
+            return true;
+          else
+            return "Min 8 caracteres, 1 número, 1 letra minúscula, 1 letra maiúscula e um caracter especial!";
+        },
+        equal: v => v === this.formEditUsuario.senha || "Senhas não conferem"
+  },
+
+      headers: [
+        { text: 'NOME DO USUÁRIO', value: 'nome' },
+        { text: 'LOGIN', value: 'email' },
+        { text: 'TIPO', value: 'tipo' },
+        { text: 'AÇÕES', value: 'actions', sortable: false },
+      ],
+      usuarios: [
+        {
+          nome: '',
+          email: '',
+          tipo: '',
+        }
+      ],
+      tabelaPaginaAtual: 1,
+      tabelaPaginas: 1,
+      totalItems: 1,
+      tabelaCarregando: false,
+
+      modalAtivo: false,
+      toast: false,
+      toastMensagem: '',
+    }
+  },
+  mounted(){
+    this.listaUsuarios();
+  },
+
+ methods: {
+
+    editItem(item){
+      this.limparDados()
+      //pegar cada item do formEditUsuario
+      this.formEditUsuario.nome=item.nome
+      this.formEditUsuario.tipo=item.tipo
+      this.formEditUsuario.id=item.id
+
+      this.dialog = true
+    },
+
+    listaUsuarios() {
+      this.tabelaCarregando = true
+      this.$axios.$get(`/usuario?pagina=${this.tabelaPaginaAtual}&limite=10`).then(response => {
+        this.usuarios = response.dados;
+        this.tabelaPaginas = response.paginas
+        this.totalItems = response.total
+      }).catch(error => {
+        console.log(error)
+        this.errored = true
+      }).finally(() => {
+        this.tabelaCarregando = false
+      });
+    },
+
+    formataTipo(tipo){
+      if(tipo == "A"){
+        return "Administrador"
+      }else if(tipo == "M"){
+        return "Médico"
+      }else if(tipo == "V"){
+        return "Visualizador"
+      }
+    },
+
+    limparDados() {
+      this.formEditUsuario = {
+        nome: null,
+        senha: null,
+        tipo: " "
+      }
+    },
+
+    atualizarUsuario() {
+      if (this.$refs.formUsuario.validate()){
+        this.$axios
+          .put('/usuario/' + this.formEditUsuario.id, this.formEditUsuario)
+          .then(res => {
+            this.limparDados();
+            this.dialog = false;
+            alert("Usuario Atualizado!");
+          })
+          .catch(err => {
+            alert(JSON.stringify(err.response.data));
+            console.log(err.response.data);
+          });
+      }
+    },
+
+    
+    abreToast(mensagem) {
+      this.toastMensagem = mensagem;
+      this.toast = true;
+    },
+
+  }
+
+}
+
+</script>
 
 <style lang="scss">
 .img {

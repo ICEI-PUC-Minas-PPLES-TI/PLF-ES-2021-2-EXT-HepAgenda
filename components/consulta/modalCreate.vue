@@ -37,6 +37,7 @@
                     item-value="id"
                     :rules="[(v) => !!v || 'Paciente obrigatório']"
                     outlined
+                    :disabled="paciente ? true: false"
                   >
                   <template v-slot:item="data">
                     <div style="white-space: nowrap;border-bottom: 1px solid #eee;width:100%" class="d-block">
@@ -144,7 +145,7 @@
 <script>
 export default {
   name: "modalCreate",
-  props: ["value"],
+  props: ["value", 'paciente'],
   data() {
     return {
       valid: true,
@@ -176,7 +177,11 @@ export default {
     }
   },
   mounted() {
-    this.listaPacientes();
+    if(this.paciente) {
+      this.pacientes = [this.paciente]
+      this.consulta.paciente_id = this.paciente.id
+    } else
+      this.listaPacientes();
     this.listaMedicos();
   },
   methods: {
@@ -192,6 +197,7 @@ export default {
           .then((response) => {
             this.limpaDados();
             this.abreToast("Consulta agendada com sucesso!");
+            this.$emit('criado')
           })
           .catch((error) => {
             this.abreToast(error.message);
@@ -259,9 +265,9 @@ export default {
         this.listaPacientes()
     },
     customFilterPaciente(item, queryText){
-      const textOne = item.nome.toLowerCase()
-      const textTwo = item.nome_mae.toLowerCase()
-      const textThree = item.registro_hc.toLowerCase()
+      const textOne = item.nome?.toLowerCase()
+      const textTwo = item.nome_mae?.toLowerCase()
+      const textThree = item.registro_hc?.toLowerCase()
       const searchText = queryText.toLowerCase()
 
       return textOne.indexOf(searchText) > -1 || textTwo.indexOf(searchText) > -1 || textThree.indexOf(searchText) > -1

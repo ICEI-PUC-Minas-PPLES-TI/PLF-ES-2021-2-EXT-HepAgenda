@@ -300,15 +300,9 @@ class ConsultaService {
     }
     const dataInicio = dataInicioTemp
       ? dataInicioTemp
-      : new Date("1970-01-01".replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3"));
-    const dataFim = dataFimTemp ? dataFimTemp : new Date(Date.now());
+      : null;
+    const dataFim = dataFimTemp ? dataFimTemp : null;
 
-    const qtd = await Consulta.count();
-    const { paginas, ...SortPaginateOptions } = SortPaginate(
-      query,
-      Object.keys(Consulta.rawAttributes) /* Todos os atributos de consulta */,
-      qtd
-    );
     let atributosCriadorTemp = ["id", "nome"];
     if (query.camposCriador)
       atributosCriadorTemp = query.camposCriador.split(",");
@@ -324,14 +318,29 @@ class ConsultaService {
     const atributosPaciente = atributosPacienteTemp;
     // * ----------------> Fim: Capturando e tratando filtros/ordenadores da pesquisa <----------------
 
+    let whre = {
+      status: statusSolicitados
+    }
+
+    if(dataInicio && dataFim)
+      whre.dt_inicio = {
+        [Op.between]: [dataInicio, dataFim]
+      }
+
+    if (query.paciente_id) {
+      whre.paciente_id = query.paciente_id
+    }
+
+    const qtd = await Consulta.count({where: whre});
+    const { paginas, ...SortPaginateOptions } = SortPaginate(
+      query,
+      Object.keys(Consulta.rawAttributes) /* Todos os atributos de consulta */,
+      qtd
+    );
+
     const consultas = await Consulta.findAndCountAll({
       ...SortPaginateOptions,
-      where: {
-        dt_inicio: {
-          [Op.between]: [dataInicio, dataFim]
-        },
-        status: statusSolicitados
-      },
+      where: whre,
       include: [
         {
           model: Usuario,
@@ -365,7 +374,7 @@ class ConsultaService {
     return {
       dados: consultas.rows,
       quantidade: consultas.rows.length,
-      total: qtd,
+      total: consultas.count,
       paginas: paginas,
       offset: SortPaginateOptions.offset
     };

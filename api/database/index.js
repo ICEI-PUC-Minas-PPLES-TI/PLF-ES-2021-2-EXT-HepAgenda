@@ -52,12 +52,11 @@ module.exports = {
       Usuario.hasMany(Consulta, { as: "consultas_acompanhandas", foreignKey: "usuario_id_medico" }); // Um usuário médico possui/realiza várias consultas
       Consulta.belongsTo(Usuario, { as: "usuario_medico", foreignKey: "usuario_id_medico" }); // Uma consulta é/realizada de/por um usuário médico
       Consulta.belongsTo(Paciente, { as: "paciente", foreignKey: "paciente_id" }); // Uma consulta pertence a um paciente
-      Paciente.hasMany(Consulta, { as: "consultas_feitas", foreignKey: "paciente_id" }); // Um paciente possui várias consultas
-      Paciente.hasOne(PacienteHepB, { foreignKey: "paciente_id" });
-      Paciente.hasMany(PacienteHepC, { foreignKey: "paciente_id" });
-      PacienteHepB.hasOne(Tratamento, { foreignKey: "id" });
-      PacienteHepC.hasOne(Tratamento, { foreignKey: "id" });
-      Paciente.hasMany(Consulta, { foreignKey: "paciente_id" });
+      Paciente.hasOne(PacienteHepB, { as: "hepatiteb", foreignKey: "paciente_id" });
+      Paciente.hasMany(PacienteHepC, { as: "hepatitec", foreignKey: "paciente_id" });
+      PacienteHepB.belongsTo(Tratamento, { as: "tratamento",foreignKey: "tratamento_id" });
+      PacienteHepC.belongsTo(Tratamento, { as: "tratamento",foreignKey: "tratamento_id" });
+      Paciente.hasMany(Consulta, { as: "consultas",foreignKey: "paciente_id" });
       Paciente.hasOne(Consulta, { as: 'uconsulta', foreignKey: "paciente_id" });
       BloqueioData.belongsTo(Usuario, {foreignKey: "usuario_id_criador", as: 'usuario'});
 

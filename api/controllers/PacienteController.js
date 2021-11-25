@@ -7,6 +7,8 @@ const PacienteHepB = require('../models/PacienteHepB');
 const PacienteHepC = require('../models/PacienteHepC');
 const PacienteService = require("../services/PacienteService");
 const { pacienteCreateScheme, pacienteUpdateScheme, hepatiteRequiredScheme } = require('../validation/PacienteValidation');
+const Consulta = require('../models/Consulta');
+const Tratamento = require('../models/Tratamento');
 
 class PacienteController {
   async create(request, response) {
@@ -84,7 +86,7 @@ class PacienteController {
     if (request.query.ativos)
       where.push({ ativo: true })
 
-    const qtdPacientes = await Paciente.count();
+    const qtdPacientes = await Paciente.count({where});
     const { paginas, ...SortPaginateOptions } = SortPaginate(request.query, atributos, qtdPacientes);
 
     Paciente.findAndCountAll({
@@ -107,10 +109,31 @@ class PacienteController {
       where: {
         id: request.params.id
       },
-      include: {
+      include: [{
+          model: Consulta,
+          as: "uconsulta"
+        },{
+          model: PacienteHepB,
+          as: "hepatiteb",
+          include: [{
+            model: Tratamento,
+            as: "tratamento"
+          }], 
+          nested: true
+        },{
+          model: PacienteHepC,
+          as: "hepatitec",
+          include: [{
+            model: Tratamento,
+            as: "tratamento"
+          }],
+          nested: true
+        }
+      ]
+      /*include: {
         all: true,
         nested: true
-      }
+      }*/
     });
     if (result) response.status(200).json(result);
     else

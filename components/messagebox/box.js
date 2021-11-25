@@ -40,6 +40,18 @@ const Message = function (config = {}) {
   instance.$data.show = true;
   document.body.style.overflow = 'hidden';
   document.body.appendChild(instance.$mount().$el);
+
+  var handler = function(e) {
+    e.preventDefault()
+    var keyCode = e.code;
+    if(keyCode == 'Enter' || keyCode == 'NumpadEnter'){
+      Dismiss()
+      document.removeEventListener('keydown', handler);
+    }
+  };
+
+  document.addEventListener("keydown", handler, false);
+
 }
 
 const Alert = function (message, title, config, callback) {
