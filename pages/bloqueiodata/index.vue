@@ -18,7 +18,7 @@
                     Gerenciamento por dia de semana
                   </h3>
                   <span>
-                    Marque os dias da semana permitidos de agendamentos.
+                    Marque os dias da semana bloqueados de agendamentos.
                   </span>
                 </li>
                 <li>
@@ -169,7 +169,7 @@
                 <v-col v-if="diasBloqueados && diasBloqueados.length == 0" class="databloqueio-dia-sembloqueio">
                   <img src="/img/calendario.svg" alt="Icone de Calendario" class="d-block">
                   <span class="d-block text-center">
-                    Nenhuma data bloqueada no mês selecionado no momento 
+                    Nenhuma data bloqueada no mês selecionado no momento
                   </span>
                 </v-col>
                 <v-col v-else>
@@ -290,7 +290,7 @@ export default {
       const dt = new Date(val + ' 00:00')
       if(dt < new Date()) // Bloquear datas anteriores a atual
         return false;
-      
+
       let dtb = this.diasBloqueados.filter(function(el) {
         return el.data === val
       })
