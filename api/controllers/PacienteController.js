@@ -84,7 +84,7 @@ class PacienteController {
     if (request.query.ativos)
       where.push({ ativo: true })
 
-    const qtdPacientes = await Paciente.count();
+    const qtdPacientes = await Paciente.count({where});
     const { paginas, ...SortPaginateOptions } = SortPaginate(request.query, atributos, qtdPacientes);
 
     Paciente.findAndCountAll({
