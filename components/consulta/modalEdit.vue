@@ -366,7 +366,6 @@ export default {
           this.$axios
             .$get(`/usuario?medico=true&ativo=1`)
             .then((response) => {
-              console.log(response);
               this.medicos = response.dados;
             })
             .catch((error) => {
