@@ -95,7 +95,7 @@
                     :items="medicos"
                     hide-details="auto"
                     :clearable="true"
-                    label="Medicos"
+                    label="Medico"
                     item-text="nome"
                     item-value="id"
                     :rules="[(v) => !!v || 'Medico obrigatório']"
