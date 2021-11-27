@@ -64,7 +64,7 @@ class ConsultaService {
     let date = new Date(Date.now());
     let dataAtaul = new Date(date.getTime() - (date.getTimezoneOffset() * 60000 )).toISOString().split("T")[0];
     if((new Date(dt_inicio)) < new Date(dataAtaul)) {
-      throw new AppError("Data da consulta não pode ser anterior a data ataul!", 401, [
+      throw new AppError("Data da consulta não pode ser anterior a data ataul!", 406, [
         `Data da consulta não pode ser anterior a data ataul!`
       ]);
     }
@@ -75,7 +75,7 @@ class ConsultaService {
     let bloqueioDataService = new BloqueioDataService();
     dataBloqueada = await bloqueioDataService.findByData(dt_inicio);
     if(dataBloqueada) {
-      throw new AppError("Data selecionada para a consulta está bloqueada!", 401, [
+      throw new AppError("Data selecionada para a consulta está bloqueada!", 406, [
         `Data selecionada para a consulta está bloqueada!`
       ]);
     }
@@ -86,7 +86,7 @@ class ConsultaService {
     let bloqueioDiaSemanaService = new BloqueioDiaSemanaService();
     diaBloqueado = await bloqueioDiaSemanaService.findByDia(new Date(dt_inicio).getDay());
     if(diaBloqueado) {
-      throw new AppError("Dia da semana desta data para a consulta está bloqueado!", 401, [
+      throw new AppError("Dia da semana desta data para a consulta está bloqueado!", 406, [
         `Dia da semana desta data para a consulta está bloqueado!`
       ]);
     }
