@@ -50,7 +50,7 @@ class LogConsultaService {
     usuario_id_medico,
     usuario_medico,
     status,
-    descricao,
+    detalhes,
     usuario_criador
   ) {
     const usuarioService = new UsuarioService();
@@ -79,9 +79,9 @@ class LogConsultaService {
     const consulta_id = consultaData.id;
 
     // Capturando usuário que modificou descrição
-    const log_descricao = `${
-      descricao
-        ? "Usuário " + usuario_criador.login + " alterou a descrição."
+    const log_detalhes = `${
+      detalhes
+        ? "Usuário " + usuario_criador.login + " alterou os detalhes."
         : ""
     }`;
 
@@ -112,7 +112,7 @@ class LogConsultaService {
     }`;
 
     // Salvando logs caso existir as modificações
-    if (log_descricao) await this.create(log_descricao, userId, consulta_id);
+    if (log_detalhes) await this.create(log_detalhes, userId, consulta_id);
     if (log_status) await this.create(log_status, userId, consulta_id);
     if (log_medico) await this.create(log_medico, userId, consulta_id);
   }
