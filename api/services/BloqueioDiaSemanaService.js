@@ -96,6 +96,19 @@ class BloqueioDiaSemanaService {
       deleted: true
     };
   }
+
+  async findByDia(dia) {
+    const dia_semana = await BloqueioDiaSemana.findOne({
+      where: {
+        dia_semana: dia,
+        ativo: 1
+      },
+    }).catch(error => {
+      throw new AppError("Erro interno do servidor!", 500, error);
+    });
+
+    return dia_semana;
+  }
 }
 
 module.exports = BloqueioDiaSemanaService;

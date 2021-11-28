@@ -107,6 +107,18 @@ class BloqueioDataService {
       deleted: true
     };
   }
+
+  async findByData(data) {
+    const bloqueada = await BloqueioData.findOne({
+      where: {
+        data: data
+      },
+    }).catch(error => {
+      throw new AppError("Erro interno do servidor!", 500, error);
+    });
+
+    return bloqueada;
+  }
 }
 
 module.exports = BloqueioDataService;
