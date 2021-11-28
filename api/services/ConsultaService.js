@@ -214,7 +214,7 @@ class ConsultaService {
       (status && status != consultaData.status) ||
       (usuario_id_medico &&
         usuario_id_medico != consultaData.usuario_id_medico) ||
-      (descricao && descricao != consultaData.descricao)
+      (detalhes && detalhes != consultaData.detalhes)
     ) {
       const logConsultaService = new LogConsultaService();
       await logConsultaService.gerarLogString(
@@ -222,7 +222,7 @@ class ConsultaService {
         usuario_id_medico,
         usuario_medico,
         status,
-        descricao,
+        detalhes,
         usuario_criador
       );
     }

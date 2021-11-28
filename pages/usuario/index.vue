@@ -129,6 +129,16 @@
                     outlined
                   ></v-text-field>
                 </v-col>
+                <v-col cols="12" sm="12" class="mt-n2">
+                  <v-text-field
+                      dense
+                      hide-details="auto"
+                      v-model="formEditUsuario.telefone"
+                      label="TELEFONE"
+                      outlined
+                      :rules="[(v) => (v || '' ).length <= 15 || 'Maximo de 15 caracteres']"
+                  ></v-text-field>
+                </v-col>
                 <v-col cols="12" sm="12">
                   <v-select
                     :items="[
@@ -196,7 +206,8 @@ import modalUsuario from '../../components/usuario/modal.vue';
       formEditUsuario: {
         nome: null,
         senha: null,
-        tipo: " "
+        tipo: "",
+        telefone: ""
       },
       rules: {
         required: value => !!value || "Obrigatório!",
@@ -250,6 +261,7 @@ import modalUsuario from '../../components/usuario/modal.vue';
       this.formEditUsuario.nome=item.nome
       this.formEditUsuario.tipo=item.tipo
       this.formEditUsuario.id=item.id
+      this.formEditUsuario.telefone = item.telefone
 
       this.dialog = true
     },

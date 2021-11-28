@@ -102,6 +102,16 @@
                                     outlined
                                 ></v-text-field>
                             </v-col>
+                            <v-col cols="12" sm="12" class="mt-n2">
+                                <v-text-field
+                                    dense
+                                    hide-details="auto"
+                                    v-model="formData.telefone"
+                                    label="TELEFONE"
+                                    outlined
+                                    :rules="[(v) => (v || '' ).length <= 15 || 'Maximo de 15 caracteres']"
+                                ></v-text-field>
+                            </v-col>
                             <!--FIM CONFIRMAR SENHA-->
                             <v-col cols="12" sm="12" class="mt-n5">
                                 <v-select
@@ -137,13 +147,6 @@
             </v-card-text>
         </v-card>
     </v-dialog>
-
-    <!-- <v-snackbar v-model="toast" shaped>
-            {{ toastMensagem }}
-            <template v-slot:action="{ attrs }">
-                <v-btn color="blue" text v-bind="attrs" @click="toast = false">Ok</v-btn>
-            </template>
-    </v-snackbar>-->
 </template>
 
 <script>
@@ -160,7 +163,8 @@ export default {
                 email: null,
                 senha: null,
                 confirmar_senha: null,
-                tipo: " "
+                tipo: "",
+                telefone: ""
             },
             rules: {
                 required: value => !!value || "Obrigatório!",
