@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `agenda`.`paciente_hepb` (
   `hbeag` TINYINT(1) NULL,
   `data_hbeag` DATE NULL,
   PRIMARY KEY (`paciente_id`),
-  INDEX `fk_paciente_hepb_tratamento1_idx` (`tratamento_id` ASC) VISIBLE,
+  INDEX `fk_paciente_hepb_tratamento1_idx` (`tratamento_id` ASC),
   CONSTRAINT `fk_paciente_hepb_paciente`
     FOREIGN KEY (`paciente_id`)
     REFERENCES `agenda`.`paciente` (`id`)
@@ -102,8 +102,8 @@ CREATE TABLE IF NOT EXISTS `agenda`.`paciente_hepc` (
   `data_ultra` DATE NULL,
   `ultimo_resultado_carga` DOUBLE NULL,
   `data_carga` DATE NULL,
-  INDEX `fk_paciente_hepc_paciente1_idx` (`paciente_id` ASC) VISIBLE,
-  INDEX `fk_paciente_hepc_tratamento1_idx` (`tratamento_id` ASC) VISIBLE,
+  INDEX `fk_paciente_hepc_paciente1_idx` (`paciente_id` ASC),
+  INDEX `fk_paciente_hepc_tratamento1_idx` (`tratamento_id` ASC),
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_paciente_hepc_paciente1`
     FOREIGN KEY (`paciente_id`)
@@ -149,9 +149,9 @@ CREATE TABLE IF NOT EXISTS `agenda`.`consulta` (
   `usuario_id_criador` INT UNSIGNED NOT NULL,
   `usuario_id_medico` INT UNSIGNED NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_consulta_paciente1_idx` (`paciente_id` ASC) VISIBLE,
-  INDEX `fk_consulta_usuario1_idx` (`usuario_id_criador` ASC) VISIBLE,
-  INDEX `fk_consulta_usuario2_idx` (`usuario_id_medico` ASC) VISIBLE,
+  INDEX `fk_consulta_paciente1_idx` (`paciente_id` ASC),
+  INDEX `fk_consulta_usuario1_idx` (`usuario_id_criador` ASC),
+  INDEX `fk_consulta_usuario2_idx` (`usuario_id_medico` ASC),
   CONSTRAINT `fk_consulta_paciente1`
     FOREIGN KEY (`paciente_id`)
     REFERENCES `agenda`.`paciente` (`id`)
@@ -180,7 +180,7 @@ CREATE TABLE IF NOT EXISTS `agenda`.`arquivo` (
   `link` VARCHAR(120) NOT NULL,
   `data_criado` TIMESTAMP NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_arquivos_consulta1_idx` (`consulta_id` ASC) VISIBLE,
+  INDEX `fk_arquivos_consulta1_idx` (`consulta_id` ASC),
   CONSTRAINT `fk_arquivos_consulta1`
     FOREIGN KEY (`consulta_id`)
     REFERENCES `agenda`.`consulta` (`id`)
@@ -209,7 +209,7 @@ CREATE TABLE IF NOT EXISTS `agenda`.`bloqueio_data` (
   `ativo` TINYINT(1) NOT NULL DEFAULT 1,
   `usuario_id_criador` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`, `usuario_id_criador`),
-  INDEX `fk_bloqueio_diasemana_usuario1_idx` (`usuario_id_criador` ASC) VISIBLE,
+  INDEX `fk_bloqueio_diasemana_usuario1_idx` (`usuario_id_criador` ASC),
   CONSTRAINT `fk_bloqueio_diasemana_usuario10`
     FOREIGN KEY (`usuario_id_criador`)
     REFERENCES `agenda`.`usuario` (`id`)
@@ -228,8 +228,8 @@ CREATE TABLE IF NOT EXISTS `agenda`.`log_consulta` (
   `usuario_id` INT UNSIGNED NOT NULL,
   `consulta_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_log_consulta_usuario1_idx` (`usuario_id` ASC) VISIBLE,
-  INDEX `fk_log_consulta_consulta1_idx` (`consulta_id` ASC) VISIBLE,
+  INDEX `fk_log_consulta_usuario1_idx` (`usuario_id` ASC),
+  INDEX `fk_log_consulta_consulta1_idx` (`consulta_id` ASC),
   CONSTRAINT `fk_log_consulta_usuario1`
     FOREIGN KEY (`usuario_id`)
     REFERENCES `agenda`.`usuario` (`id`)
