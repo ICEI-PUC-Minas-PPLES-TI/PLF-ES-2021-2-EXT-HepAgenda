@@ -82,6 +82,7 @@
                     </template>
                     <v-date-picker
                       v-model="consulta.dt_inicio"
+                      :allowed-dates="datasPermitidas"
                       @input="menuData = false"
                     ></v-date-picker>
                   </v-menu>
@@ -98,7 +99,6 @@
                     label="Medico"
                     item-text="nome"
                     item-value="id"
-                    :rules="[(v) => !!v || 'Medico obrigatório']"
                     outlined
                   />
                 </v-col>
@@ -145,7 +145,7 @@
 <script>
 export default {
   name: "modalCreate",
-  props: ["value", 'paciente'],
+  props: ["value", 'paciente','bloqueioSemana'],
   data() {
     return {
       valid: true,
@@ -157,7 +157,7 @@ export default {
         paciente_id: "",
         status: "AGUARDANDOC",
         descricao: "",
-        usuario_id_medico:'',
+        usuario_id_medico:null,
         dt_inicio: null,
       },
 
@@ -196,11 +196,12 @@ export default {
           .$post("/consulta", consulta)
           .then((response) => {
             this.limpaDados();
-            this.abreToast("Consulta agendada com sucesso!");
+            this.$Message.alert('Consulta agendada com sucesso!',null, {type: 'success', msgBody: {style: {width: '30%'}}})
             this.$emit('criado')
           })
           .catch((error) => {
-            this.abreToast(error.message);
+            console.log(error.response)
+            this.$Message.alert(error.response.data.message,'Erro', {type: 'error', msgBody: {style: {width: '30%'}}})
           });
       }
     },
@@ -271,6 +272,20 @@ export default {
       const searchText = queryText.toLowerCase()
 
       return textOne.indexOf(searchText) > -1 || textTwo.indexOf(searchText) > -1 || textThree.indexOf(searchText) > -1
+    },
+    datasPermitidas(val){
+      const dt = new Date(val + ' 23:59:59')
+      if(!(dt >= new Date()))
+        return false
+      
+      if(this.bloqueioSemana) {
+        const diaSemana = dt.getDay()
+        if(this.bloqueioSemana[diaSemana].ativo)
+          return false;
+      }
+
+      return true
+        
     }
   },
 

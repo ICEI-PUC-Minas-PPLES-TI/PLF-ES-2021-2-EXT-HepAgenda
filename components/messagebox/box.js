@@ -41,16 +41,14 @@ const Message = function (config = {}) {
   document.body.style.overflow = 'hidden';
   document.body.appendChild(instance.$mount().$el);
 
-  var handler = function(e) {
-    e.preventDefault()
-    var keyCode = e.code;
-    if(keyCode == 'Enter' || keyCode == 'NumpadEnter'){
-      Dismiss()
-      document.removeEventListener('keydown', handler);
-    }
-  };
 
-  document.addEventListener("keydown", handler, false);
+  document.addEventListener("keydown", function(e) {
+    var keyCode = e.code;
+    if(keyCode == 'Enter' || keyCode == 'NumpadEnter' && instance.$data.show){
+      e.preventDefault()
+      Dismiss()
+    }
+  });
 
 }
 
@@ -97,6 +95,21 @@ const Confirm = function (message, callback) {
       content: message
     },
     buttons: [{
+      label: 'Cancelar',
+      style: {
+        margin: '0',
+        padding: '3%',
+        width: '50%',
+        height: '40%',
+        boxSizing: 'border-box',
+        border: 'none',
+        lineHeight: '2'
+      },
+      action: function () {
+        Dismiss();
+        callback && callback(false);
+      }
+    }, {
       label: 'Confirmar',
       style: {
         margin: '0',
@@ -111,21 +124,6 @@ const Confirm = function (message, callback) {
       action: function () {
         Dismiss();
         callback && callback(true);
-      }
-    }, {
-      label: 'Cancelar',
-      style: {
-        margin: '0',
-        padding: '3%',
-        width: '50%',
-        height: '40%',
-        boxSizing: 'border-box',
-        border: 'none',
-        lineHeight: '2'
-      },
-      action: function () {
-        Dismiss();
-        callback && callback(false);
       }
     }],
     msgFooter: {

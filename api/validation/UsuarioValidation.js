@@ -12,7 +12,7 @@ const signinUsuarioValidation = yup.object().shape({
 
 const createUsuarioValidation = yup.object().shape({
   nome: yup.string().required("'nome' obrigatório!"),
-  telefone: yup.string().matches(telefoneRegExp, "'telefone' inválido!"),
+  telefone: yup.string().matches(telefoneRegExp, "'telefone' inválido!").nullable(),
 
   login: yup.string().min(3, "'login' deve ter no mínimo 3 caracteres!"),
 
@@ -36,7 +36,7 @@ const createUsuarioValidation = yup.object().shape({
 
 const updateUsuarioValidation = yup.object().shape({
   nome: yup.string(),
-  telefone: yup.string().matches(telefoneRegExp, "Telefone inválido!"),
+  telefone: yup.string().matches(telefoneRegExp, "Telefone inválido!").nullable(),
 
   data_excluido: yup
     .date().nullable(),

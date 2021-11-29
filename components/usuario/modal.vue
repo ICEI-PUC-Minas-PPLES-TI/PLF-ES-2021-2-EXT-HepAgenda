@@ -9,7 +9,7 @@
     >
         <v-card>
             <v-card-title>
-                <span class="text-h5">Atualizar Usuário</span>
+                <span class="text-h5">Criar novo usuário</span>
             </v-card-title>
             <!--NOME-->
             <v-card-text>
@@ -63,7 +63,7 @@
                                 ></v-text-field>
                             </v-col>
                             <!--LOGIN-->
-                            <v-col cols="12" sm="12" class="mt-n2">
+                            <v-col cols="12" sm="12">
                                 <v-text-field
                                     dense
                                     hide-details="auto"
@@ -74,7 +74,7 @@
                                 ></v-text-field>
                             </v-col>
                             <!--SENHA-->
-                            <v-col cols="12" sm="12" class="mt-n2">
+                            <v-col cols="12" sm="12">
                                 <v-text-field
                                     dense
                                     v-model="formData.senha"
@@ -83,26 +83,13 @@
                                     :type="show1 ? 'text' : 'password'"
                                     label="SENHA"
                                     hint="Pelo menos 8 caracteres, 1 número, 1 letra minúscula e 1 letra maiúscula"
+                                    hide-details="auto"
                                     @click:append="show1 = !show1"
                                     outlined
                                 ></v-text-field>
                             </v-col>
-                            <!--CONFIRMAR SENHA-->
-                            <v-col cols="12" sm="12" class="mt-n5">
-                                <!-- diminuir altura do quadro com dense -->
-                                <v-text-field
-                                    dense
-                                    v-model="formData.confirmar_senha"
-                                    :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
-                                    :rules="[rules.required, rules.equal]"
-                                    :type="show2 ? 'text' : 'password'"
-                                    label="CONFIRMAR SENHA"
-                                    hint="Pelo menos 8 caracteres"
-                                    @click:append="show2 = !show2"
-                                    outlined
-                                ></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="12" class="mt-n2">
+                            <!--FIM CONFIRMAR SENHA-->
+                            <v-col cols="12" sm="12">
                                 <v-text-field
                                     dense
                                     hide-details="auto"
@@ -112,8 +99,7 @@
                                     :rules="[(v) => (v || '' ).length <= 15 || 'Maximo de 15 caracteres']"
                                 ></v-text-field>
                             </v-col>
-                            <!--FIM CONFIRMAR SENHA-->
-                            <v-col cols="12" sm="12" class="mt-n5">
+                            <v-col cols="12" sm="12">
                                 <v-select
                                     :items="[
                                         {
@@ -162,7 +148,6 @@ export default {
                 nome: null,
                 email: null,
                 senha: null,
-                confirmar_senha: null,
                 tipo: "",
                 telefone: ""
             },
@@ -179,8 +164,7 @@ export default {
                         return true;
                     else
                         return "Min 8 caracteres, 1 número, 1 letra minúscula e 1 letra maiúscula";
-                },
-                equal: v => v === this.formData.senha || "Senhas não conferem"
+                }
             }
         };
     },
@@ -197,7 +181,6 @@ export default {
                 nome: null,
                 email: null,
                 senha: null,
-                confirmar_senha: null,
                 tipo: " "
             }
         },

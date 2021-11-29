@@ -34,7 +34,7 @@
               <v-icon color="primary" class="mr-2" @click="editItem(item)">
                 mdi-square-edit-outline
               </v-icon>
-              <v-icon disabled color="primary" @click="deleteItem(item)">
+              <v-icon color="primary" @click="deleteItem(item)">
                 mdi-trash-can-outline
               </v-icon>
             </template>
@@ -101,7 +101,7 @@
         </v-card-title>
         <v-card-text>
           <v-container>
-            <v-form ref="formUsuario" lazy-validation>
+            <v-form ref="formUsuario" lazy-validation class="formUsuario">
               <v-row>
                 <v-col cols="12" sm="12" md="12">
                   <v-text-field
@@ -129,14 +129,14 @@
                     outlined
                   ></v-text-field>
                 </v-col>
-                <v-col cols="12" sm="12" class="mt-n2">
+                <v-col cols="12" sm="12">
                   <v-text-field
-                      dense
-                      hide-details="auto"
                       v-model="formEditUsuario.telefone"
+                      hide-details="auto"
                       label="TELEFONE"
                       outlined
                       :rules="[(v) => (v || '' ).length <= 15 || 'Maximo de 15 caracteres']"
+                      v-mask="['(##) ####-####', '(##) #####-####']"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="12">
@@ -157,9 +157,43 @@
                     ]"
                     label="TIPO"
                     v-model="formEditUsuario.tipo"
+                    hide-details="auto"
                     required
                     outlined
                   ></v-select>
+                </v-col>
+                <v-col cols="12" sm="12">
+                  <v-menu
+                      v-model="menuExpira"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      transition="scale-transition"
+                      offset-y
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-model="formEditUsuario.data_expira"
+                          outlined
+                          :hide-details="true"
+                          label="Data de Expiração (Opcional)"
+                          clearable
+                          type="date"
+                          max="3000-01-01"
+                          @click:clear="formEditUsuario.data_expira = null"
+                        >
+                          <span slot="append">
+                            <v-icon v-bind="attrs" v-on="on">
+                              mdi-calendar
+                            </v-icon>
+                          </span>
+                        </v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="formEditUsuario.data_expira"
+                        @input="menuExpira = false"
+                      ></v-date-picker>
+                    </v-menu>
                 </v-col>
               </v-row>
             </v-form>
@@ -192,22 +226,26 @@
 </template>
 
 <script>
+import {mask} from 'vue-the-mask'
 import modalUsuario from '../../components/usuario/modal.vue';
  export default {
   layout: 'main',
   components:{
     modalUsuario
   },
+  directives: {mask},
   data() {
     return {
       show1: false,
       show2: false,
       dialog: false,
+      menuExpira: false,
       formEditUsuario: {
         nome: null,
         senha: null,
         tipo: "",
-        telefone: ""
+        telefone: "",
+        data_expira: null
       },
       rules: {
         required: value => !!value || "Obrigatório!",
@@ -257,15 +295,15 @@ import modalUsuario from '../../components/usuario/modal.vue';
 
     editItem(item){
       this.limparDados()
-      //pegar cada item do formEditUsuario
       this.formEditUsuario.nome=item.nome
       this.formEditUsuario.tipo=item.tipo
       this.formEditUsuario.id=item.id
       this.formEditUsuario.telefone = item.telefone
+      if(item.data_expira)
+        this.formEditUsuario.data_expira = item.data_expira.split('T')[0]
 
       this.dialog = true
     },
-
     listaUsuarios() {
       this.tabelaCarregando = true
       this.$axios.$get(`/usuario?pagina=${this.tabelaPaginaAtual}&limite=10`).then(response => {
@@ -279,7 +317,6 @@ import modalUsuario from '../../components/usuario/modal.vue';
         this.tabelaCarregando = false
       });
     },
-
     formataTipo(tipo){
       if(tipo == "A"){
         return "Administrador"
@@ -289,7 +326,6 @@ import modalUsuario from '../../components/usuario/modal.vue';
         return "Visualizador"
       }
     },
-
     limparDados() {
       this.formEditUsuario = {
         nome: null,
@@ -297,28 +333,47 @@ import modalUsuario from '../../components/usuario/modal.vue';
         tipo: " "
       }
     },
-
     atualizarUsuario() {
       if (this.$refs.formUsuario.validate()){
+        if(this.formEditUsuario.telefone)
+          this.formEditUsuario.telefone = this.formEditUsuario.telefone.replace(/\D/g,'')
+
+        if(this.formEditUsuario.data_expira)
+          this.formEditUsuario.data_expira += ' 23:59:59'
+
         this.$axios
           .put('/usuario/' + this.formEditUsuario.id, this.formEditUsuario)
           .then(res => {
             this.limparDados();
             this.dialog = false;
-            alert("Usuario Atualizado!");
+            this.$Message.alert('Usuario Atualizado!',null, {type: 'success', msgBody: {style: {width: '30%'}}})
           })
           .catch(err => {
-            alert(JSON.stringify(err.response.data));
             console.log(err.response.data);
+            this.$Message.alert(err.response.data.message, 'Erro', { type: 'error', msgBody: { style: { width: '30%' } } })
           });
       }
     },
-
-    
     abreToast(mensagem) {
       this.toastMensagem = mensagem;
       this.toast = true;
     },
+    deleteItem(item){
+      const t = this
+      this.$Message.confirm('Você tem certeza que deseja desativar o usuário ' + item.nome , function(result){
+        if(result) {
+          t.$axios
+            .put(`/usuario/${item.id}`, {data_excluido: 1})
+            .then(() => {
+              t.$Message.alert('Usuário desativado!',null, {type: 'info', msgBody: {style: {width: '30%'}}})
+              t.listaUsuarios()
+            })
+            .catch(err => {
+              t.$Message.alert(err.response.data.message,'Erro', {type: 'error', msgBody: {style: {width: '30%'}}})
+            })
+        }
+      });
+    }
 
   }
 
@@ -342,5 +397,9 @@ import modalUsuario from '../../components/usuario/modal.vue';
     .v-data-footer{
         display: none;
     }
+}
+.formUsuario input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
 }
 </style>
