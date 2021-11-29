@@ -13,7 +13,8 @@ const createConsultaValidation = yup.object().shape({
     .required("'paciente_id' obrigatório!"),
   descricao: yup
     .string("'descricao' deve ser string!")
-    .max(60, "'descricao' deve ter no máximo 60 caracteres!"),
+    .max(60, "'descricao' deve ter no máximo 60 caracteres!")
+    .nullable(),
   status: yup
     .mixed()
     .oneOf(
@@ -27,7 +28,7 @@ const createConsultaValidation = yup.object().shape({
   dt_inicio: yup
     .date("'dt_inicio' deve ser data!")
     .required("'dt_inicio' obrigatório!"),
-  usuario_id_medico: yup.number("'usuario_id_medico' deve ser numérico!")
+  usuario_id_medico: yup.number("'usuario_id_medico' deve ser numérico!").nullable()
 });
 
 const updateConsultaValidation = yup.object().shape({

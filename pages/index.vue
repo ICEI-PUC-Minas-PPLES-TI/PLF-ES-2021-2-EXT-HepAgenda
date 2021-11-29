@@ -215,7 +215,7 @@
         </v-row>
       </v-col>
     </v-row>
-    <modalCreateConsulta v-model="modalCreateAtivo" />
+    <modalCreateConsulta v-model="modalCreateAtivo" :bloqueioSemana="bloqueioSemana" />
     <modalEditConsulta v-model="modalEditAtivo" v-bind:consultaId="consultaId" />
   </v-container>
 </template>

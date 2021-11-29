@@ -9,7 +9,7 @@
     >
         <v-card>
             <v-card-title>
-                <span class="text-h5">Atualizar Usuário</span>
+                <span class="text-h5">Criar novo usuário</span>
             </v-card-title>
             <!--NOME-->
             <v-card-text>
@@ -50,7 +50,7 @@
                     </svg>
                 </v-col>
                 <v-container>
-                    <v-form ref="formData" lazy-validation>
+                    <v-form ref="formData" lazy-validation class="formData">
                         <v-row>
                             <v-col cols="12" sm="12" md="12">
                                 <v-text-field
@@ -63,7 +63,7 @@
                                 ></v-text-field>
                             </v-col>
                             <!--LOGIN-->
-                            <v-col cols="12" sm="12" class="mt-n2">
+                            <v-col cols="12" sm="12">
                                 <v-text-field
                                     dense
                                     hide-details="auto"
@@ -74,7 +74,7 @@
                                 ></v-text-field>
                             </v-col>
                             <!--SENHA-->
-                            <v-col cols="12" sm="12" class="mt-n2">
+                            <v-col cols="12" sm="12">
                                 <v-text-field
                                     dense
                                     v-model="formData.senha"
@@ -83,37 +83,24 @@
                                     :type="show1 ? 'text' : 'password'"
                                     label="SENHA"
                                     hint="Pelo menos 8 caracteres, 1 número, 1 letra minúscula e 1 letra maiúscula"
+                                    hide-details="auto"
                                     @click:append="show1 = !show1"
                                     outlined
                                 ></v-text-field>
                             </v-col>
-                            <!--CONFIRMAR SENHA-->
-                            <v-col cols="12" sm="12" class="mt-n5">
-                                <!-- diminuir altura do quadro com dense -->
-                                <v-text-field
-                                    dense
-                                    v-model="formData.confirmar_senha"
-                                    :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
-                                    :rules="[rules.required, rules.equal]"
-                                    :type="show2 ? 'text' : 'password'"
-                                    label="CONFIRMAR SENHA"
-                                    hint="Pelo menos 8 caracteres"
-                                    @click:append="show2 = !show2"
-                                    outlined
-                                ></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="12" class="mt-n2">
+                            <!--FIM CONFIRMAR SENHA-->
+                            <v-col cols="12" sm="12">
                                 <v-text-field
                                     dense
                                     hide-details="auto"
                                     v-model="formData.telefone"
                                     label="TELEFONE"
                                     outlined
+                                    v-mask="['(##) ####-####', '(##) #####-####']"
                                     :rules="[(v) => (v || '' ).length <= 15 || 'Maximo de 15 caracteres']"
                                 ></v-text-field>
                             </v-col>
-                            <!--FIM CONFIRMAR SENHA-->
-                            <v-col cols="12" sm="12" class="mt-n5">
+                            <v-col cols="12" sm="12">
                                 <v-select
                                     :items="[
                                         {
@@ -131,10 +118,45 @@
                                     ]"
                                     label="TIPO"
                                     v-model="formData.tipo"
+                                    :hide-details="true"
                                     outlined
                                 ></v-select>
                             </v-col>
+                            <v-col cols="12" sm="12">
+                                <v-menu
+                                    v-model="menuExpira"
+                                    :close-on-content-click="false"
+                                    :nudge-right="40"
+                                    transition="scale-transition"
+                                    offset-y
+                                    min-width="auto"
+                                >
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field
+                                    v-model="formData.data_expira"
+                                    outlined
+                                    :hide-details="true"
+                                    label="Data de Expiração (Opcional)"
+                                    clearable
+                                    type="date"
+                                    max="3000-01-01"
+                                    @click:clear="formData.data_expira = null"
+                                    >
+                                    <span slot="append">
+                                        <v-icon v-bind="attrs" v-on="on">
+                                        mdi-calendar
+                                        </v-icon>
+                                    </span>
+                                    </v-text-field>
+                                </template>
+                                <v-date-picker
+                                    v-model="formData.data_expira"
+                                    @input="menuExpira = false"
+                                ></v-date-picker>
+                                </v-menu>
+                            </v-col>
                         </v-row>
+                        <br>
                     </v-form>
                     <!--BOTAO-->
                     <v-row class="mb-6" no-gutters>
@@ -150,21 +172,24 @@
 </template>
 
 <script>
+import {mask} from 'vue-the-mask'
 export default {
     name: "modal-usuario",
     props: ["value"],
     /*SENHA*/
+    directives: {mask},
     data() {
         return {
             show1: false,
             show2: false,
+            menuExpira: false,
             formData: {
                 nome: null,
                 email: null,
                 senha: null,
-                confirmar_senha: null,
+                data_expira: null,
                 tipo: "",
-                telefone: ""
+                telefone: null
             },
             rules: {
                 required: value => !!value || "Obrigatório!",
@@ -179,8 +204,7 @@ export default {
                         return true;
                     else
                         return "Min 8 caracteres, 1 número, 1 letra minúscula e 1 letra maiúscula";
-                },
-                equal: v => v === this.formData.senha || "Senhas não conferem"
+                }
             }
         };
     },
@@ -197,24 +221,26 @@ export default {
                 nome: null,
                 email: null,
                 senha: null,
-                confirmar_senha: null,
                 tipo: " "
             }
         },
         criarUsuario() {
             if (this.$refs.formData.validate()){
-            this.$axios
-                .post("/usuario", this.formData)
-                .then(res => {
-                    this.limparDados();
-                    this.$emit('input', false)
-                    this.$emit('listaUsuarios')
-                    this.$emit('toast', "Usuario Cadastrado com sucesso!")
-                })
-                .catch(err => {
-                    console.log(err.response.data);
-                    this.$Message.alert(err.response.data.message, 'Erro', { type: 'error', msgBody: { style: { width: '30%' } } })
-                });
+                if(this.formData.telefone)
+                    this.formData.telefone = this.formData.telefone.replace(/\D/g,'')
+
+                this.$axios
+                    .post("/usuario", this.formData)
+                    .then(res => {
+                        this.limparDados();
+                        this.$emit('input', false)
+                        this.$emit('listaUsuarios')
+                        this.$emit('toast', "Usuario Cadastrado com sucesso!")
+                    })
+                    .catch(err => {
+                        console.log(err.response.data);
+                        this.$Message.alert(err.response.data.message, 'Erro', { type: 'error', msgBody: { style: { width: '30%' } } })
+                    });
             }
         }
     }
@@ -224,5 +250,9 @@ export default {
 <style>
 .img {
     text-align: center;
+}
+.formData input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
 }
 </style>

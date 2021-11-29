@@ -962,7 +962,7 @@ export default {
           this.$axios.post('/paciente', info).then(res=>{
             this.limparDados()
             this.$emit('input', false) // Fecha modal
-            alert('Paciente Cadastrado')
+            this.$Message.alert('Paciente Salvo',null, {type: 'success', msgBody: {style: {width: '30%'}}})
             this.$emit('listaPacientes')
           }).catch(err => {
             alert(JSON.stringify(err.response.data))

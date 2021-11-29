@@ -69,27 +69,27 @@
                 <router-link to="/paciente" class="main-menu-link">Pacientes</router-link>
               </li>
               <li>
-              <v-menu offset-y>
-                <template v-slot:activator="{ on, attrs }">
-                  <svg style="width:24px;height:24px;" viewBox="0 -5 24 24" v-bind="attrs" v-on="on">
-                    <path fill="currentColor" d="M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z" />
-                  </svg>
-                </template>
-                <client-only>
+              <client-only>
+                <v-menu v-if="['A'].includes($store.getters['login/me'].tipo)" offset-y>
+                  <template v-slot:activator="{ on, attrs }">
+                    <svg style="width:24px;height:24px;" viewBox="0 -5 24 24" v-bind="attrs" v-on="on">
+                      <path fill="currentColor" d="M16,12A2,2 0 0,1 18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12M10,12A2,2 0 0,1 12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12M4,12A2,2 0 0,1 6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12Z" />
+                    </svg>
+                  </template>
                   <v-list dense>
-                    <v-list-item v-if="['A','M'].includes($store.getters['login/me'].tipo)" to="/usuario">
+                    <v-list-item v-if="['A'].includes($store.getters['login/me'].tipo)" to="/usuario">
                       <v-list-item-icon>
                         <v-icon>mdi-account-group-outline</v-icon>
                       </v-list-item-icon>
                       <v-list-item-title>Gerenciar Usuários</v-list-item-title>
                     </v-list-item>
-                    <v-list-item v-if="['A','M'].includes($store.getters['login/me'].tipo)" to="/bloqueiodata">
+                    <v-list-item v-if="['A'].includes($store.getters['login/me'].tipo)" to="/bloqueiodata">
                       <v-list-item-icon>
                         <v-icon>mdi-calendar-range</v-icon>
                       </v-list-item-icon>
                       <v-list-item-title>Gerenciar Datas Bloqueadas</v-list-item-title>
                     </v-list-item>
-                    <v-list-item v-if="['A','M'].includes($store.getters['login/me'].tipo)" to="/tratamento">
+                    <v-list-item v-if="['A'].includes($store.getters['login/me'].tipo)" to="/tratamento">
                       <v-list-item-icon>
                         <v-icon>mdi-bottle-tonic-plus-outline</v-icon>
                       </v-list-item-icon>
@@ -102,8 +102,8 @@
                       <v-list-item-title>Relatórios</v-list-item-title>
                     </v-list-item>
                   </v-list>
-                </client-only>
-              </v-menu>
+                </v-menu>
+              </client-only>
               </li>
               <!-- Menu Usuário -->
               <li>
