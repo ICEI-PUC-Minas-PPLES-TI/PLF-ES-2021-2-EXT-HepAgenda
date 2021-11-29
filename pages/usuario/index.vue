@@ -118,7 +118,7 @@
                   <v-text-field
                     v-model="formEditUsuario.senha"
                     hide-details="auto"
-                    
+
                     :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                     :rules="[rules.required, rules.min]"
                     :type="show1 ? 'text' : 'password'"
@@ -360,7 +360,7 @@ import modalUsuario from '../../components/usuario/modal.vue';
     },
     deleteItem(item){
       const t = this
-      this.$Message.confirm('Você tem certeza que deseja desativar o usuário ' + item.nome , function(result){
+      this.$Message.confirm('Você tem certeza que deseja deletar o usuário ' + item.nome , function(result){
         if(result) {
           t.$axios
             .put(`/usuario/${item.id}`, {data_excluido: 1})
