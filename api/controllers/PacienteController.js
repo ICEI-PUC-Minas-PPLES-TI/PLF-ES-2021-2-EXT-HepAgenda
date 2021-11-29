@@ -89,7 +89,7 @@ class PacienteController {
     const qtdPacientes = await Paciente.count({where});
     const { paginas, ...SortPaginateOptions } = SortPaginate(request.query, atributos, qtdPacientes);
 
-    Paciente.findAndCountAll({
+    await Paciente.findAndCountAll({
       ...SortPaginateOptions,
       where,
       include: {
@@ -118,7 +118,7 @@ class PacienteController {
           include: [{
             model: Tratamento,
             as: "tratamento"
-          }], 
+          }],
           nested: true
         },{
           model: PacienteHepC,
