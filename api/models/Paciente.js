@@ -84,6 +84,8 @@ class Paciente extends Model {
       {
         tableName: "paciente",
         timestamps: false,
+        modelName: 'paciente',
+        freezeTableName: true,
         sequelize
       }
     );
