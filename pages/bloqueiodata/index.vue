@@ -260,7 +260,9 @@ export default {
         result = result.map(function(obj) {
           return obj.ativo ? obj.diasemana: null;
         })
-        result = result.filter(n => n)
+        result = result.filter((n) => {
+          return n >= 0
+        })
         data.dia_semanaBloqueio = result
       }).catch(err => {
         console.log('err', err.response)
