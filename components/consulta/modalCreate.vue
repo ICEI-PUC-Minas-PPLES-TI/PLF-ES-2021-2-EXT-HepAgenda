@@ -29,7 +29,7 @@
                     :items="pacientes"
                     hide-details="auto"
                     :clearable="true"
-                    label="Paciente"
+                    label="Paciente (Obrigatório)"
                     :filter="customFilterPaciente"
                     :search-input="procuraPacienteTxt"
                     @update:search-input="procuraPaciente"
@@ -67,7 +67,7 @@
                         outlined
                         hide-details="auto"
                         :rules="[(v) => !!v || 'Data da consulta obrigatória']"
-                        label="Data da consulta"
+                        label="Data da consulta (Obrigatório)"
                         type="date"
                         min="2017-06-01"
                         max="2050-06-30"
@@ -110,7 +110,7 @@
                     v-model="consulta.descricao"
                     hide-details="auto"
                     outlined
-                    label="Descrição (Opcional)"
+                    label="Descrição"
                     :rules="[(v) => (v || '' ).length <= 60 || 'Maximo de 60 caracteres']"
                     auto-grow
                   ></v-textarea>

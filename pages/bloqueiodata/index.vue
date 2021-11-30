@@ -102,7 +102,7 @@
               <br>
               <v-row>
                 <v-col :cols="12" :md="10" :offset-md="1">
-                  <v-btn block color="primary" @click="mudaBloqueioSemana">
+                  <v-btn block color="error" @click="mudaBloqueioSemana">
                     MARCAR DIAS DA SEMANA
                   </v-btn>
                 </v-col>
@@ -158,7 +158,7 @@
               <br>
               <v-row>
                 <v-col>
-                  <v-btn block color="primary" @click="bloqueiaDia">
+                  <v-btn block color="error" @click="bloqueiaDia">
                     BlOQUEAR DATA
                   </v-btn>
                 </v-col>
