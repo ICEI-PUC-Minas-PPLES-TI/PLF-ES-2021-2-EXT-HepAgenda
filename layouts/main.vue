@@ -192,9 +192,9 @@ export default {
       if(item.tipo == 'P') {
         const textOne = item.nome.toLowerCase()
         const textTwo = item.nome_mae.toLowerCase()
-        const textThree = item.registro_hc.toLowerCase()
+        const textThree = item.registro_hc?.toLowerCase()
         const searchText = queryText.toLowerCase()
-        return textOne.indexOf(searchText) > -1 || textTwo.indexOf(searchText) > -1 || textThree.indexOf(searchText) > -1
+        return textOne?.indexOf(searchText) > -1 || textTwo?.indexOf(searchText) > -1 || textThree?.indexOf(searchText) > -1
       } else {
         const textOne = item.dt_inicio
         const textTwo = this.formataData(item.dt_inicio)

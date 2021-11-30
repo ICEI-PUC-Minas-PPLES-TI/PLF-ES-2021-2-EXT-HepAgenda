@@ -78,7 +78,6 @@
                           label="Medicos"
                           item-text="nome"
                           item-value="id"
-                          :rules="[(v) => !!v || 'Medico obrigatório']"
                           outlined
                           :disabled="['V'].includes($store.getters['login/me'].tipo)"
                         />
