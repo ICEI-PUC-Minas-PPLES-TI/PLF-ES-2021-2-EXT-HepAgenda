@@ -245,10 +245,9 @@
                 <!-- Botão de marcarConsulta -->
                 <v-row class="mx-auto" v-if="['A', 'M'].includes($store.getters['login/me'].tipo)">
                   <v-col class="consulta-modal-marcar text-center">
-                    <v-btn color="primary" large @click="update">Salvar Alterações</v-btn>
                     <v-dialog v-model="modalConfirm" persistent max-width="350">
                       <template v-slot:activator="{ on, attrs }">
-                        <v-btn color="white" large dark v-bind="attrs" v-on="on">Cancelar Consulta</v-btn>
+                        <v-btn color="error" large text v-bind="attrs" v-on="on">Cancelar Consulta</v-btn>
                       </template>
                       <v-card>
                         <v-card-title class="text-h5">Deseja realmente cancelar essa consulta?</v-card-title>
@@ -259,6 +258,7 @@
                         </v-card-actions>
                       </v-card>
                     </v-dialog>
+                    <v-btn color="primary" large @click="update">Salvar Alterações</v-btn>
                   </v-col>
                 </v-row>
               </client-only>
