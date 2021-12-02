@@ -254,7 +254,7 @@
                         <v-card-actions>
                           <v-spacer></v-spacer>
                           <v-btn color="grey darken-1" text @click="modalConfirm = false">Não</v-btn>
-                          <v-btn color="red darken-1 !important" text @click="cancelaConsulta">Sim</v-btn>
+                          <v-btn color="red darken-1" text @click="cancelaConsulta">Sim</v-btn>
                         </v-card-actions>
                       </v-card>
                     </v-dialog>
@@ -574,10 +574,6 @@ export default {
 .consulta-modal-marcar .v-btn {
   border-radius: 10px;
   margin-right: 20px;
-}
-
-.consulta-modal-marcar .white {
-  color: #ce4b39 !important;
 }
 
 #input-usage .v-messages,
