@@ -179,7 +179,6 @@ export default {
   },
   mounted() {
     if(this.paciente) {
-      console.log(this.paciente)
       this.pacientes = [this.paciente]
       this.consulta.paciente_id = this.paciente.id
     } else

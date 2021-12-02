@@ -3,7 +3,7 @@
     <header class="main-header">
       <v-container>
         <v-row>
-          <v-col :md="3" :offset-md="1">
+          <v-col cols="8" :sm="8" :md="3" :offset-md="1" class="d-md-block" :class="!pesquisaMobile ? 'd-block': 'd-none'">
             <router-link to="/">
               <svg width="214" viewBox="0 0 274 59" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect x="1.6798" y="4.7904" width="37.0125" height="37.0125" stroke="#008BD9" stroke-width="2.64039" stroke-linejoin="round"/>
@@ -21,7 +21,7 @@
               </svg>
             </router-link>
           </v-col>
-          <v-col :md="4">
+          <v-col :sm="8" :md="4" class="d-md-block" :class="pesquisaMobile ? 'd-block': 'd-none'">
             
             <v-input
               class="main-input"
@@ -60,8 +60,8 @@
               </v-autocomplete>
             </v-input>
           </v-col>
-          <v-col :md="4">
-            <ul class="main-menu">
+          <v-col cols="4" :sm="3" :md="4">
+            <ul class="main-menu d-none d-md-block">
               <li>
                 <router-link to="/" class="main-menu-link">Agenda </router-link>
               </li>
@@ -79,7 +79,7 @@
                   <v-list dense>
                     <v-list-item v-if="['A'].includes($store.getters['login/me'].tipo)" to="/usuario">
                       <v-list-item-icon>
-                        <v-icon>mdi-account-group-outline</v-icon>
+                        <v-icon>mdi-shield-account-outline</v-icon>
                       </v-list-item-icon>
                       <v-list-item-title>Gerenciar Usuários</v-list-item-title>
                     </v-list-item>
@@ -128,6 +128,75 @@
                 </v-menu>
               </li>
             </ul>
+            <ul class="main-menu d-md-none d-block">
+              <li @click="pesquisaMobile = !pesquisaMobile">
+                <v-icon v-if="!pesquisaMobile">mdi-magnify</v-icon>
+                <v-icon v-else>mdi-arrow-left-circle</v-icon>
+              </li>
+              <li>
+                <v-icon @click="drawerMobile = !drawerMobile">mdi-menu</v-icon>
+              </li>
+            </ul>
+            <v-navigation-drawer
+              v-model="drawerMobile"
+              absolute
+              right
+              temporary
+            >
+              <client-only>
+                <v-list
+                  nav
+                  dense
+                >
+                  <v-list-item-group
+                    active-class="deep-purple--text text--accent-4"
+                  >
+                    <v-subheader>Menu</v-subheader>
+                    <v-list-item to="/">
+                      <v-list-item-icon>
+                        <v-icon>mdi-home</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-title>Agenda</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item to="/paciente">
+                      <v-list-item-icon>
+                        <v-icon>mdi-account-group-outline</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-title>Pacientes</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item v-if="['A'].includes($store.getters['login/me'].tipo)" to="/usuario">
+                      <v-list-item-icon>
+                        <v-icon>mdi-shield-account-outline</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-title>Gerenciar Usuários</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item v-if="['A'].includes($store.getters['login/me'].tipo)" to="/bloqueiodata">
+                      <v-list-item-icon>
+                        <v-icon>mdi-calendar-range</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-title>Gerenciar Datas Bloqueadas</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item v-if="['A'].includes($store.getters['login/me'].tipo)" to="/tratamento">
+                      <v-list-item-icon>
+                        <v-icon>mdi-bottle-tonic-plus-outline</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-title>Gerenciar Tratamentos</v-list-item-title>
+                    </v-list-item>
+                    <v-subheader>Conta</v-subheader>
+                    <v-list-item disabled>
+                      <v-list-item-icon>
+                        <v-icon>mdi-account-circle-outline</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-title><b>{{ $store.getters['login/me'].nome }}</b></v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="logout">
+                      <v-list-item-icon><v-icon>mdi-logout</v-icon></v-list-item-icon>
+                      <v-list-item-title>Sair</v-list-item-title>
+                    </v-list-item>
+                  </v-list-item-group>
+                </v-list>
+              </client-only>
+            </v-navigation-drawer>
           </v-col>
         </v-row>
       </v-container>
@@ -142,7 +211,9 @@ export default {
   data(){
     return {
       pesquisaTxt: '',
-      pesquisaItems: []
+      pesquisaItems: [],
+      pesquisaMobile: false,
+      drawerMobile: false
     }
   },
   watch: {
