@@ -25,6 +25,7 @@
               <v-row class="mt-n5">
                 <v-col :md="12" :sm="12" :xl="12" cols="12">
                   <v-autocomplete
+                    v-if="!paciente"
                     v-model="consulta.paciente_id"
                     :items="pacientes"
                     hide-details="auto"
@@ -37,7 +38,6 @@
                     item-value="id"
                     :rules="[(v) => !!v || 'Paciente obrigatório']"
                     outlined
-                    :disabled="paciente ? true: false"
                   >
                   <template v-slot:item="data">
                     <div style="white-space: nowrap;border-bottom: 1px solid #eee;width:100%" class="d-block">
@@ -47,6 +47,7 @@
                     </div>
                   </template>
                   </v-autocomplete>
+                  <v-text-field v-else hide-details="auto" label="Paciente (Obrigatório)" outlined disabled :value="paciente.nome" />
                 </v-col>
               </v-row>
               <!-- Data da consulta -->
@@ -178,6 +179,7 @@ export default {
   },
   mounted() {
     if(this.paciente) {
+      console.log(this.paciente)
       this.pacientes = [this.paciente]
       this.consulta.paciente_id = this.paciente.id
     } else
@@ -222,14 +224,15 @@ export default {
       }
     },
     listaPacientes(limit = 20, search = null) {
-      this.$axios
-        .$get(`/paciente?limite=${limit}&pesquisar=${search ? search: ''}&ativos=1`)
-        .then((response) => {
-          this.pacientes = response.dados;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      if(!this.paciente)
+        this.$axios
+          .$get(`/paciente?limite=${limit}&pesquisar=${search ? search: ''}&ativos=1`)
+          .then((response) => {
+            this.pacientes = response.dados;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
     },
 
     listaMedicos(){

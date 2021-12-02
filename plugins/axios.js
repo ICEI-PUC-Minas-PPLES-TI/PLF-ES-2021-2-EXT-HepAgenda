@@ -1,4 +1,4 @@
-export default function({ $axios, store, req }) {
+export default function({ $axios, store, req, redirect }) {
     if (req) {
       let cookies = JSON.parse(getCookie('vuex', req.headers.cookie))
       if (cookies) {
@@ -15,7 +15,6 @@ export default function({ $axios, store, req }) {
   
     $axios.onError(error => {
       const code = parseInt(error.response && error.response.status)
-      //const data = error.response.data
       if (code === 403) {
         store.dispatch('login/userLogout', {
           router: null

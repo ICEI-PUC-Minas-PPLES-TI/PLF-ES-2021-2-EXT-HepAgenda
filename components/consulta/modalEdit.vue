@@ -419,6 +419,7 @@ export default {
         "Setembro",
         "Outubro",
         "Novembro",
+        "Dezembro",
       ];
       return `${dia} de ${mesExtensos[parseInt(mes) - 1]} de ${ano}`;
     },
@@ -467,15 +468,9 @@ export default {
     },
 
     baixaArquivo(idx) {
-      axios2({
-        url:
-          `${window.location.href}api/arquivo/` +
-          this.consulta.arquivos[idx].id, //your url
-        method: "GET",
-        responseType: "blob",
-      })
-        //.$get("/arquivo/" + this.consulta.arquivos[idx].id )
-        .then((response) => {
+      this.$axios.get('/arquivo/' + this.consulta.arquivos[idx].id, {
+        responseType: "blob"
+      }).then((response) => {
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement("a");
           link.href = url;

@@ -95,12 +95,14 @@
                       </v-list-item-icon>
                       <v-list-item-title>Gerenciar Tratamentos</v-list-item-title>
                     </v-list-item>
+                    <!--
                     <v-list-item to="/relatorio" disabled>
                       <v-list-item-icon>
                         <v-icon>mdi-chart-line</v-icon>
                       </v-list-item-icon>
                       <v-list-item-title>Relatórios</v-list-item-title>
                     </v-list-item>
+                    -->
                   </v-list>
                 </v-menu>
               </client-only>

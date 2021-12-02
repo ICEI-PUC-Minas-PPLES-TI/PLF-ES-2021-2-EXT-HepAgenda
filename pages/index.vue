@@ -366,7 +366,7 @@ export default {
   methods: {
     formataData(data){
       const [ano, mes, dia] = data.split('-')
-      const mesExtensos = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro']
+      const mesExtensos = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
       return `${dia} de ${mesExtensos[parseInt(mes) - 1]} de ${ano}`
     },
     formataDataSimples(data){
