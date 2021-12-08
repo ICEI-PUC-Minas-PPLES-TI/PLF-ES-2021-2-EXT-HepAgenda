@@ -36,7 +36,7 @@ One you cloned your repository, install the dependencies with:
 yarn install # or npm install
 ```
 
-## Commands
+## Comandos
 
 | Command | Description |
 |---------|-------------|
@@ -44,7 +44,7 @@ yarn install # or npm install
 | npm run api | Start ExpressJS server in dev mode with hot reloading. |
 | npm run build | Build the nuxt.js web application for production. |
 
-## Documentation
+## Documentação
 
 - [ExpressJS](http://expressjs.com/en/guide/routing.html)
 - [Nuxt.js](https://nuxtjs.org/guide/)
@@ -52,7 +52,7 @@ yarn install # or npm install
 - [Sequelize.js](https://sequelize.org/master/index.html)
 - [Vuetify](https://vuetifyjs.com/en/)
 
-## Licenses
+## Licenças
 
 - [ExpressJS license](https://github.com/expressjs/express/blob/master/LICENSE)
 - [NuxtJS license](https://github.com/nuxt/nuxt.js/blob/master/LICENSE.md)
