@@ -28,7 +28,7 @@
 Assim que a primeira versão do sistema estiver disponível, deverá complementar com as instruções de utilização. Descreva como instalar eventuais dependências e como executar a aplicação.
 
 
-## Installation
+## Instalação
 
 One you cloned your repository, install the dependencies with:
 
