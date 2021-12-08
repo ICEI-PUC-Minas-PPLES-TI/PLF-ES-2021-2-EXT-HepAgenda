@@ -19,9 +19,7 @@
 
 
 ## Coordenadora da Extensão
-
   
-* Cléia Márcia Gomes Amaral
 * Ivre Marjorie Ribeiro Machado
 
 
