@@ -415,7 +415,7 @@ export default {
     carregaConsultas(dataInicio) {
       dataInicio += ' 00:00:00'
       const dtInicio = new Date(dataInicio);
-      const dtFim = new Date()
+      const dtFim = new Date(dataInicio)
       dtFim.setDate(new Date(dtInicio).getDate() + 7);
       this.filtroDataInicio = new Date(dtInicio.getTime() - (dtInicio.getTimezoneOffset() * 60000 )).toISOString().split("T")[0]
       this.filtroDataFim = new Date(dtFim.getTime() - (dtFim.getTimezoneOffset() * 60000 )).toISOString().split("T")[0]
